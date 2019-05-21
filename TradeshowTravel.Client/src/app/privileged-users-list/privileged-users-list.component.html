@@ -1,0 +1,27 @@
+<div>
+  <kendo-grid class="table table-striped"
+    [data]="gridView" 
+    [sortable]="true"
+    [sort]="sort"
+    (sortChange)="sortChange($event)">
+    <kendo-grid-column field="Username" width="135"></kendo-grid-column>
+    <kendo-grid-column field="FirstName" title="First Name"></kendo-grid-column>
+    <kendo-grid-column field="LastName" title="Last Name"></kendo-grid-column>
+    <kendo-grid-column field="Email"></kendo-grid-column>
+    <kendo-grid-column field="Segment" width="125"></kendo-grid-column>
+    <kendo-grid-column field="Telephone" title="Work Number"></kendo-grid-column>
+    <kendo-grid-column *ngIf="showEdit"  width="50" 
+      class="text-center" headerClass="text-center">
+      <ng-template kendoGridHeaderTemplate>
+        <button type="button" class="close" title="Add Users" aria-label="Close" (click)="popupAddUsers()">
+          <span class="text-info fa fa-plus-circle" aria-hidden="true"></span>
+        </button>
+      </ng-template>
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <button type="button" class="close" title="Remove {{dataItem.Username}}" aria-label="Close" (click)="onRemoveUser(dataItem.Username)">
+          <span class="text-warning fa fa-minus-circle" aria-hidden="true"></span>
+        </button>
+      </ng-template>
+    </kendo-grid-column>
+  </kendo-grid>
+</div>

@@ -1,0 +1,36 @@
+<div [class.loading]="loading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">Are you sure?</h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="bg-secondary px-3 py-2 text-dark">
+    You are about to remove the user(s) below from the 'Attendee' list.  If the person has already RSVP'd, they will be removed from the list and notified via email.  If the user has not RSVP'd, no email will be sent.
+  </div>
+  <div class="modal-body">
+    <div class="row" style="max-height: 150px; overflow-y: scroll">
+      <div class="col-md-auto">
+        <ng-template ngFor let-name let-i="index" [ngForOf]="names">
+          <div *ngIf="i < (names.length / 2)">
+            <span class="font-weight-bold">{{name}}</span>
+          </div>
+        </ng-template>
+      </div>
+      <div class="col-md-auto">
+        <ng-template ngFor let-name let-i="index" [ngForOf]="names">
+          <div *ngIf="i >= (names.length / 2)">
+            <span class="font-weight-bold">{{name}}</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm px-3" (click)="onSubmit()">Remove</button>
+  </div>
+</div>

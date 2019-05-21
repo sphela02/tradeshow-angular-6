@@ -1,0 +1,813 @@
+<div class="tabs-wrapper bg-white">
+  <ul class="nav classic-tabs tabs-white" role="tablist">
+    <li class="nav-item ml-3">
+      <a id="Details" class="nav-link waves-light waves-effect"
+         [class.active]="activeTab == EventDisplayTab.Details"
+         (click)="onTabClick($event)">{{event.Name}}</a>
+    </li>
+    <li class="nav-item ml-3" *ngIf="canEditAttendees">
+      <a id="Fields" class="nav-link waves-light waves-effect"
+         [class.active]="activeTab == EventDisplayTab.Fields"
+         (click)="onTabClick($event)">Attendee Configuration</a>
+    </li>
+    <li class="nav-item ml-3" *ngIf="canEditSettings">
+      <a id="Settings" class="nav-link waves-light waves-effect"
+         [class.active]="activeTab == EventDisplayTab.Settings"
+         (click)="onTabClick($event)">Settings</a>
+    </li>
+    <li class="nav-item ml-3" *ngIf="selectedAttendee">
+      <a id="Attendee" class="nav-link waves-light waves-effect"
+         [class.active]="activeTab == EventDisplayTab.Attendee"
+         (click)="onTabClick($event)">
+          {{selectedAttendee.Profile.FirstName}} {{selectedAttendee.Profile.LastName}}&nbsp;
+          <span (click)="onTabClose($event)">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </span>
+      </a>
+    </li>
+  </ul>
+</div>
+<!-- Event Info -->
+<div id="tabPanel1" class="mt-3 mx-3" [class.d-none]="activeTab != EventDisplayTab.Details">
+
+  <div class="card mb-3">
+    <app-event-info
+      [(event)]="event">
+    </app-event-info>
+  </div>
+
+  <!--div class="card mb-3">
+    <div class="card-body">
+      <span class="h5 card-title">Notifications</span>
+      <ul class="list-properties mt-3" style="overflow-y: auto;">
+        <li>All Clear!</li>
+      </ul>
+    </div>
+  </div-->
+
+  <div class="d-flex justify-content-between mb-3">
+    <div class="card card-inline">
+      <div class="card-body text-center">
+        <p class="mb-1">Planned&nbsp;Attendees</p>
+        <h2>{{results?.Total}}</h2>
+      </div>
+    </div>
+    <div class="card card-inline">
+      <div class="card-body text-center">
+        <p class="mb-1">RSVP'd&nbsp;Attendees</p>
+        <h2>{{results?.RSVPD}}</h2>
+        <div class="float-left mb-1" style="width: 70px">
+          <strong>Yes: {{results?.Attendees.filter(yesRSVPs).length}}</strong>
+        </div>
+        <div class="float-right mb-1" style="width: 70px">
+          <strong>No: {{results?.Attendees.filter(noRSVPs).length}}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="card card-inline" style="max-width: 175px">
+        <div class="card-body">
+          <p class="mb-1">RSVP'd&nbsp;by&nbsp;Segment</p>
+          <div>
+            <div class="float-left mb-1" style="width: 70px"
+                 *ngFor="let key of results?.Segments | keys">
+              <strong>{{key}}: {{results?.Segments[key]}}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="card card-inline">
+      <div class="card-body text-center">
+        <p class="mb-1">Completed&nbsp;Responses</p>
+        <h2>{{results?.Completed}}</h2>
+      </div>
+    </div>
+    <div class="card card-inline">
+      <div class="card-body text-center">
+        <p class="mb-1">#&nbsp;Needing&nbsp;Hotel</p>
+        <h2>{{results?.Hotel}}</h2>
+      </div>
+    </div>
+    <div class="card card-inline">
+      <div class="card-body text-center">
+        <p class="mb-1">Days&nbsp;Until&nbsp;Event</p>
+        <h2>{{daysUntilEvent}}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-auto">
+          <span class="h5 card-title">Attendees</span>&nbsp;
+          <span class="badge badge-small badge-warning badge-pill"
+            *ngIf="checkedAttendeeCount">
+            {{ checkedAttendeeCount }}&nbsp;
+            <a (click)="onClearAttendeeChecked()">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+          </span>
+        </div>
+        <div class="col-md text-right pl-0">
+          <button type="button" *ngIf="true"
+                 [disabled]="!checkedAttendeeCount || attendeeGrid.loading"
+                  class="btn btn-info btn-sm waves-effect waves-light px-3"
+                  (click)="popupSendRSVP()">
+                  <i class="fa fa-paper-plane" aria-hidden="true"></i>&nbsp;
+                  RSVP REQUEST
+          </button>
+          <button type="button" *ngIf="canEditAttendees"
+                 [disabled]="!checkedAttendeeCount || attendeeGrid.loading"
+                  class="btn btn-info btn-sm waves-effect waves-light px-3"
+                  (click)="popupSendReminder()">
+                  <i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;
+                  Send Email
+          </button>
+          <button type="button" *ngIf="canDeleteAttendee"
+                 [disabled]="!checkedAttendeeCount || attendeeGrid.loading"
+                  class="btn btn-info btn-sm waves-effect waves-light px-3"
+                  (click)="popupDeleteAttendee()">
+                  <i class="fa fa-trash-o" aria-hidden="true"></i>&nbsp;
+                  Remove
+          </button>
+          <button type="button" *ngIf="canAddAttendee"
+                  class="btn btn-info btn-sm waves-effect waves-light px-3"
+                  (click)="popupAddAttendees()">
+                  <i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp;
+                  Add Attendee
+          </button>
+          <button type="button" id="Fields" *ngIf="canEditAttendees"
+                  (click)="onTabClick($event)"
+                  class="btn btn-info btn-sm waves-effect waves-light px-3">
+                  <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
+                  Attendee Configuration
+          </button>
+          <button type="button" [disabled]="!results.Attendees?.length || attendeeGrid.loading"
+                  (click)="onAttendeeExport()"
+                  class="btn btn-info btn-sm waves-effect waves-light px-3">
+                  <i class="fa fa-download" aria-hidden="true"></i>&nbsp;
+                  Export
+          </button>
+        </div>
+      </div>
+    </div>
+    <kendo-grid #attendeeGrid
+      [data]="view"
+      [pageable]="true"
+      [pageSize]="state.take"
+      [skip]="state.skip"
+      [sortable]="true"
+      [sort]="state.sort"
+      (sortChange)="sortChange($event)"
+      filterable="menu"
+      [filter]="state.filter"
+      (dataStateChange)="dataStateChange($event)"
+      style="height: 500px;"
+    >
+      <kendo-grid-column width="50" [locked]="true">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+          <input type="checkbox" id="attendee_all" class="filled-in"
+            [disabled]="!results.Attendees?.length || attendeeGrid.loading"
+            [checked]="areAllChecked"
+            (click)="onCheckAllAttendees($event)">
+          <label for="attendee_all" class="m-0 p-0 align-bottom"></label>
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <input type="checkbox" id="att_{{dataItem.ID}}" class="filled-in"
+            [checked]="checkedAttendees[dataItem.ID]"
+            (click)="onAttendeeChecked(dataItem)">
+          <label for="att_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
+        </ng-template>
+      </kendo-grid-column>
+<!--
+      <kendo-grid-column width="80" [locked]="true" title="Pic">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <i *ngIf="!dataItem.Profile.EmplID; else elseBlock"
+             class="fa fa-user-circle avatar" aria-hidden="true">
+          </i>
+          <ng-template #elseBlock>
+            <img src="http://my.harris.com/PeopleFinder/employeePics/{{dataItem.Profile.EmplID}}.jpg"
+                 class="avatar img-fluid rounded-circle z-depth-0"
+                 (error)="imgErrHandler($event)">
+            <i class="fa fa-user-circle avatar d-none" aria-hidden="true"></i>
+          </ng-template>
+        </ng-template>
+      </kendo-grid-column>
+-->
+      <kendo-grid-column field="Name" width="200" [locked]="true" [filterable]="false" title="Name">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <a (click)="onAttendeeInfoClicked(dataItem)" class="text-info">
+            {{dataItem.Profile.FirstName}} {{dataItem.Profile.LastName}}
+          </a>
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column width="70" [locked]="true" *ngIf="canEditAttendees">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <div class="attendee-edit-dropdown" [attr.data-id]="dataItem.ID">
+            <a class="waves-effect waves-light align-bottom" data-toggle="dropdown">
+              <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
+            </a>
+            <div class="dropdown-menu attendee-menu-list p-0" role="menu" style="width: 150px;" id="att_menu_{{dataItem.ID}}">
+              <a class="dropdown-item waves-effect waves-light px-3 py-1" role="menuitem" tabindex="-1"
+                (click)="onAttendeeInfoClicked(dataItem)">
+                View Attendee
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item waves-effect waves-light px-3 py-1" role="menuitem" tabindex="-1"
+                *ngIf="canEditProfiles"
+                (click)="popupEditProfile(dataItem)">
+                Edit Profile
+              </a>
+              <a class="dropdown-item waves-effect waves-light px-3 py-1" role="menuitem" tabindex="-1"
+                (click)="popupEditAttendeeFields(dataItem)">
+                Edit Attendee Fields
+              </a>
+              <a class="dropdown-item waves-effect waves-light px-3 py-1" role="menuitem" tabindex="-1"
+                (click)="popupEditOrganizerFields(dataItem)">
+                Edit Organizer Fields
+              </a>
+            </div>
+          </div>
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column field="DateRSVP" filter="date" title="RSVP Request Sent" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.DateRSVP ? (dataItem.DateRSVP | date: 'MM/dd/yyyy') : "NOT SENT" }}
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column field="Status" title="RSVP Response (Y/N)" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ HelperSvc.getResponseText(dataItem.Status) }}
+        </ng-template>
+        <ng-template kendoGridFilterMenuTemplate
+          let-column="column"
+          let-filter="filter"
+          let-filterService="filterService"
+          >
+          <grid-rsvp-filter
+            [field]="column.field"
+            [filterService]="filterService"
+            [currentFilter]="filter">
+          </grid-rsvp-filter>
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column field="User.Title" title="Job Title" [filterable]="false" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.Title }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Segment" title="Segment" width="100">
+        <ng-template kendoGridFilterMenuTemplate
+          let-column="column"
+          let-filter="filter"
+          let-filterService="filterService"
+          >
+          <grid-seg-filter
+            [isPrimitive]="true"
+            [showFilter]="false"
+            [field]="column.field"
+            [operator]="'eq'"
+            [filterService]="filterService"
+            [currentFilter]="filter"
+            [data]="segments"></grid-seg-filter>
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.Segment }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.DelegateUsername" title="Delegate" [filterable]="false" width="150">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.Profile.Delegate?.FirstName}} {{dataItem.Profile.Delegate?.LastName}}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Email" title="Email" [filterable]="false" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.Email }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Telephone" title="Work Number" [filterable]="false" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.Telephone }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Mobile" title="Cell Number" [filterable]="false" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.Mobile }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.BadgeName" title="Name on Badge" [filterable]="false" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.BadgeName }}
+        </ng-template>
+      </kendo-grid-column>
+
+      <kendo-grid-column field="User.PassportName" title="Passport Name" [filterable]="false" width="200"
+        *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.PassportName }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.PassportNumber" title="Passport Number" [filterable]="false" width="200"
+        *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.PassportNumber }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Nationality" title="Nationality" [filterable]="false" width="200"
+        *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.Nationality }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.COB" title="Country of Birth" [filterable]="false" width="200"
+        *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.COB }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.DOB" title="Date of Birth" [filterable]="false" width="200"
+        *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{dataItem.Profile.DOB | date:'MM/dd/yyyy'}}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.COR" title="Country of Residence" [filterable]="false" width="200"
+        *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.COR }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.COI" title="Country of Issue" [filterable]="false" width="200"
+        *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.COI }}
+        </ng-template>
+      </kendo-grid-column>
+
+      <ng-template ngFor let-field [ngForOf]="eventFields">
+        <kendo-grid-column *ngIf="field.Source"
+          [filterable]="field.Source == 'Arrival' || field.Source == 'Departure'"
+          title="{{field.Label}}"
+          field="{{field.Source}}"
+          filter="date" format="{0:d}"
+          width="200">
+          <ng-template *ngIf="field.Input == InputType.Date"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem[field.Source] | date: 'MM/dd/yyyy' }}
+          </ng-template>
+          <ng-template *ngIf="field.Input == InputType.YesOrNo"
+            kendoGridCellTemplate let-dataItem>
+            {{ HelperSvc.getYesOrNoText(dataItem[field.Source]) }}
+          </ng-template>
+          <ng-template *ngIf="field.Input == InputType.MultiSelect"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem[field.Source] | replace : '|' : ', '}}
+          </ng-template>
+        </kendo-grid-column>
+        <kendo-grid-column *ngIf="!field.Source" [filterable]="false"
+          title="{{field.Label}}"
+          width="200">
+          <ng-template *ngIf="field.Input == InputType.Date"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] | date: 'MM/dd/yyyy' }}
+          </ng-template>
+          <ng-template *ngIf="field.Input == InputType.MultiSelect"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] | replace : '|' : ', '}}
+          </ng-template>
+          <ng-template *ngIf="field.Input != InputType.Date && field.Input != InputType.MultiSelect"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] }}
+          </ng-template>
+        </kendo-grid-column>
+      </ng-template>
+
+    </kendo-grid>
+  </div>
+
+</div>
+<!-- Attendee Details -->
+<div id="tabPanel2" class="mt-3 mx-3" [class.d-none]="activeTab != EventDisplayTab.Fields">
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <span class="h4 card-title">Required Attendee Details</span>
+        </div>
+        <div class="col-md-auto text-right">
+          <button type="button" [hidden]="!isFieldsDirty"
+                  class="btn btn-secondary waves-effect waves-light"
+                  (click)="discardFieldChanges()">
+                  Discard Changes
+          </button>
+          <button type="button" [disabled]="!isFieldsDirty"
+                  class="btn btn-info waves-effect waves-light"
+                  (click)="saveFieldChanges()">
+                  Save
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+            Below are the details that event attendees will be required to fill out. When you are done click 'Save'.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Accordion wrapper-->
+  <div class="accordion mb-3" id="accordionFields" role="tablist" aria-multiselectable="true">
+    <!-- Accordion card -->
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header pl-3" role="tab" id="headingProfileFields">
+        <a data-toggle="collapse" data-parent="#accordionFields" href="#collapseProfileFields" aria-expanded="false" aria-controls="collapseProfileFields" class="collapsed">
+          <h5 class="mb-0">
+            Attendee Profile (Default Questions) <i class="fa fa-angle-down rotate-icon"></i>
+          </h5>
+        </a>
+      </div>
+      <!-- Card body -->
+      <div id="collapseProfileFields" class="collapse" role="tabpanel" aria-labelledby="headingProfileFields">
+        <div class="card-body p-0">
+          <table class="table table-bordered table-responsive-md table-striped mb-0">
+            <thead>
+              <tr>
+                <th>Field Name</th>
+                <th>Type</th>
+                <th>Required Y/N</th>
+                <th>Hint/Help</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Name</td>
+                <td>Short Text</td>
+                <td>Yes</td>
+                <td>Please use your real name.</td>
+              </tr>
+              <tr>
+                <td>Title</td>
+                <td>Short Text</td>
+                <td>Yes</td>
+                <td>This is your job title at work.</td>
+              </tr>
+              <tr>
+                <td>Segment</td>
+                <td>Dropdown</td>
+                <td>Yes</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Delegate</td>
+                <td>Dropdown</td>
+                <td>No</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td>Short Text</td>
+                <td>Yes</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Work Number</td>
+                <td>Short Text</td>
+                <td>No</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Mobile Number</td>
+                <td>Short Text</td>
+                <td>Yes</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Badge Name</td>
+                <td>Short Text</td>
+                <td>Yes</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Passport Name</td>
+                <td>Short Text</td>
+                <td>{{event.ShowType == ShowType.International ? 'Yes' : 'No'}}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Passport Number</td>
+                <td>Short Text</td>
+                <td>{{event.ShowType == ShowType.International ? 'Yes' : 'No'}}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Nationality</td>
+                <td>Short Text</td>
+                <td>{{event.ShowType == ShowType.International ? 'Yes' : 'No'}}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Date of Birth</td>
+                <td>Date</td>
+                <td>{{event.ShowType == ShowType.International ? 'Yes' : 'No'}}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Country of Birth</td>
+                <td>Short Text</td>
+                <td>{{event.ShowType == ShowType.International ? 'Yes' : 'No'}}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Country of Residence</td>
+                <td>Short Text</td>
+                <td>{{event.ShowType == ShowType.International ? 'Yes' : 'No'}}</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Country of Issue</td>
+                <td>Short Text</td>
+                <td>{{event.ShowType == ShowType.International ? 'Yes' : 'No'}}</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <!-- Accordion card -->
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header pl-3" role="tab" id="headingAttendeeFields">
+        <a class="collapsed" data-toggle="collapse" data-parent="#accordionFields" href="#collapseAttendeeFields" aria-expanded="true" aria-controls="collapseAttendeeFields">
+          <h5 class="mb-0">
+            Other Attendee Details <i class="fa fa-angle-down rotate-icon"></i>
+          </h5>
+        </a>
+      </div>
+      <!-- Card body -->
+      <div id="collapseAttendeeFields" class="collapse show" role="tabpanel" aria-labelledby="headingAttendeeFields">
+        <div class="card-body p-0">
+          <kendo-grid
+            [height]="400"
+            class="table table-striped"
+            #attendeeFields>
+            <kendo-grid-column field="Included" title="Inc?" width="75">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <input type="checkbox" id="inc_{{dataItem.ID}}" class="filled-in"
+                       [checked]="dataItem.Included"
+                       [attr.data-id]="dataItem.ID"
+                       (click)="toggleInclude($event)">
+                <label for="inc_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Label" title="Field Label"></kendo-grid-column>
+            <kendo-grid-column field="Input" title="Type">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{ HelperSvc.getInputTypeString(dataItem.Input) }}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Required" title="Required Y/N">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.Required ? "Yes": "No" }}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Tooltip" title="Hint/Help"></kendo-grid-column>
+            <kendo-grid-column class="text-right" headerClass="text-right">
+              <ng-template kendoGridHeaderTemplate>
+                  <button type="button"
+                          class="btn btn-info btm-sm waves-effect waves-light m-0"
+                          (click)="popupFieldEvent(0, Role.All)">Add Field
+                  </button>
+              </ng-template>
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <a aria-expanded="false"
+                   aria-haspopup="true"
+                   class="waves-effect waves-light align-bottom"
+                   data-toggle="dropdown" id="menu_{{dataItem.ID}}">
+                  <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right p-0">
+                  <a class="dropdown-item waves-effect waves-light py-2 m-0"
+                     (click)="popupFieldEvent(dataItem.ID, dataItem.Access)">Edit</a>
+                  <div *ngIf="dataItem.Custom" class="dropdown-divider m-0"></div>
+                  <a *ngIf="!dataItem.Source"
+                      class="dropdown-item waves-effect waves-light py-2 m-0"
+                      (click)="popupDeleteField(dataItem)">Delete</a>
+                </div>
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <!-- Accordion card -->
+    <div class="card">
+      <!-- Card header -->
+      <div class="card-header pl-3" role="tab" id="headingOrganizerFields">
+        <a class="" data-toggle="collapse" data-parent="#accordionFields" href="#collapseOrganizerFields" aria-expanded="false" aria-controls="collapseOrganizerFields">
+          <h5 class="mb-0">
+            Organizer Only <i class="fa fa-angle-down rotate-icon"></i>
+          </h5>
+        </a>
+      </div>
+      <!-- Card body -->
+      <div id="collapseOrganizerFields" class="collapse" role="tabpanel" aria-labelledby="headingOrganizerFields">
+        <div class="card-body p-0">
+            <kendo-grid
+            [height]="400"
+            class="table table-striped"
+            #organizerFields>
+            <kendo-grid-column field="Included" title="Inc?" width="75">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <input type="checkbox" id="inc_{{dataItem.ID}}" class="filled-in"
+                  [checked]="dataItem.Included"
+                  [attr.data-id]="dataItem.ID"
+                  (click)="toggleInclude($event)">
+                <label for="inc_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Label" title="Field Label"></kendo-grid-column>
+            <kendo-grid-column field="Input" title="Type">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{ HelperSvc.getInputTypeString(dataItem.Input) }}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Required" title="Required Y/N">
+              <ng-template kendoGridCellTemplate let-dataItem>
+                {{ dataItem.Required ? "Yes": "No" }}
+              </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column field="Tooltip" title="Hint/Help"></kendo-grid-column>
+            <kendo-grid-column class="text-right" headerClass="text-right">
+              <ng-template kendoGridHeaderTemplate>
+                  <button type="button"
+                          class="btn btn-info btm-sm waves-effect waves-light m-0"
+                          (click)="popupFieldEvent(0, Role.BackOffice)">Add Field
+                  </button>
+              </ng-template>
+              <ng-template kendoGridCellTemplate let-dataItem>
+                <a aria-expanded="false"
+                   aria-haspopup="true"
+                   class="waves-effect waves-light align-bottom"
+                   data-toggle="dropdown" id="menu_{{dataItem.ID}}">
+                  <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right p-0">
+                  <a class="dropdown-item waves-effect waves-light py-2 m-0"
+                     (click)="popupFieldEvent(dataItem.ID, dataItem.Access)">Edit</a>
+                  <div *ngIf="dataItem.Custom" class="dropdown-divider m-0"></div>
+                  <a *ngIf="!dataItem.Source"
+                      class="dropdown-item waves-effect waves-light py-2 m-0"
+                      (click)="popupDeleteField(dataItem)">Delete</a>
+                </div>
+              </ng-template>
+            </kendo-grid-column>
+          </kendo-grid>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- Settings -->
+<div id="tabPanel3" class="mt-3 mx-3" [class.d-none]="activeTab != EventDisplayTab.Settings">
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row">
+        <div class="col">
+          <span class="h4 card-title">General Settings</span>
+        </div>
+        <div class="col text-right">
+          <button type="button"
+                  class="btn btn-info waves-effect waves-light float-right"
+                  (click)="popupDeleteEvent()">
+                  Delete Event
+          </button>
+          <!--button type="button"
+                  class="btn btn-info waves-effect waves-light float-right">
+                  Archive Event
+          </button-->
+        </div>
+      </div>
+      <div class="md-form mt-0">
+        <input type="checkbox" class="filled-in" id="notify" (click)="onSendReminderClicked($event)" [checked]="event?.SendReminders">
+        <label for="notify">Send Reminder Emails Automatically</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header py-3 border-bottom-0">
+      <h5 class="float-left mb-0">User Group Permissions</h5>
+      <a (click)="popupUsersEvent()" class="float-right waves-effect waves-light">
+        <i aria-hidden="true" class="fa fa-pencil-square fa-2x"></i>
+      </a>
+    </div>
+    <div class="card-body p-0">
+      <div>
+        <table class="table table-bordered table-responsive-md table-striped table-hover mb-0">
+          <thead>
+            <tr>
+              <th>User Group</th>
+              <th>Permissions</th>
+              <th>Users</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Lead Organizer</td>
+              <td>Edit All</td>
+              <td>{{event.Owner.FirstName}} {{event.Owner.LastName}}</td>
+            </tr>
+            <tr>
+              <td>Support Organizer</td>
+              <td>Edit All</td>
+              <td>
+                <ng-template ngFor let-u let-i="index" let-c="count" [ngForOf]="event.Users | eventUserFilter : Role.Support">
+                  <span *ngIf="i == 0 && c > 1; else elseBlock">
+                    {{ u.User.FirstName }} {{ u.User.LastName }};
+                  </span>
+                  <ng-template #elseBlock>
+                    <span>{{ u.User.FirstName }} {{ u.User.LastName }}</span>
+                  </ng-template>
+                </ng-template>
+              </td>
+            </tr>
+            <tr>
+              <td>BCD Organizer</td>
+              <td>Travel User</td>
+              <td>
+                <ng-template ngFor let-u let-i="index" let-c="count" [ngForOf]="event.Users | eventUserFilter : Role.Travel">
+                  <span *ngIf="i == 0 && c > 1; else elseBlock">
+                    {{ u.User.FirstName }} {{ u.User.LastName }};
+                  </span>
+                  <ng-template #elseBlock>
+                    <span>{{ u.User.FirstName }} {{ u.User.LastName }}</span>
+                  </ng-template>
+                </ng-template>
+              </td>
+            </tr>
+            <tr>
+              <td>Business Leads</td>
+              <td>Nominate Only</td>
+              <td>
+                <ng-template ngFor let-u let-i="index" let-c="count" [ngForOf]="event.Users | eventUserFilter : Role.Business">
+                  <span *ngIf="i == 0 && c > 1; else elseBlock">
+                    {{ u.User.FirstName }} {{ u.User.LastName }};
+                  </span>
+                  <ng-template #elseBlock>
+                    <span>{{ u.User.FirstName }} {{ u.User.LastName }}</span>
+                  </ng-template>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+<!-- Attendee Info -->
+<div id="tabAttendeePanel" class="mt-3 mx-3"
+  [class.d-none]="activeTab != EventDisplayTab.Attendee"
+  *ngIf="selectedAttendee">
+
+  <div class="card mb-3">
+    <app-profile-info
+      [event]="event"
+      [profile]="selectedAttendee?.Profile"
+      (profileChange)="onAttendeeChanged()">
+    </app-profile-info>
+  </div>
+
+  <div class="card mb-3">
+    <app-attendee-fields
+      [title]="'Other Attendee Details'"
+      [filter]="Role.All"
+      [event]="event"
+      [attendee]="selectedAttendee"
+      (attendeeChange)="onAttendeeChanged()">
+    </app-attendee-fields>
+  </div>
+
+  <div class="card">
+    <app-attendee-fields
+      [title]="'Organizer Only'"
+      [filter]="Role.BackOffice"
+      [event]="event"
+      [attendee]="selectedAttendee"
+      (attendeeChange)="onAttendeeChanged()">
+    </app-attendee-fields>
+  </div>
+
+</div>

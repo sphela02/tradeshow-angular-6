@@ -1,0 +1,93 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">
+      {{field.ID > 0 ? "Edit" : "Add"}} {{field.Source ? "" : "Custom"}} Field
+    </h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form novalidate (ngSubmit)="onSubmit(f)" #f="ngForm">
+      <div class="md-form pb-3">
+        <label for="fieldLabel" class="active">
+          Field Label <span class="text-danger">*</span>
+        </label>
+        <input type="text" id="fieldLabel" name="fieldLabel" class="form-control"
+                maxlength="50"
+                [(ngModel)]="field.Label">
+      </div>
+      <div class="md-form pb-3">
+        <label for="tooltip" class="active">Hint Text</label>
+        <input type="text" id="tooltip" name="tooltip" class="form-control"
+                maxlength="256"
+                [(ngModel)]="field.Tooltip">
+      </div>
+      <div class="md-form pb-3">
+        <kendo-dropdownlist
+          name="required"
+          [data]="requiredOptions"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [valuePrimitive]="true"
+          [(ngModel)]="field.Required"
+          style="width:100%"
+          #req="ngModel"
+          #requiredDropdown>
+        </kendo-dropdownlist>
+        <label for="required" class="active">
+          Required <span class="text-danger">*</span>
+        </label>
+      </div>
+      <div class="md-form pb-3">
+        <label for="inputtype" class="active">
+          Response Type <span class="text-danger">*</span>
+        </label>
+        <kendo-dropdownlist 
+          name="inputtype"
+          [data]="inputOptions"
+          [textField]="'text'"
+          [valueField]="'value'"
+          [defaultItem]="InputType.Unknown"
+          [valuePrimitive]="true"
+          [(ngModel)]="field.Input"
+          [disabled]="field.Source"
+          style="width:100%"
+          #type="ngModel"
+          #inputDropdown>
+        </kendo-dropdownlist>
+      </div>
+      <div class="md-form pb-3" *ngIf="showOption">
+        <label for="option" class="active">Field Choices <span class="text-danger">*</span></label>
+        <div class="row pt-2" *ngFor="let option of optionList; let i = index">
+          <div class="col-md-auto">
+            <a class="valign-middle" (click)="removeOption($event)" [attr.data-index]="i">
+              <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+            </a>
+          </div>
+          <div class="col pl-2">
+            {{ option }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md">
+            <input type="text" id="option" name="option" class="form-control" maxlength="50" #option>
+            <small>
+              <a (click)="addOption()">
+                <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Choice
+              </a>
+            </small>
+            <small class="text-danger ml-4" [hidden]="!choiceErrMsg">{{choiceErrMsg}}</small>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm px-4" [disabled]="!isValid" (click)="f.ngSubmit.emit()">Save</button>
+  </div>
+</div>

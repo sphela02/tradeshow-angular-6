@@ -1,0 +1,42 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">Add {{title}}</h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>
+      <app-person-finder [usePrimitive]="false" [(ngModel)]="user"></app-person-finder>
+      <small>
+        <a (click)="addUser()">
+          <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add {{title}}
+        </a>
+      </small>
+    </div>
+    <div class="row mt-3" *ngIf="users.length">
+      <div class="col-md h6">{{title}}</div>
+    </div>
+    <div class="row" *ngIf="users.length">
+      <div class="col-md">
+        <div class="row" *ngFor="let user of users; let i = index">
+          <div class="col-md-auto pr-1">
+            <a (click)="removeUser(i)">
+              <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+            </a>
+          </div>
+          <div class="col-md px-0">
+            {{ user.DisplayName }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-danger m-0" role="alert" *ngIf="errorMsg">
+    <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm px-4" (click)="onSubmit()">Save</button>
+  </div>
+</div>

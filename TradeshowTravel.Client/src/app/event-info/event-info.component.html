@@ -1,0 +1,124 @@
+<div class="p-3">
+  <div class="row" *ngIf="!readonly">
+    <div class="col">
+      <span [class.text-success]="eventStatus == 'PAST'"
+            [class.text-info]="eventStatus == 'UPCOMING'">{{eventStatus}}</span>
+    </div>
+    <div class="col-md-auto text-right">
+      <a class="waves-effect waves-light" [class.invisible]="!showEditLink" (click)="popupEditEvent()">
+        <i aria-hidden="true" class="fa fa-pencil-square fa-2x"></i>
+      </a>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col">
+      <span class="h4 card-title">{{event.Name}}</span>
+    </div>
+  </div>
+  <div class="row" *ngIf="event?.Description">
+    <div class="col">
+      <p><strong>Event Description</strong></p>
+      <p>{{event.Description}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div>
+        <strong>Venue:</strong> {{event.Venue}}
+      </div>
+      <div>
+        <strong>Start Date:</strong> {{event.StartDate | date:'MMM d, yyyy'}}
+      </div>
+      <div>
+        <strong>End Date:</strong> {{event.EndDate | date:'MMM d, yyyy'}}
+      </div>
+      <div>
+        <strong>Segments:</strong> {{event.Segments | replace:',':', '}}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>
+        <strong>Location:</strong>
+      </div>
+      <div>
+        {{ event.Location }}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>
+        <strong>Tier:</strong> {{event.Tier}}
+      </div>
+      <div>
+        <strong>Show Type:</strong> {{HelperSvc.getShowTypeString(event.ShowType)}}
+      </div>
+      <div>
+        <strong>RSVPs Due:</strong> {{event.RsvpDueDate | date:'MMM d, yyyy'}}
+      </div>
+    </div>
+    <div class="col-md-3" style="overflow-x: hidden;">
+      <div>
+        <strong>Event Points of Contact</strong>
+      </div>
+      <div>
+        {{event.Owner?.FirstName}} {{event.Owner?.LastName}} (Lead) <a href="mailto:{{event.Owner?.Email}}">{{event.Owner?.Email}}</a>
+      </div>
+      <ng-template ngFor let-u let-i="index" [ngForOf]="event.Users | eventUserFilter : Role.Travel">
+        <div *ngIf="showAllInfo || i == 0">
+            {{ u.User.FirstName }} {{ u.User.LastName }} (BCD) <a href="mailto:{{u.User.Email}}">{{ u.User.Email }}</a>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  <div class="row mt-3" *ngIf="showAllInfo">
+    <div class="col-md-3">
+      <div>
+        <strong>Estimated Attendees:</strong> {{ event.EstAttendCount }}
+      </div>
+      <div class="mt-3">
+        <strong>Housing Bureau Link:</strong> {{ event.BureauLink }}
+      </div>
+      <div class="mt-3">
+        <strong>Hotels</strong>
+      </div>
+      <div *ngIf="showEditLink">
+        <div *ngFor="let hotel of event.Hotels?.split('|')">
+          {{hotel}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>
+        <strong>Room Blocks Needed per Day</strong>
+      </div>
+      <div *ngFor="let block of event.RoomBlocks; let i = index">
+        {{i + 1}}. {{block.EstRoomCount}} on {{block.Date | date : 'MM/dd/yyyy'}}
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>
+        <strong>Support Organizers</strong>
+      </div>
+      <div *ngFor="let u of event.Users | eventUserFilter : Role.Support">
+        {{ u.User.FirstName }} {{ u.User.LastName }} <a href="mailto:{{u.User.Email}}">{{ u.User.Email }}</a>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div>
+        <strong>Business Leads</strong>
+      </div>
+      <div *ngFor="let u of event.Users | eventUserFilter : Role.Business">
+          {{ u.User.FirstName }} {{ u.User.LastName }} <a href="mailto:{{u.User.Email}}">{{ u.User.Email }}</a>
+        </div>
+    </div>
+  </div>
+  <div class="row mt-3" *ngIf="!readonly">
+    <div class="col text-right">
+      <a class="waves-effect waves-light text-info" (click)="toggleShowAll()">
+        VIEW {{showAllInfo ? 'LESS' : 'MORE' }}
+        <i class="fa " aria-hidden="true"
+          [class.fa-chevron-circle-up]="showAllInfo"
+          [class.fa-chevron-circle-down]="!showAllInfo"></i>
+      </a>
+    </div>
+  </div>
+</div>

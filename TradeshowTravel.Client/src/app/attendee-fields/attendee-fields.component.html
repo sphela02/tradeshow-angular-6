@@ -1,0 +1,52 @@
+<div class="card p-3">
+  <div class="row">
+    <div class="col-md-auto">
+      <div class="h6">{{title}}</div>
+    </div>
+    <div class="col-md">
+      <span class="badge badge-pill px-3" 
+        [class.badge-success]="completionText=='COMPLETE'"
+        [class.badge-danger]="completionText=='INCOMPLETE'"
+        [hidden]="!completionText">
+        {{completionText}}
+      </span>&nbsp;
+    </div>
+    <div class="col-md-auto">
+      <a (click)="popupEditFields()" [hidden]="!canEdit">
+        <i class="fa fa-pencil-square fa-2x" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md">
+      <ng-template ngFor let-field [ngForOf]="fields" let-i="index">
+        <div class="row" *ngIf="i < (fields.length / 2)">
+          <div class="col-md-auto font-weight-bold pr-1">
+            {{ field.Label }}:
+          </div>
+          <div class="col-md pl-0" *ngIf="field.Input == InputType.Date">
+            {{ values[field.ID] | date: 'MM/dd/yyyy' }}
+          </div>
+          <div class="col-md pl-0" *ngIf="field.Input != InputType.Date">
+            {{ values[field.ID] }}
+          </div>
+        </div>
+      </ng-template>
+    </div>
+    <div class="col-md">
+      <ng-template ngFor let-field [ngForOf]="fields" let-i="index">
+        <div class="row" *ngIf="i >= (fields.length / 2)">
+          <div class="col-md-auto font-weight-bold pr-1">
+            {{ field.Label }}:
+          </div>
+          <div class="col-md pl-0" *ngIf="field.Input == InputType.Date">
+            {{ values[field.ID] | date: 'MM/dd/yyyy' }}
+          </div>
+          <div class="col-md pl-0" *ngIf="field.Input != InputType.Date">
+            {{ values[field.ID] }}
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

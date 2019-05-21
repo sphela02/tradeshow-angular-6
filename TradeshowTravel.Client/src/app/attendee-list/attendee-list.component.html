@@ -1,0 +1,64 @@
+<div class="m-3">
+  <div class="card">
+    <div class="card-body pl-4">
+      <span class="h5 card-title">All Contacts</span>
+    </div>
+    <kendo-grid #attendeeGrid
+      [data]="view"
+      [pageable]="true"
+      [pageSize]="state.take"
+      [skip]="state.skip"
+      [sortable]="true"
+      [sort]="state.sort"
+      (sortChange)="sortChange($event)"
+      filterable="menu"
+      [filter]="state.filter"
+      (dataStateChange)="dataStateChange($event)"
+      style="height: calc(100vh - 137px);"
+    >
+      <kendo-grid-column field="User.Name" title="Name" [filterable]="false">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <a class="text-info" [routerLink]="[dataItem.Username.toLowerCase()]">
+            {{ dataItem.FirstName }} {{ dataItem.LastName }}
+          </a>
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Email" title="Email" width="200">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Email }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Telephone" title="Work Number">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Telephone }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Mobile" title="Cell Number">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Mobile }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="User.Segment" title="Segment" width="120">
+        <ng-template kendoGridFilterMenuTemplate
+          let-column="column"
+          let-filter="filter"
+          let-filterService="filterService">
+          <grid-seg-filter
+            [isPrimitive]="true"
+            [showFilter]="false"
+            [field]="column.field"
+            [operator]="'eq'"
+            [filterService]="filterService"
+            [currentFilter]="filter"
+            [data]="segments">
+          </grid-seg-filter>
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Segment }}
+        </ng-template>
+      </kendo-grid-column>
+      <kendo-grid-column field="EventsAttended" title="Events Attended" [filterable]="false">
+      </kendo-grid-column>
+    </kendo-grid>
+  </div>
+</div>

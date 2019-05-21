@@ -1,0 +1,30 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">You are Invited to {{attendee?.Event.Name}}!</h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="bg-secondary">
+      <app-event-info
+        [event]="attendee?.Event" 
+        [readonly]="true">
+      </app-event-info>
+    </div>
+    <div class="mt-3">
+      <span class="h6">Do you want to RSVP for this event?</span>
+    </div>
+    <div class="my-3">
+      <button class="btn btn-secondary p-2 m-0" style="border: 1px solid black!important" (click)="onNoClicked()">
+        NO, I WILL NOT ATTEND
+      </button>
+      <button class="btn btn-info py-2 my-0" (click)="onYesClicked()">
+        YES, I WILL ATTEND
+      </button>
+    </div>
+  </div>
+  <div class="alert alert-danger m-0" role="alert" *ngIf="errorMsg">
+    <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+  </div>
+</div>

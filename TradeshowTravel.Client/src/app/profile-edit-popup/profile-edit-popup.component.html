@@ -1,0 +1,186 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h4 class="modal-title w-100 font-weight-bold">Edit Attendee Profile</h4>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="bg-secondary px-3 py-2 text-dark" *ngIf="event">
+      The fields with a (<span class="text-danger">*</span>) are required by <span class="font-weight-bold">{{event.RsvpDueDate | date: 'MMM d, yyyy'}}</span>.
+      <br><br>
+      Your personal information is only viewable by the show organizer and is securely stored in accordance with Harris policy.
+  </div>
+  <div class="modal-body">
+    <form #profileForm="ngForm" class="row">
+      <div class="col-md-6">
+        <h6 class="pb-2">GENERAL INFORMATION</h6>
+
+        <div class="md-form">
+          <label for="first" class="active">
+            First Name <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="first" name="first" class="form-control"
+                required maxlength="50"
+                [(ngModel)]="profile.FirstName">
+        </div>
+        <div class="md-form">
+          <label for="last" class="active">
+            Last Name <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="last" name="last" class="form-control"
+                required maxlength="50"
+                [(ngModel)]="profile.LastName">
+        </div>
+        <div class="md-form">
+          <label for="title" class="active">Title</label>
+          <input type="text" id="title" name="title" class="form-control" maxlength="100"
+                [(ngModel)]="profile.Title">
+        </div>
+        <div class="md-form">
+            <label for="segment" class="active">
+              Segment <span class="text-danger" [hidden]="!event">*</span>
+            </label>
+            <kendo-dropdownlist
+              name="segment"
+              [data]="segments"
+              [(ngModel)]="profile.Segment"
+              style="width: 100%">
+            </kendo-dropdownlist>
+        </div>
+        <div class="md-form">
+          <label for="delegate" class="active">Delegate (if applicable)</label>
+          <app-person-finder id="delegate" name="delegate"
+                [(ngModel)]="profile.DelegateUsername">
+          </app-person-finder>
+        </div>
+        <div class="md-form">
+          <label for="email" class="active">
+            Email <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="email" name="email" class="form-control"
+                required maxlength="256"
+                [(ngModel)]="profile.Email">
+        </div>
+        <div class="md-form">
+          <label for="phone" class="active">
+            Work Number <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="phone" name="phone" class="form-control" maxlength="24"
+                [(ngModel)]="profile.Telephone">
+        </div>
+        <div class="md-form">
+          <label for="mobile" class="active">
+            Mobile Number <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="mobile" name="mobile" class="form-control" maxlength="24"
+                [(ngModel)]="profile.Mobile">
+        </div>
+        <div class="md-form">
+          <label for="badgeName" class="active">
+            Badge Name <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="badgeName" name="badgeName" class="form-control"
+                required maxlength="100"
+                [(ngModel)]="profile.BadgeName">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h6 class="pb-2" *ngIf="showPassportInfo">INTERNATIONAL TRAVEL</h6>
+
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="passportName" class="active">
+            Passport Name <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="passportName" name="passportName" class="form-control" maxlength="100"
+                [(ngModel)]="profile.PassportName">
+        </div>
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="passportNumber" class="active">
+            Passport Number <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="passportNumber" name="passportNumber" class="form-control"
+                [(ngModel)]="profile.PassportNumber">
+        </div>
+        
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="nationality" class="active">
+            Nationality <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="nationality" name="nationality" class="form-control" maxlength="50"
+                [(ngModel)]="profile.Nationality">
+        </div>
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="dob" class="active">
+            Date of Birth <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <kendo-datepicker
+            id="dob" name="dob"
+            [(ngModel)]="profile.DOB"
+            [activeView]="'decade'"
+            format="MM/dd/yyyy"
+            formatPlaceholder="formatPattern"
+            placeholder=" "
+            style="width: 100%;">
+          </kendo-datepicker>
+        </div>
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="cob" class="active">
+            Country of Birth <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="cob" name="cob" class="form-control" maxlength="50"
+                [(ngModel)]="profile.COB">
+        </div>
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="cor" class="active">
+            Country of Residence <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="cor" name="cor" class="form-control" maxlength="50"
+                [(ngModel)]="profile.COR">
+        </div>
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="coi" class="active">
+            Country of Issue <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <input type="text" id="coi" name="coi" class="form-control" maxlength="50"
+                [(ngModel)]="profile.COI">
+        </div>
+  
+        <br />
+        <h6 class="pb-2" *ngIf="showPassportInfo">Scanned Travel Documents</h6>
+        <small>
+        <div class="row" *ngFor="let tdoc of TravelDocList; let i = index"> 
+          <div class="col-md-1">
+            <a class="valign-middle" (click)="removeTravelDoc($event)" [attr.data-index]="i">
+              <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+            </a>
+          </div>
+          <div class="col-md-2">
+            <a (click)="viewTravelDoc($event)" [attr.data-index]="i">{{tdoc.Category}}
+            </a>
+          </div>
+          <div class="col-md-9">
+            {{tdoc.Description}}
+          </div> 
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-md" *ngIf="showPassportInfo">
+            <a (click)="popupPicUpload()">
+              <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Travel Document
+            </a>
+          </div>
+        </div>
+        </small>  
+      </div>
+        
+      
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">CANCEL</button>
+    <button type="button" class="btn btn-primary btn-sm px-4" [disabled]="!profileForm.valid" (click)="saveChanges()">SAVE</button>
+  </div>
+</div>

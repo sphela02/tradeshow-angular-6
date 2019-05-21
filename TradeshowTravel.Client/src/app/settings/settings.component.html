@@ -1,0 +1,22 @@
+<div style="margin-top: 65px;position: relative;">
+<div *ngFor="let privilege of privileges"
+  class="accordion m-3" id="accordionPrivileges" role="tablist" aria-multiselectable="true">
+  <div class="card">
+    <!-- Card header -->
+    <div class="card-header pl-3" role="tab">
+      <a class="collapsed" data-toggle="collapse" data-parent="#accordionPrivileges" href="#collapse{{privilege.value}}" aria-expanded="true">
+        <h5 class="mb-0">
+          {{privilege.name}} <i class="fa fa-angle-down rotate-icon"></i>
+        </h5>
+      </a>
+    </div>
+    <!-- Card body -->
+    <div id="collapse{{privilege.value}}" class="collapse show" role="tabpanel">
+      <app-privileged-users-list 
+        [title]="privilege.name"
+        [privilege]="privilege.value">
+      </app-privileged-users-list>
+    </div>
+  </div>
+</div>
+</div>

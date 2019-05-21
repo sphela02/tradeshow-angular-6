@@ -1,0 +1,83 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">Add Attendees</h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="bg-secondary px-3 py-2 text-dark">
+    To add attendees, please search for the employee, select the correct person in the search results and press 'ADD' to move them to the list below. Add any additional attendees and press 'Submit'.  The 'Attendee Delegate' field allows you to assign another person to fill out the information for the attendee.
+  </div>
+  <div class="modal-body">
+    <div class="row pb-3">
+      <div class="col-md-5">
+        <div class="md-form">
+          <app-person-finder id="attendee"
+            [usePrimitive]="false"
+            (valueChange)="onAttendeeChanged($event)"
+            [(ngModel)]="attendee">
+          </app-person-finder>
+          <label for="attendee" class="active">Attendee</label>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="md-form">
+          <app-person-finder id="delegate"
+            [usePrimitive]="false"
+            [disabled]="!attendee"
+            [(ngModel)]="delegate">
+          </app-person-finder>
+          <label for="delegate" class="active">Attendee Delegate (if applicable)</label>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <button type="button"
+                (click)="addAttendee()"
+                class="btn btn-info btn-sm waves-effect waves-light valign-bottom"
+                [disabled]="!attendee">
+                Add
+        </button>
+      </div>
+    </div>
+    <div class="row pb-1 pt-3">
+      <h6 class="col-md-5">
+        Attendee
+      </h6>
+      <h6 class="col-md-5">
+        Attendee Delegate
+      </h6>
+    </div>
+    <div *ngFor="let item of attendees; let i = index"
+      class="row border-top">
+      <div class="col-md-5">
+        <span class="valign-middle">{{ HelperSvc.getDisplayName(item.Profile) }}</span>
+      </div>
+      <div class="col-md-5">
+        <span class="valign-middle">{{ item.Profile.Delegate?.DisplayName }}</span>
+      </div>
+      <div class="col-md-2">
+        <button type="button"
+                [attr.data-index]="i"
+                (click)="removeAttendee($event)"
+                class="btn btn-info btn-sm waves-effect waves-light">
+                Remove
+        </button>
+      </div>
+    </div>
+    <div class="row border-top">
+      <div class="col">
+        <div class="md-form mt-0">
+          <input type="checkbox" class="filled-in" id="sendRSVPRequest" [(ngModel)]="sendRSVP">
+          <label for="sendRSVPRequest">Send attendees (or their delegates) an RSVP request?</label>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+  </div>
+  <div class="modal-footer justify-content-center">
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm px-4" [disabled]="!attendee && !attendees.length" (click)="onSubmit()">Save</button>
+  </div>
+</div>

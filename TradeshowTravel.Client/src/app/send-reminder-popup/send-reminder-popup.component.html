@@ -1,0 +1,47 @@
+<div [class.loading]="loading">
+    <div class="modal-header">
+      <h5 class="modal-title w-100">Send Email</h5>
+      <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="bg-secondary px-3 py-2 text-dark">
+      Below are the people you are sending reminders.  You will be CC'd on this email.  When you are done click 'SEND'.
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md">
+          <span class="font-weight-bold">Recipient(s)</span> <span class="text-danger">*</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md">
+          <span class="badge badge-info badge-pill mr-1 font-weight-normal p-1 px-2" *ngFor="let name of names">
+            {{ name }}
+          </span>
+          <span *ngIf="!names || !names.length" class="text-danger">
+            You must select one or more attendees.
+          </span>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md">
+          <span class="font-weight-bold">Email Text</span> <span class="text-danger">*</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md">
+          <textarea kendoTextArea class="w-100" rows="20"
+            [(ngModel)]="request.EmailText">
+          </textarea>
+        </div>
+      </div>
+      <div class="alert alert-danger m-0 py-1 mt-3 mr-3" role="alert" [hidden]="!errorMsg">
+        <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">Cancel</button>
+      <button type="button" class="btn btn-primary btn-sm px-4" [disabled]="!isValid" (click)="onSubmit()">Send</button>
+    </div>
+  </div>

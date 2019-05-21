@@ -1,0 +1,142 @@
+
+<div class="bg-white" style="display: flex">
+  <div style="width:100%;">
+    <div class="tabs-wrapper">
+      <ul class="nav classic-tabs tabs-white" role="tablist">
+        <li class="nav-item ml-3">
+          <a class="nav-link waves-light waves-effect active show">All Events</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="text-right">
+    <button type="button" *ngIf="showAddEvent"
+            class="btn btn-info waves-effect waves-light"
+            (click)="popupNewEvent()">
+            Add&nbsp;Event
+    </button>
+  </div>
+</div>
+
+<div class="mt-3 ml-3">
+
+  <div class="card card-inline mr-3 mb-3">
+    <div>
+      <div class="card-body text-center d-inline-block">
+        <p class="mb-1">Upcoming&nbsp;Events</p>
+        <h2>{{results?.Upcoming}}</h2>
+      </div>
+      <div class="card-body text-center d-inline-block"
+           *ngFor="let key of results?.Segments | keys">
+        <p class="mb-1">{{key}}</p>
+        <h2>{{results?.Segments[key]}}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-inline mr-3 mb-3">
+    <div class="card-body text-center">
+      <p class="mb-1">Past&nbsp;Events</p>
+      <h2>{{results?.Past}}</h2>
+    </div>
+  </div>
+
+  <div class="card card-inline mr-3 mb-3">
+    <div class="card-body">
+      <p class="mb-0">Date Filter</p>
+      <div style="margin-bottom: 9px;">
+          <kendo-datepicker #startRange
+            [(ngModel)]="startDate"
+            (valueChange)="onStartChange($event)"
+            formatPlaceholder="narrow"
+            placeholder="Start date"
+            style="width: 120px;">
+          </kendo-datepicker>
+          <kendo-datepicker #endRange
+            [(ngModel)]="endDate"
+            (valueChange)="onEndChange($event)"
+            formatPlaceholder="narrow"
+            placeholder="End date"
+            class="ml-3"
+            style="width: 120px;">
+          </kendo-datepicker>
+          <button class="btn btn-info waves-effect waves-light my-1 ml-3" (click)="dateRangeChange()">GO</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="card-grid mx-3">
+  <h6 class="p-3 m-0">All Events</h6>
+  <kendo-grid #eventsGrid
+      [data]="view"
+      [pageable]="true"
+      [pageSize]="state.take"
+      [skip]="state.skip"
+      [sortable]="true"
+      [sort]="state.sort"
+      filterable="menu"
+      [filter]="state.filter"
+      (sortChange)="sortChange($event)"
+      (dataStateChange)="dataStateChange($event)"
+      style="height: calc(100vh - 296px);"
+    >
+    <kendo-grid-column field="Name" [width]="225" [minResizableWidth]="225">
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        <a class="text-info" [routerLink]="[dataItem.ID]">{{dataItem.Name}}</a>
+      </ng-template>
+      <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
+        <kendo-grid-string-filter-menu [column]="column" [extra]="false" [filter]="filter" [filterService]="filterService">
+            <kendo-filter-contains-operator></kendo-filter-contains-operator>
+            <kendo-filter-startswith-operator></kendo-filter-startswith-operator>
+            <kendo-filter-endswith-operator></kendo-filter-endswith-operator>
+        </kendo-grid-string-filter-menu>
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="StartDate" title="Start Date" [filterable]="false" [width]="150" [minResizableWidth]="150">
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.StartDate | date:'MM/dd/yyyy'}}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="Segments">
+      <ng-template kendoGridFilterMenuTemplate
+        let-column="column"
+        let-filter="filter"
+        let-filterService="filterService"
+        >
+        <grid-seg-filter
+          [isPrimitive]="true"
+          [showFilter]="false"
+          [field]="column.field"
+          [filterService]="filterService"
+          [currentFilter]="filter"
+          [data]="segments"></grid-seg-filter>
+      </ng-template>
+      <ng-template kendoGridCellTemplate let-dataItem let-rowIndex="rowIndex">
+        {{dataItem.Segments | replace:',':', '}}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="OwnerName" title="Lead Organizer" [filterable]="false"></kendo-grid-column>
+    <kendo-grid-column field="EstAttendeeCount" title="Estimated Attendees" [filterable]="false">
+      <ng-template kendoGridFilterMenuTemplate let-filter let-column="column" let-filterService="filterService">
+        <kendo-grid-numeric-filter-menu
+            [column]="column"
+            [extra]="false"
+            [filter]="filter"
+            [filterService]="filterService"
+            >
+        </kendo-grid-numeric-filter-menu>
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="ActAttendeeCount" title="Actual Attendees" [filterable]="false"></kendo-grid-column>
+    <kendo-grid-column field="Status" [width]="115" [minResizableWidth]="115" [filterable]="false">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <span [class.text-info]="dataItem.Status == 'Upcoming'"
+              [class.text-success]="dataItem.Status == 'Past'">
+          {{ dataItem.Status }}
+        </span>
+      </ng-template>
+    </kendo-grid-column>
+  </kendo-grid>
+</div>

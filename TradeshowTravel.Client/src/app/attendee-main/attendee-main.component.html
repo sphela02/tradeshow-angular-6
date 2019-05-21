@@ -1,0 +1,11 @@
+<div style="margin-top: 65px;position: relative;" *ngIf="(viewMode == AttendeeViewMode.List)">
+  <app-attendee-list>
+  </app-attendee-list>
+</div>
+
+<div style="margin-top: 49px;position: relative;" *ngIf="(viewMode == AttendeeViewMode.Display)">
+  <app-attendee-view
+    [profile]="profile"
+    [attendee]="attendee">
+  </app-attendee-view>
+</div>

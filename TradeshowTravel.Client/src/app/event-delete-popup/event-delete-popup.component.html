@@ -1,0 +1,24 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">Are you sure you want to Delete this event?</h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="alert alert-info" role="alert">
+      You are about to delete the event below. By deleting the event you will no longer have access to the data and it will not be included in any reports. Attendee profile data will not be affected.
+    </div>
+    <div class="md-form">
+      <label for="deltxt" [class.active]="deleteText">Type "DELETE" to erase {{event.Name}}</label>
+      <input type="text" id="deltxt" name="deltxt" class="form-control" maxlength="6" [(ngModel)]="deleteText">
+    </div>
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">CANCEL</button>
+    <button type="button" class="btn btn-primary btn-sm px-4" [disabled]="deleteText!='DELETE'" (click)="onDelete()">DELETE</button>
+  </div>
+</div>

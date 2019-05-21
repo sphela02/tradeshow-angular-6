@@ -1,0 +1,14 @@
+<kendo-combobox
+  [data]="view | async"
+  [valueField]="'Username'"
+  [textField]="'DisplayName'"
+  [valuePrimitive]="usePrimitive"
+  [filterable]="true"
+  (filterChange)="handleFilter($event)"
+  [(ngModel)]="value"
+  (valueChange)="comboValueChange($event)"
+  (blur)="onBlur()"
+  [disabled]="disabled"
+  placeholder="Enter Name"
+  style="width: 100%">
+</kendo-combobox>

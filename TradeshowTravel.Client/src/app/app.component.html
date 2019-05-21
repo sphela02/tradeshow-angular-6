@@ -1,0 +1,102 @@
+<header>
+    <div id='sidebar' class="side-nav fixed">
+        <div class="nav-container">
+            <div class="navbar">
+                <span class="h5 m-0 pl-3 py-1">Event Travel Portal</span>
+            </div>
+
+            <div class="user-menu row no-gutters">
+                <div class="col-sm-auto px-2 text-center">
+                    <img [src]="avatar"
+                         class="avatar img-fluid rounded-circle z-depth-0"
+                         (error)="imgErrHandler($event)"
+                         [hidden]="!showProfileAvatar">
+                    <i class="fa fa-user-circle avatar" [hidden]="showProfileAvatar" aria-hidden="true"></i>
+                </div>
+                <div class="col-sm" *ngIf="userProfile">
+                    <span class="d-block mt-2">{{userProfile.FirstName}}&nbsp;{{userProfile.LastName}}</span>
+                    <a class="d-block p-0 font-weight-bold" [routerLink]="['attendees', userProfile.Username.toLowerCase()]">
+                        View Profile
+                    </a>
+                </div>
+            </div>
+
+            <ul class="nav flex-column">
+                <li class="nav-item border-top border-light" aria-expanded="true" [class.active]="activeMenu==SideMenuMode.Events"
+                    *ngIf="showEventsMenu">
+                    <a class="nav-link" [routerLink]="'/events'">
+                        <i class="fa fa-clock-o fa-lg"></i> Event Management
+                    </a>
+                    <ul class="nav flex-column"
+                        [class.d-none]="activeMenu != SideMenuMode.Events || !activeChildmenu">
+                        <li class="nav-item border-top border-light">
+                            <a class="nav-link ml-4">{{activeChildmenu}}</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item border-top border-light" aria-expanded="true" [class.active]="activeMenu==SideMenuMode.Attendees">
+                    <a class="nav-link" [routerLink]="['attendees']">
+                        <i class="fa fa-users"></i> Contact Directory
+                    </a>
+                    <ul class="nav flex-column"
+                        [class.d-none]="activeMenu != SideMenuMode.Attendees || !activeChildmenu">
+                        <li class="nav-item border-top border-light">
+                            <a class="nav-link ml-4">{{activeChildmenu}}</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item border-top border-light" aria-expanded="true" [class.active]="activeMenu==SideMenuMode.Settings"
+                    *ngIf="showAdminMenu">
+                    <a class="nav-link" [routerLink]="'/settings'">
+                        <i class="fa fa-wrench"></i> Administrative Settings
+                    </a>
+                    <ul class="nav flex-column"
+                        [class.d-none]="activeMenu != SideMenuMode.Settings || !activeChildmenu">
+                        <li class="nav-item border-top border-light">
+                            <a class="nav-link ml-4">{{activeChildmenu}}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="harris-logo-wrapper">
+            <img src="assets/harris-logo.png" class="img-fluid flex-center">
+        </div>
+    </div>
+    <nav class="navbar navbar-toggleable-md navbar-expand-lg fixed-top double-nav">
+        <div class="float-left">
+            <a href="#" id="sidebarCollapse" data-activates="sidebar" class="button-collapse">
+                <i class="fa fa-bars"></i>
+            </a>
+        </div>
+        <span [ngSwitch]="activeMenu" class="h5 m-0 pl-3 py-1">
+            <a *ngSwitchCase="SideMenuMode.Events" [routerLink]="['events']" style="font-size: inherit;color:white">Event Management</a>
+            <a *ngSwitchCase="SideMenuMode.Settings" [routerLink]="['settings']" style="font-size: inherit;color:white">Administrative Settings</a>
+            <a *ngSwitchDefault [routerLink]="['attendees']" style="font-size: inherit;color:white">Contact Directory</a>
+            <span *ngIf="activeChildmenu">&gt;</span>
+            <span *ngIf="activeChildmenu">{{activeChildmenu}}</span>
+        </span>
+        <ul class="navbar-nav ml-auto nav-flex-icons">
+            <!--li class="nav-item dropdown">
+                <a class="nav-link waves-effect waves-light" id="app-alerts" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-lg fa-bell-o mx-0 text-white"></i>
+                    <span class="badge badge-secondary badge-pill">1</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="alerts">
+                    <a class="dropdown-item waves-effect waves-light" href="#">Action</a>
+                    <div class="dropdown-divider m-0"></div>
+                    <a class="dropdown-item waves-effect waves-light" href="#">Another action</a>
+                    <div class="dropdown-divider m-0"></div>
+                    <a class="dropdown-item waves-effect waves-light" href="#">Something else here</a>
+                </div>
+            </li-->
+        </ul>
+    </nav>
+</header>
+<main class="m-0 pt-0">
+    <div class="wrapper">
+        <div id="content" class="container-fluid p-0">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</main>

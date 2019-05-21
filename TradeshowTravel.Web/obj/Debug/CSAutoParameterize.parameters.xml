@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="ECADB-Web.config Connection String" description="ECADB Connection String used in web.config by the application to access the database." defaultValue="DATA SOURCE=ECA_PROD.harris.com;PASSWORD=;USER ID=WEB_USER" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\jlott01\\Code\\TradeshowTravel\\TradeshowTravel\.Web\\obj\\Debug\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='ECADB']/@connectionString" />
+  </parameter>
+  <parameter name="TSTDB-Web.config Connection String" description="TSTDB Connection String used in web.config by the application to access the database." defaultValue="Data Source=SSMNT1,61447;Initial Catalog=TradeshowTravel;user id=TSTravelUser;Password=;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\jlott01\\Code\\TradeshowTravel\\TradeshowTravel\.Web\\obj\\Debug\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TSTDB']/@connectionString" />
+  </parameter>
+  <parameter name="TradeshowTravel.ECA.ECAUserRepository-Web.config Connection String" description="TradeshowTravel.ECA.ECAUserRepository Connection String used in web.config by the application to access the database." defaultValue="TradeshowTravel.ECA.ECAUserRepository_ConnectionString" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\jlott01\\Code\\TradeshowTravel\\TradeshowTravel\.Web\\obj\\Debug\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='TradeshowTravel.ECA.ECAUserRepository']/@connectionString" />
+  </parameter>
+</parameters>

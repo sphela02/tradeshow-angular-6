@@ -1,0 +1,61 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h4 class="modal-title w-100 font-weight-bold">Upload Images</h4>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form #profilePicForm="ngForm" class="row">
+
+      <div class="md-form" style="margin-left:10px;" *ngIf="!isTravelDoc">  
+        <input type="file" id="inputFile"
+        class="form-control" 
+        (change)="onFileSelected($event)"
+        accept="image/*">
+      </div>
+      <div class="md-form" style="margin-left:10px;" *ngIf="isTravelDoc">  
+          <input type="file" id="inputFile"
+          class="form-control" 
+          (change)="onFileSelected($event)"
+          accept="image/*, application/pdf">
+
+          <div class="md-form">
+              <label for="category" class="active">
+                Category <span class="text-danger">*</span></label>
+              <kendo-dropdownlist
+                name="category" id="category"
+                [data]="categorys"
+                style="width: 100%"
+                (selectionChange)="onChange($event)"
+              >
+              </kendo-dropdownlist>
+          </div>
+          <div class="md-form">
+              <input type="text" id="description" name="description" class="form-control" maxlength="200" placeholder="Description" #description>
+          </div>
+      </div>
+
+      <div style="margin-left:10px;margin-right:10px;">
+          <figure class="figure">
+            <img [src]="pic"
+             class="photo img-fluid rounded-circle z-depth-0"
+             (error)="imgErrHandler($event)"
+             *ngIf="showProfilePic || isTravelDoc"
+             hspace=20
+             width="150px"
+             #Image;>
+          </figure>
+          <i class="fa fa-user-circle photo" aria-hidden="true" *ngIf="!showProfilePic && !isTravelDoc"></i>
+        </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">CANCEL</button>
+    <button type="button" id="SaveButton" class="btn btn-primary btn-sm px-4" (click)="onUpload()">SAVE</button>
+  </div>
+</div>

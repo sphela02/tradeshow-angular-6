@@ -1,0 +1,101 @@
+<div class="card p-3">
+  <div class="row">
+    <div class="col-md-auto text-center">
+      <div class="h6">Attendee Profile</div>
+      <div>
+        <figure class="figure">
+          <img [src]="userPicInfo.PicURL" 
+              class="photo img-fluid rounded-circle z-depth-0"
+              (error)="imgErrHandler($event)"
+              *ngIf="showProfilePic"
+              width="150px">
+          <figcaption class="figure-caption text-center font-weight-bold mt-1" *ngIf="showProfilePic">
+            <a class="text-dark" (click)="downloadPhoto()">Download</a>  
+          </figcaption>
+          <figcaption class="figure-caption text-center font-weight-bold mt-1" *ngIf="showProfilePic && showEditLink">
+            <a class="text-dark" (click)="popupPicUpload()">Replace Photo</a>   
+            </figcaption>
+        </figure>
+        <i class="fa fa-user-circle photo" aria-hidden="true" *ngIf="!showProfilePic"></i>
+        <br/>
+        <span class="figure-caption text-center font-weight-bold mt-1" *ngIf="!showProfilePic && showEditLink">
+            <a class="text-dark" (click)="popupPicUpload()">Upload Photo</a>   
+        </span>
+      </div>
+    </div>
+    <div class="col-md">
+      <div class="mb-2">
+        <span class="badge badge-pill px-3" 
+          [class.badge-success]="completionText=='COMPLETE'"
+          [class.badge-danger]="completionText=='INCOMPLETE'"
+          [hidden]="!completionText">
+          {{completionText}}
+        </span>&nbsp;
+      </div>
+      <div class="mb-1">
+        <span class="h5">{{profile?.FirstName}} {{profile?.LastName}}</span>
+      </div>
+      <div class="mb-1">
+        <span class="h6 text-muted">{{profile?.Title}}</span>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <strong>Segment:</strong> {{profile?.Segment}}
+        </div>
+        <div class="col-md-7" [hidden]="!showPassportInfo">
+          <strong>Passport Name:</strong> {{profile?.PassportName}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <strong>Delegate:</strong> {{profile?.Delegate?.DisplayName}}
+        </div>
+        <div class="col-md-7" [hidden]="!showPassportInfo">
+          <strong>Passport Number:</strong> {{HelperSvc.getMaskedText(profile?.PassportNumber, 2)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <strong>Email:</strong> {{profile?.Email}}
+        </div>
+        <div class="col-md-7" [hidden]="!showPassportInfo">
+          <strong>Nationality:</strong> {{profile?.Nationality}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <strong>Work Number:</strong> {{profile?.Telephone}}
+        </div>
+        <div class="col-md-7" [hidden]="!showPassportInfo">
+          <strong>Date of Birth:</strong> {{profile?.DOB | date:'MM/dd/yyyy'}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <strong>Mobile Number:</strong> {{profile?.Mobile}}
+        </div>
+        <div class="col-md-7" [hidden]="!showPassportInfo">
+          <strong>Country of Birth:</strong> {{profile?.COB}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <strong>Badge Name:</strong> {{profile?.BadgeName}}
+        </div>
+        <div class="col-md-7" [hidden]="!showPassportInfo">
+          <strong>Country of Residence:</strong> {{profile?.COR}}
+        </div>
+      </div>
+      <div class="row" [hidden]="!showPassportInfo">
+        <div class="offset-md-5 col-md-7">
+          <strong>Country of Issue:</strong> {{profile?.COI}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-auto">
+      <a class="waves-light waves-effect" (click)="popupEditProfile()">
+        <i class="fa fa-pencil-square fa-2x" aria-hidden="true" [hidden]="!showEditLink"></i>
+      </a>
+    </div>
+  </div>
+</div>

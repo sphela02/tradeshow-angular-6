@@ -1,0 +1,90 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">User Group Permissions</h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="md-form pb-3">
+      <label for="owner" class="active">Lead Organizer <span class="text-danger">*</span></label>
+      <app-person-finder id="owner" name="owner" [usePrimitive]="false" [(ngModel)]="owner"></app-person-finder>
+    </div>
+    <div class="md-form pb-3">
+      <label for="support" class="active">Support Organizers</label>
+      <div class="row pt-2" *ngFor="let user of supportList; let i = index">
+        <div class="col-md-auto">
+          <a class="valign-middle" (click)="removeSupport($event)" [attr.data-index]="i">
+            <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div class="col pl-2">
+          {{ user.DisplayName }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md">
+          <app-person-finder id="support" name="support" [usePrimitive]="false" #supportPF></app-person-finder>
+          <small>
+            <a (click)="addSupport()">
+              <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Support Organizer
+            </a>
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="md-form pb-3">
+      <label for="travel" class="active">BCD Contacts</label>
+      <div class="row pt-2" *ngFor="let user of travelList; let i = index">
+        <div class="col-md-auto">
+          <a class="valign-middle" (click)="removeTravel($event)" [attr.data-index]="i">
+            <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div class="col pl-2">
+          {{ user.DisplayName }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md">
+          <app-person-finder id="travel" name="travel" [usePrimitive]="false" #travelPF></app-person-finder>
+          <small>
+            <a (click)="addTravel()">
+              <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add BCD Contact
+            </a>
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="md-form pb-3">
+      <label for="business" class="active">Business Leads (if applicable)</label>
+      <div class="row pt-2" *ngFor="let user of businessList; let i = index">
+        <div class="col-md-auto">
+          <a class="valign-middle" (click)="removeBusiness($event)" [attr.data-index]="i">
+            <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div class="col pl-2">
+          {{ user.DisplayName }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md">
+          <app-person-finder id="business" name="business" [usePrimitive]="false" #businessPF></app-person-finder>
+          <small>
+            <a (click)="addBusiness()">
+              <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Business Lead
+            </a>
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm px-4" [disabled]="!owner" (click)="onSubmit()">Save</button>
+  </div>
+</div>

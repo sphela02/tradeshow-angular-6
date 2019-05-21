@@ -1,0 +1,10 @@
+<div style="margin-top: 49px;position: relative;">
+  <app-event-list
+    *ngIf="(viewMode == EventViewMode.List)">
+  </app-event-list>
+
+  <app-event-view
+    *ngIf="(viewMode == EventViewMode.Display)"
+    [event]="activeEvent">
+  </app-event-view>
+</div>

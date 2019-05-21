@@ -1,0 +1,121 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100">{{title}}</h5>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="bg-secondary px-3 py-2 text-dark" *ngIf="showRequired">
+    <span class="font-weight-bold">To complete your RSVP</span>, the fields with a (<span class="text-danger">*</span>) are required by <span class="font-weight-bold">{{event.RsvpDueDate | date: 'MMM d, yyyy'}}</span>.
+    <br><br>
+    Event Dates: {{event.StartDate | date:'MMM d, yyyy'}} - {{event.EndDate | date:'MMM d, yyyy'}}.
+  </div>
+  <div class="bg-secondary px-3 py-2 text-dark" *ngIf="!showRequired">
+    Only event organizers can see the fields below. Edit these fields in the "Required Attendee Details" tab.
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md">
+        <ng-template ngFor let-field [ngForOf]="fields" let-i="index">
+          <div class="md-form" *ngIf="i < (fields.length / 2)">
+            <label for="f{{field.ID}}" class="active">
+              {{field.Label}}
+              <span [hidden]="!field.Tooltip" class="fa fa-question-circle" aria-hidden="true" title="{{field.Tooltip}}"></span>
+              <span [hidden]="!field.Required" class="text-danger">*</span>
+            </label>
+            <kendo-datepicker *ngIf="field.Input == InputType.Date"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [(ngModel)]="values[field.ID]"
+              [activeView]="'month'"
+              [max]="maxvalues[field.ID]"
+              [min]="minvalues[field.ID]"
+              format="MM/dd/yyyy"
+              formatPlaceholder="formatPattern"
+              placeholder=" "
+              style="width: 100%;">
+            </kendo-datepicker>
+            <input type="text" *ngIf="field.Input == InputType.ShortText"
+              id="f{{field.ID}}" name="f{{field.ID}}" class="form-control"
+              [(ngModel)]="values[field.ID]">
+            <textarea rows="3" *ngIf="field.Input == InputType.LongText"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              class="form-control md-textarea py-1"
+              [(ngModel)]="values[field.ID]">
+            </textarea>
+            <kendo-dropdownlist *ngIf="field.Input == InputType.YesOrNo"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [data]="'|Yes|No'.split('|')"
+              [(ngModel)]="values[field.ID]"
+              style="width: 100%">
+            </kendo-dropdownlist>
+            <kendo-dropdownlist *ngIf="field.Input == InputType.Select"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [data]="field.Options.split('|')"
+              [(ngModel)]="values[field.ID]"
+              style="width: 100%">
+            </kendo-dropdownlist>
+            <kendo-multiselect *ngIf="field.Input == InputType.MultiSelect"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [data]="field.Options.split('|')"
+              [(ngModel)]="values[field.ID]">
+            </kendo-multiselect>
+          </div>
+        </ng-template>
+      </div>
+      <div class="col-md">
+        <ng-template ngFor let-field [ngForOf]="fields" let-i="index">
+          <div class="md-form" *ngIf="i >= (fields.length / 2)">
+            <label for="f{{field.ID}}" class="active">
+              {{field.Label}}
+              <span [hidden]="!field.Tooltip" class="fa fa-question-circle" aria-hidden="true" title="{{field.Tooltip}}"></span>
+              <span [hidden]="!field.Required" class="text-danger">*</span>
+            </label>
+            <kendo-datepicker *ngIf="field.Input == InputType.Date"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [(ngModel)]="values[field.ID]"
+              [activeView]="'month'"
+              [max]="maxvalues[field.ID]"
+              [min]="minvalues[field.ID]"
+              format="MM/dd/yyyy"
+              formatPlaceholder="formatPattern"
+              placeholder=" "
+              style="width: 100%;">
+            </kendo-datepicker>
+            <input type="text" *ngIf="field.Input == InputType.ShortText"
+              id="f{{field.ID}}" name="f{{field.ID}}" class="form-control"
+              [(ngModel)]="values[field.ID]">
+            <textarea rows="3" *ngIf="field.Input == InputType.LongText"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              class="form-control md-textarea py-1"
+              [(ngModel)]="values[field.ID]">
+            </textarea>
+            <kendo-dropdownlist *ngIf="field.Input == InputType.YesOrNo"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [data]="'|Yes|No'.split('|')"
+              [(ngModel)]="values[field.ID]"
+              style="width: 100%">
+            </kendo-dropdownlist>
+            <kendo-dropdownlist *ngIf="field.Input == InputType.Select"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [data]="field.Options.split('|')"
+              [(ngModel)]="values[field.ID]"
+              style="width: 100%">
+            </kendo-dropdownlist>
+            <kendo-multiselect *ngIf="field.Input == InputType.MultiSelect"
+              id="f{{field.ID}}" name="f{{field.ID}}"
+              [data]="field.Options.split('|')"
+              [(ngModel)]="values[field.ID]">
+            </kendo-multiselect>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm px-4" (click)="onSubmit()">Save</button>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\TradeshowTravel.Domain.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\TradeshowTravel.Domain.pdb
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Common.Logging.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\NetPasswordSDK.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Documents.Core.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Documents.Spreadsheet.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Zip.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Common.Logging.pdb
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Documents.Core.xml
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Documents.Spreadsheet.xml
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.xml
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\bin\Debug\Telerik.Windows.Zip.xml
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\obj\Debug\TradeshowTravel.Domain.csprojResolveAssemblyReference.cache
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\obj\Debug\TradeshowTravel.Domain.dll
+C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Domain\obj\Debug\TradeshowTravel.Domain.pdb

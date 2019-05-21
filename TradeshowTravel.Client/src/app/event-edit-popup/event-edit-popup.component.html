@@ -1,0 +1,332 @@
+<div [class.loading]="isLoading">
+  <div class="modal-header">
+    <h4 class="modal-title w-100 font-weight-bold">{{ title }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="bg-secondary px-3 py-2 text-dark" *ngIf="!showCreateSuccess">
+    Fill out the details to the best of your ability. The fields with a (<span class="text-danger">*</span>) are required. You can change these fields later.
+  </div>
+  <div class="modal-body" [class.d-none]="showCreateSuccess">
+    <form class="row" novalidate (ngSubmit)="onSubmit(f)" #f="ngForm">
+      <div class="col-md-6">
+        <h6 class="pb-2">EVENT DETAILS</h6>
+        <div class="md-form">
+          <label for="eventName" class="active">
+            Event Name <span class="text-danger">*</span>
+          </label>
+          <input type="text" id="eventName" name="eventName" class="form-control"
+                  [disabled]="userRole != Role.Lead && userRole != Role.Support"
+                  maxlength="50" [(ngModel)]="event.Name">
+        </div>
+        <div class="md-form">
+          <label for="description" class="active">
+            Event Description
+          </label>
+          <textarea type="text" id="description" name="description"
+            class="form-control md-textarea py-1" rows="3"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [(ngModel)]="event.Description"></textarea>
+        </div>
+        <div class="md-form">
+          <label for="start" class="active">
+            Start Date <span class="text-danger">*</span>
+          </label>
+          <kendo-datepicker
+            id="start" name="start"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [(ngModel)]="event.StartDate"
+            (valueChange)="onStartChange($event)"
+            format="MM/dd/yyyy"
+            formatPlaceholder="formatPattern"
+            placeholder=" "
+            style="width: 100%;">
+          </kendo-datepicker>
+        </div>
+        <div class="md-form">
+          <label for="end" class="active">
+            End Date <span class="text-danger">*</span>
+          </label>
+          <kendo-datepicker
+            id="end" name="end"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [(ngModel)]="event.EndDate"
+            (valueChange)="onEndChange($event)"
+            format="MM/dd/yyyy"
+            formatPlaceholder="formatPattern"
+            placeholder=" "
+            style="width: 100%">
+          </kendo-datepicker>
+        </div>
+        <div class="md-form">
+          <label for="rsvpDueDate" class="active">
+            RSVP Deadline
+          </label>
+          <kendo-datepicker #rsvpDueDate
+            id="rsvpDueDate" name="rsvpDueDate"
+            [(ngModel)]="event.RsvpDueDate"
+            format="MM/dd/yyyy"
+            formatPlaceholder="formatPattern"
+            placeholder=" "
+            style="width: 100%">
+          </kendo-datepicker>
+        </div>
+        <div class="md-form">
+          <label for="segments" class="active">
+            Participating Segment(s)
+          </label>
+          <kendo-multiselect
+            name="segments"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [data]="segmentList"
+            [(ngModel)]="selectedSegments">
+          </kendo-multiselect>
+        </div>
+        <div class="md-form">
+          <label for="tier" class="active">Tier</label>
+          <kendo-dropdownlist
+            name="tier"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [data]="tierList"
+            [(ngModel)]="event.Tier"
+            style="width: 100%">
+          </kendo-dropdownlist>
+        </div>
+        <div class="md-form">
+          <label for="showType" class="active">
+            Show Type <span class="text-danger">*</span>
+          </label>
+          <kendo-dropdownlist
+            name="showType"
+            [data]="showtypeList"
+            [textField]="'text'"
+            [valueField]="'value'"
+            [defaultItem]="ShowType.Unknown"
+            [valuePrimitive]="true"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [(ngModel)]="event.ShowType"
+            style="width:100%">
+          </kendo-dropdownlist>
+        </div>
+        <div class="md-form">
+          <label for="estAttCount" class="active">
+            Estimated Number of Attendees
+          </label>
+          <input type="text" id="estAttCount" name="estAttCount" class="form-control"
+            [(ngModel)]="event.EstAttendCount"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            pattern="^[0-9]*$">
+        </div>
+        <div class="row">
+          <div class="col-md-7">
+            <div class="md-form">
+              <label for="roomCount" class="active">
+                Estimated Hotel Rooms Per Day
+              </label>
+              <kendo-numerictextbox #roomCount
+                placeholder="Enter # of rooms for block"
+                [format]="'n0'">
+              </kendo-numerictextbox>
+              <small>
+                <a (click)="addRoomBlock()">
+                  <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Hotel Block
+                </a>
+              </small>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="md-form">
+              <label for="roomDate" class="active">
+                Date
+              </label>
+              <kendo-datepicker #roomDate
+                format="MM/dd/yyyy"
+                formatPlaceholder="formatPattern"
+                placeholder=" "
+                style="width: 100%">
+              </kendo-datepicker>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngFor="let block of roomBlockList; let i = index">
+          <div class="col-md-7">
+            <kendo-numerictextbox id="rb{{i}}" name="rb{{i}}"
+              [value]="roomBlockList[i].EstRoomCount"
+              [(ngModel)]="roomBlockList[i].EstRoomCount"
+              [format]="'n0'">
+            </kendo-numerictextbox>
+          </div>
+          <div class="col-md-4">
+            <div class="valign-middle">
+              {{ roomBlockList[i].Date | date : 'MM/dd/yyyy' }}
+            </div>
+          </div>
+          <div class="col-md-1">
+            <a class="valign-middle" style="right: 15px" (click)="removeRoomBlock($event)" [attr.data-index]="i">
+              <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h6 class="pb-2">LOCATION DETAILS</h6>
+        <div class="md-form">
+          <label for="location" class="active">Location (Country, State, City etc)</label>
+          <input type="text" id="location" name="location" class="form-control"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [(ngModel)]="event.Location">
+        </div>
+        <div class="md-form">
+          <label for="venue" class="active">Venue</label>
+          <input type="text" id="venue" name="venue" class="form-control"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [(ngModel)]="event.Venue">
+        </div>
+        <div class="md-form">
+          <label for="housingLink" class="active">Housing Bureau Link (if applicable)</label>
+          <input type="text" id="housingLink" name="housingLink" class="form-control"
+            [(ngModel)]="event.BureauLink">
+        </div>
+        <div class="md-form pb-3">
+          <label for="hotel" class="active">Hotel Name(s)</label>
+          <div class="row pt-2" *ngFor="let name of hotelList; let i = index">
+            <div class="col-md-auto">
+              <a class="valign-middle" (click)="removeHotel($event)" [attr.data-index]="i">
+                <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
+              </a>
+            </div>
+            <div class="col pl-2">
+              {{ name }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md">
+              <input type="text" id="hotel" name="hotel" class="form-control py-2 mb-0" maxlength="50" placeholder="Enter Hotel Name" #hotel>
+              <small>
+                <a (click)="addHotel()">
+                  <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Hotel
+                </a>
+              </small>
+            </div>
+          </div>
+        </div>
+        <h6 class="pb-2 pt-3">ORGANIZERS</h6>
+        <div class="md-form pb-3">
+          <label for="owner" class="active">
+            Lead Organizer <span class="text-danger">*</span>
+          </label>
+          <app-person-finder id="owner" name="owner"
+            [disabled]="userRole != Role.Lead && userRole != Role.Support"
+            [(ngModel)]="event.OwnerUsername">
+          </app-person-finder>
+        </div>
+        <div class="md-form pb-3">
+          <label for="support" class="active">Support Organizers</label>
+          <div class="row pt-2" *ngFor="let user of supportList; let i = index">
+            <div class="col-md-auto">
+              <a class="valign-middle" (click)="removeSupport($event)" [attr.data-index]="i">
+                <i class="fa fa-minus-circle fa-lg mr-1" aria-hidden="true"
+                  [class.text-warning]="userRole == Role.Lead || userRole == Role.Support"
+                  [class.text-muted]="userRole != Role.Lead && userRole != Role.Support">
+                </i>
+              </a>
+            </div>
+            <div class="col pl-2">
+              {{ user.DisplayName }}
+            </div>
+          </div>
+          <div class="row" *ngIf="userRole == Role.Lead || userRole == Role.Support">
+            <div class="col-md">
+              <app-person-finder id="support" name="support" [usePrimitive]="false" #supportPF></app-person-finder>
+              <small>
+                <a (click)="addSupport()">
+                  <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Support Organizer
+                </a>
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="md-form pb-3">
+          <label for="travel" class="active">BCD Contacts</label>
+          <div class="row pt-2" *ngFor="let user of travelList; let i = index">
+            <div class="col-md-auto">
+              <a class="valign-middle" (click)="removeTravel($event)" [attr.data-index]="i">
+                <i class="fa fa-minus-circle fa-lg mr-1" aria-hidden="true"
+                  [class.text-warning]="userRole == Role.Lead || userRole == Role.Support"
+                  [class.text-muted]="userRole != Role.Lead && userRole != Role.Support">
+                </i>
+              </a>
+            </div>
+            <div class="col pl-2">
+              {{ user.DisplayName }}
+            </div>
+          </div>
+          <div class="row" *ngIf="userRole == Role.Lead || userRole == Role.Support">
+            <div class="col-md">
+              <app-person-finder id="travel" name="travel" [usePrimitive]="false" #travelPF></app-person-finder>
+              <small>
+                <a (click)="addTravel()">
+                  <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add BCD Contact
+                </a>
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="md-form pb-3">
+          <label for="business" class="active">Business Leads (if applicable)</label>
+          <div class="row pt-2" *ngFor="let user of businessList; let i = index">
+            <div class="col-md-auto">
+              <a class="valign-middle" (click)="removeBusiness($event)" [attr.data-index]="i">
+                <i class="fa fa-minus-circle fa-lg mr-1" aria-hidden="true"
+                  [class.text-warning]="userRole == Role.Lead || userRole == Role.Support"
+                  [class.text-muted]="userRole != Role.Lead && userRole != Role.Support">
+                </i>
+              </a>
+            </div>
+            <div class="col pl-2">
+              {{ user.DisplayName }}
+            </div>
+          </div>
+          <div class="row" *ngIf="userRole == Role.Lead || userRole == Role.Support">
+            <div class="col-md">
+              <app-person-finder id="business" name="business" [usePrimitive]="false" #businessPF></app-person-finder>
+              <small>
+                <a (click)="addBusiness()">
+                  <i class="text-info fa fa-plus-circle fa-lg mr-1" aria-hidden="true"></i> Add Business Lead
+                </a>
+              </small>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+    <div class="alert alert-danger m-0 py-1 mr-3" role="alert" [hidden]="!errorMsg">
+      <i class="fa fa-exclamation-circle fa-lg" aria-hidden="true"></i>&nbsp; {{errorMsg}}
+    </div>
+  </div>
+  <div class="modal-body" *ngIf="showCreateSuccess">
+    <div class="row">
+      <div class="col-md-auto">
+        <i class="text-info fa fa-check-circle fa-5x mt-3" style="font-size: 128px" aria-hidden="true"></i>
+      </div>
+      <div class="col-md">
+        <div class="pb-3">This event has been created and you have access to update attendee lists and information.</div>
+        <div class="font-weight-bold">Please keep in mind:</div>
+        <ul>
+          <li>Email reminders will be sent automatically to event leads, BCD Travel and Business Leads</li>
+        </ul>
+        <div class="pb-3">You can update this by going to the Settings tab of your new event</div>
+        <div>
+          <button type="button" class="btn btn-secondary px-3" (click)="cancelPopup()">BACK TO EVENT LIST</button>
+          <button type="button" class="btn btn-primary px-3" (click)="onGotoEvent()">VIEW NEW EVENT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" *ngIf="!showCreateSuccess" class="btn btn-secondary btn-sm px-3" (click)="cancelPopup()">CANCEL</button>
+    <button type="button" *ngIf="!showCreateSuccess" class="btn btn-primary btn-sm px-4" [disabled]="!IsValid" (click)="f.ngSubmit.emit()">SAVE</button>
+  </div>
+</div>
