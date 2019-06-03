@@ -1,4 +1,5 @@
-﻿ 
+﻿import { EventAttendee } from "./EventAttendee";
+
     export interface EventAttendeeQueryResult { 
         Total: number;
         Attendees: EventAttendee[];

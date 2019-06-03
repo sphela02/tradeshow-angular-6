@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Logging", "..\Logging\Common.Logging\Common.Logging.csproj", "{3ECFFC7F-E692-4C8C-9A19-1B36DB697F77}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Logging", "Common.Logging\Common.Logging.csproj", "{3ECFFC7F-E692-4C8C-9A19-1B36DB697F77}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TradeshowTravel.Database", "TradeshowTravel.Database\TradeshowTravel.Database.sqlproj", "{711F06E6-8D7F-4BF4-8580-CC17ABD1F867}"
 EndProject
@@ -37,6 +37,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AngularClient", "AngularCli
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeshowTravel.ScheduledTask", "TradeshowTravel.ScheduledTask\TradeshowTravel.ScheduledTask.csproj", "{A15AFDFC-1AD9-4C53-831F-1EB6FD00E053}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BB960487-ECBC-4089-8FC7-AA46EC994BBE}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,32 +85,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {64B8CB41-7839-4CC9-8BC6-09925FFF0C59}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 8
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://mlbtfs3:8080/tfs/web%20application%20group
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ..\\Logging\\Common.Logging\\Common.Logging.csproj
-		SccProjectName1 = ../../../Configuration\u0020And\u0020Tools/Common.Logging/Common.Logging
-		SccLocalPath1 = ..\\Logging\\Common.Logging
-		SccProjectUniqueName2 = TradeshowTravel.Data\\TradeshowTravel.Data.csproj
-		SccProjectName2 = TradeshowTravel.Data
-		SccLocalPath2 = TradeshowTravel.Data
-		SccProjectUniqueName3 = TradeshowTravel.Database\\TradeshowTravel.Database.sqlproj
-		SccProjectName3 = TradeshowTravel.Database
-		SccLocalPath3 = TradeshowTravel.Database
-		SccProjectUniqueName4 = TradeshowTravel.Domain\\TradeshowTravel.Domain.csproj
-		SccProjectName4 = TradeshowTravel.Domain
-		SccLocalPath4 = TradeshowTravel.Domain
-		SccProjectUniqueName5 = TradeshowTravel.ECA\\TradeshowTravel.ECA.csproj
-		SccProjectName5 = TradeshowTravel.ECA
-		SccLocalPath5 = TradeshowTravel.ECA
-		SccProjectUniqueName6 = TradeshowTravel.Web\\TradeshowTravel.Web.csproj
-		SccProjectName6 = TradeshowTravel.Web
-		SccLocalPath6 = TradeshowTravel.Web
-		SccProjectUniqueName7 = TradeshowTravel.ScheduledTask\\TradeshowTravel.ScheduledTask.csproj
-		SccProjectName7 = TradeshowTravel.ScheduledTask
-		SccLocalPath7 = TradeshowTravel.ScheduledTask
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,5 @@
-﻿ 
+﻿import { AttendeeStatus } from "./Enums";
+
     export interface AttendeeEvent { 
         ID: number;
         Name: string;
