@@ -1,4 +1,8 @@
-﻿ 
+﻿import { UserInfo } from "./UserInfo";
+import { UserProfile } from "./UserProfile";
+import { Permissions } from "./Enums";
+import { Role } from "./Enums";
+
     export interface UserProfile { 
         Username: string;
         EmplID: string;

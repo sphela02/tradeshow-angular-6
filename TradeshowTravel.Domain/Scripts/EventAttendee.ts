@@ -1,4 +1,7 @@
-﻿ 
+﻿import { UserProfile } from "./UserProfile";
+import { EventInfo } from "./EventInfo";
+import { AttendeeStatus } from "./Enums";
+
     export interface EventAttendee { 
         ID: number;
         EventID: number;

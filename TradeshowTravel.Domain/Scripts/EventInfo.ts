@@ -1,4 +1,8 @@
-﻿ 
+﻿import { UserInfo } from "./UserInfo";
+import { ShowType } from "./Enums";
+import { Role } from "./Enums";
+import { InputType } from "./Enums";
+
     export interface EventInfo { 
         ID: number;
         Name: string;

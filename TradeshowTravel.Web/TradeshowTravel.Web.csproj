@@ -26,6 +26,7 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -169,7 +170,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Logging\Common.Logging\Common.Logging.csproj">
+    <ProjectReference Include="..\Common.Logging\Common.Logging.csproj">
       <Project>{3ecffc7f-e692-4c8c-9a19-1b36db697f77}</Project>
       <Name>Common.Logging</Name>
     </ProjectReference>

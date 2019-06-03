@@ -333,3 +333,5 @@ ASALocalRun/
 *.min.js
 *.min.css
 *.map
+
+/TradeshowTravel.Domain/Scripts/*.js
