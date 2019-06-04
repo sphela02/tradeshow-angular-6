@@ -1,5 +1,0 @@
-C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Database\bin\Debug\TradeshowTravel.Database.dacpac
-C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Database\bin\Debug\TradeshowTravel.Database.dll
-C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Database\bin\Debug\TradeshowTravel.Database.pdb
-C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Database\obj\Debug\TradeshowTravel.Database.dll
-C:\Users\jlott01\Code\TradeshowTravel\TradeshowTravel.Database\obj\Debug\TradeshowTravel.Database.pdb
