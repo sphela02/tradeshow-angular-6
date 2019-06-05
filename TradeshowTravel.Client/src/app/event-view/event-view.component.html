@@ -161,6 +161,7 @@
       (sortChange)="sortChange($event)"
       filterable="menu"
       [filter]="state.filter"
+      (filterChange)="filterChange($event)"
       (dataStateChange)="dataStateChange($event)"
       style="height: 500px;"
     >

@@ -256,6 +256,10 @@ export class EventViewComponent implements OnInit {
     this.state.sort = sort;
   }
 
+  filterChange(filter: FilterDescriptor[]){
+    this.onClearAttendeeChecked();
+  }
+
   dataStateChange(state: DataStateChangeEvent) {
     this.state = state;
     this.loadAttendees();
