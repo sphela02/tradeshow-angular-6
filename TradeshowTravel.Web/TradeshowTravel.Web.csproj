@@ -16,7 +16,7 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
@@ -130,6 +130,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
+    <Content Include="App_Data\EventTravelPortal_UserManual_Attendee.pptx" />
     <None Include="Properties\PublishProfiles\MLBIIS1R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS2R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIISDEVL1R2.pubxml" />
@@ -188,7 +189,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Images\" />
   </ItemGroup>
   <PropertyGroup>

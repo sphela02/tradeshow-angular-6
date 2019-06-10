@@ -1605,6 +1605,12 @@ namespace TradeshowTravel.Domain
                                     attendee.DateRSVP = DateTime.Now;
                                     attendee = DataRepo.SaveAttendee(attendee);
                                     EmailSrv.SendRSVP(evt, attendee);
+
+                                    if (curStatus == AttendeeStatus.Unknown)
+                                    {
+                                        EmailSrv.SendNewUser(evt, attendee);
+                                    }
+
                                     Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP to {attendee.Username} for event {eventID}.");
                                 }
                                 break;
