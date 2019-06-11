@@ -37,16 +37,17 @@ namespace TradeshowTravel.Domain
             // send to owner/lead
             this.Send(evt.Owner.Email, subject, body);
 
-            // send to travel, support, leads
+            // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)
             {
-                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)))
+                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
+                  || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
                     this.Send(eventUser.User.Email, subject, body);
                 }
             }
         }
-
+    
         // send RSVP using custom text from user.
         public void SendRSVP(EventInfo evt, EventAttendee attendee, RsvpRequest req)
         {
@@ -227,10 +228,11 @@ namespace TradeshowTravel.Domain
             // send to lead
             this.Send(evt.Owner.Email, subject, body);
 
-            // send to travel, support, leads
+            // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)
             {
-                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)))
+                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
+                  || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
                     body = $"Hello {eventUser.User.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details or has canceled.\n\nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
                     this.Send(eventUser.User.Email, subject, body);
@@ -247,10 +249,11 @@ namespace TradeshowTravel.Domain
             var body = $"Hello {evt.Owner.FirstName},\n\nThe list of attendees for {evt.Name} has been updated by {username}.\n\nView Event: {getEventUrl(evt.ID)}\n\n{getSignature(evt)}";
             this.Send(evt.Owner.Email, subject, body);
 
-            // send to travel, support, leads
+            // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)
             {
-                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)))
+                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
+                  || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
                     this.Send(eventUser.User.Email, subject, body);
                 }
@@ -309,10 +312,11 @@ namespace TradeshowTravel.Domain
                 table += $"{lastCommaFirst,-20}\t{attendee.GetRsvpResponse(),-20}\t{(attendee.IsCompleted(evt.Fields, evt.IsPassportRequired()) ? "Yes" : "No"),-20}\n";
             }
 
-            // send to travel, support, leads
+            // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)
             {
-                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)))
+                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
+                || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
                     body = $"Hello {eventUser.User.FirstName},\n\nHere is a summary of RSVP’s for {evt.Name}.\n\n{table}\nView Event: {getEventUrl(evt.ID)}\n\n{getSignature(evt)}";
                     this.Send(eventUser.User.Email, subject, body);
