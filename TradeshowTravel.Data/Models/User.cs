@@ -39,9 +39,9 @@ namespace TradeshowTravel.Data.Models
             Telephone = profile.Telephone;
             BadgeName = profile.BadgeName;
             Privileges = profile.Privileges;
-
             PassportName = profile.PassportName;
             PassportNumber = profile.PassportNumber;
+            PassportExpirationDate = profile.PassportExpirationDate.ToDTOFormat();
             DOB = profile.DOB.ToDTOFormat();
             Nationality = profile.Nationality;
             COB = profile.COB;
@@ -65,6 +65,8 @@ namespace TradeshowTravel.Data.Models
         public string PassportNumber { get; set; }
         [Encrypted]
         public string PassportName { get; set; }
+        [Encrypted]
+        public string PassportExpirationDate { get;set; }
         [Encrypted]
         public string DOB { get; set; }
         [Encrypted]
