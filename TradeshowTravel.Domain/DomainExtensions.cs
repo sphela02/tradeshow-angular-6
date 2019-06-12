@@ -71,6 +71,7 @@ namespace TradeshowTravel.Domain
             {
                 profile.PassportName = null;
                 profile.PassportNumber = null;
+                profile.PassportExpirationDate = null;
                 profile.Nationality = null;
                 profile.DOB = null;
                 profile.COB = null;

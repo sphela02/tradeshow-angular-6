@@ -26,6 +26,7 @@ namespace TradeshowTravel.Domain.DTOs
         {
             "PassportName",
             "PassportNumber",
+            "PassportExpirationDate",
             "DOB",
             "Nationality",
             "COB",
@@ -45,6 +46,7 @@ namespace TradeshowTravel.Domain.DTOs
         public string BadgeName { get; set; }
         public string PassportNumber { get; set; }
         public string PassportName { get; set; }
+        public DateTime? PassportExpirationDate { get;set; }
         public DateTime? DOB { get; set; }
         public string Nationality { get; set; }
         public string COB { get; set; }
