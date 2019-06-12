@@ -1589,7 +1589,7 @@ namespace TradeshowTravel.Domain
                     Logging.LogMessage(LogLevel.DebugBasic, $"Send delegate email to '{attendee.Profile.DelegateUsername}'.");
                 }
 
-                // if the event has already started only send invitation notifications
+                // Don't bother sending notifications for past events
                 if (evt.StartDate > DateTime.Now)
                 {
                     // Handle notifications
@@ -1633,10 +1633,6 @@ namespace TradeshowTravel.Domain
                         EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee);
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
-                }
-                else if(newStatus == AttendeeStatus.Invited)
-                {
-                    Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
                 }
             }
 
