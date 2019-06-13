@@ -62,7 +62,13 @@ export class ProfileEditPopupComponent implements OnInit {
       const temp = new Date(profile.DOB);
       this._profile.DOB = temp;
     }
+
+    if (profile && profile.PassportExpirationDate) {
+      const temp = new Date(profile.PassportExpirationDate);
+      this._profile.PassportExpirationDate = temp;
+    }
   }
+
   get profile(): UserProfile {
     return this._profile;
   }

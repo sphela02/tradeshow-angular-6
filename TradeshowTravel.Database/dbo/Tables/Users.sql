@@ -12,7 +12,7 @@
     [BadgeName]					VARCHAR (100) NULL,
     [PassportNumber]			VARCHAR (MAX) NULL,
     [PassportName]				VARCHAR (MAX) NULL,
-	[PassportExpirationDate]	DATETIME	  NULL,
+	[PassportExpirationDate]	VARCHAR (MAX) NULL,
     [DOB]						VARCHAR (MAX) NULL,
     [Nationality]				VARCHAR (MAX) NULL,
     [COB]						VARCHAR (MAX) NULL,
