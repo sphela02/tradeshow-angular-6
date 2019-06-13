@@ -36,14 +36,14 @@
     </app-event-info>
   </div>
 
-  <!--<div class="card mb-3">
+  <!--div class="card mb-3">
     <div class="card-body">
       <span class="h5 card-title">Notifications</span>
       <ul class="list-properties mt-3" style="overflow-y: auto;">
         <li>All Clear!</li>
       </ul>
     </div>
-  </div>-->
+  </div-->
 
   <div class="d-flex justify-content-between mb-3">
     <div class="card card-inline">
@@ -256,22 +256,11 @@
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.Title" title="Job Title" width="200">
+      <kendo-grid-column field="User.Title" title="Job Title" [filterable]="false" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Title }}
         </ng-template>
-        <!--<ng-template kendoGridFilterMenuTemplate
-          let-column="column"
-          let-filter="filter"
-          let-filterService="filterService">
-          <grid-rsvp-filter
-            [field]="column.field"
-            [filterService]="filterService"
-            [currentFilter]="filter">
-          </grid-rsvp-filter>
-        </ng-template>-->
       </kendo-grid-column>
-
       <kendo-grid-column field="User.Segment" title="Segment" width="100">
         <ng-template kendoGridFilterMenuTemplate
           let-column="column"
@@ -291,95 +280,68 @@
           {{ dataItem.Profile.Segment }}
         </ng-template>
       </kendo-grid-column>
-
-      <kendo-grid-column field="User.DelegateUsername" title="Delegate" [filterable]="true" width="150">
+      <kendo-grid-column field="User.DelegateUsername" title="Delegate" [filterable]="false" width="150">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{dataItem.Profile.Delegate?.FirstName}} {{dataItem.Profile.Delegate?.LastName}}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.Email" title="Email" [filterable]="false" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Email }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.Telephone" title="Work Number" [filterable]="false" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Telephone }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.Mobile" title="Cell Number" [filterable]="false" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Mobile }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.BadgeName" title="Name on Badge" [filterable]="false" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.BadgeName }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.Visa" title="Visa" [filterable]="true" width="200">
-        <ng-template kendoGridCellTemplate let-dataItem>
-          {{ dataItem.Profile.Visa }}
-        </ng-template>
-        <ng-template kendoGridFilterMenuTemplate
-            let-column="column"
-            let-filter="filter"
-            let-filterService="filterService">
-          <grid-yesno-filter
-            [field]="column.field"
-            [filterService]="filterService"
-            [currentFilter]="filter">
-          </grid-yesno-filter>
-        </ng-template>
-      </kendo-grid-column>
-
-      <kendo-grid-column field="User.PassportName" title="Passport Name"  filter="boolean" width="200"
+      <kendo-grid-column field="User.PassportName" title="Passport Name" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.PassportName }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.PassportNumber" title="Passport Number" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.PassportNumber }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.Nationality" title="Nationality" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Nationality }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.COB" title="Country of Birth" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.COB }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.DOB" title="Date of Birth" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{dataItem.Profile.DOB | date:'MM/dd/yyyy'}}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.COR" title="Country of Residence" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.COR }}
         </ng-template>
       </kendo-grid-column>
-
       <kendo-grid-column field="User.COI" title="Country of Issue" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
@@ -388,59 +350,42 @@
       </kendo-grid-column>
 
       <ng-template ngFor let-field [ngForOf]="eventFields">
-        <kendo-grid-column *ngIf="field.Source == 'Arrival' || field.Source == 'Departure'"
+        <kendo-grid-column *ngIf="field.Source"
           [filterable]="field.Source == 'Arrival' || field.Source == 'Departure'"
           title="{{field.Label}}"
           field="{{field.Source}}"
           filter="date" format="{0:d}"
           width="200">
-        </kendo-grid-column>
-
-        <kendo-grid-column *ngIf="field.Source == 'IsHotelNeeded' || field.Source == 'IsAttending'"
-                           [filterable]="true"
-                           title="{{field.Label}}"
-                           field="{{field.Source}}"
-                           width="200">
-
-
-          <ng-template kendoGridFilterMenuTemplate
-                       let-column="column"
-                       let-filter="filter"
-                       let-filterService="filterService">
-            <grid-yesno-filter [field]="column.field"
-                               [filterService]="filterService"
-                               [currentFilter]="filter">
-            </grid-yesno-filter>
+          <ng-template *ngIf="field.Input == InputType.Date"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem[field.Source] | date: 'MM/dd/yyyy' }}
           </ng-template>
-
-
           <ng-template *ngIf="field.Input == InputType.YesOrNo"
-                       kendoGridCellTemplate let-dataItem>
+            kendoGridCellTemplate let-dataItem>
             {{ HelperSvc.getYesOrNoText(dataItem[field.Source]) }}
           </ng-template>
           <ng-template *ngIf="field.Input == InputType.MultiSelect"
-                       kendoGridCellTemplate let-dataItem>
+            kendoGridCellTemplate let-dataItem>
             {{ dataItem[field.Source] | replace : '|' : ', '}}
           </ng-template>
         </kendo-grid-column>
-
-          <kendo-grid-column *ngIf="!field.Source" [filterable]="false"
-                             title="{{field.Label}}"
-                             width="200">
-            <ng-template *ngIf="field.Input == InputType.Date"
-                         kendoGridCellTemplate let-dataItem>
-              {{ dataItem.Properties[field.ID] | date: 'MM/dd/yyyy' }}
-            </ng-template>
-            <ng-template *ngIf="field.Input == InputType.MultiSelect"
-                         kendoGridCellTemplate let-dataItem>
-              {{ dataItem.Properties[field.ID] | replace : '|' : ', '}}
-            </ng-template>
-            <ng-template *ngIf="field.Input != InputType.Date && field.Input != InputType.MultiSelect"
-                         kendoGridCellTemplate let-dataItem>
-              {{ dataItem.Properties[field.ID] }}
-            </ng-template>
-          </kendo-grid-column>
-</ng-template>
+        <kendo-grid-column *ngIf="!field.Source" [filterable]="false"
+          title="{{field.Label}}"
+          width="200">
+          <ng-template *ngIf="field.Input == InputType.Date"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] | date: 'MM/dd/yyyy' }}
+          </ng-template>
+          <ng-template *ngIf="field.Input == InputType.MultiSelect"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] | replace : '|' : ', '}}
+          </ng-template>
+          <ng-template *ngIf="field.Input != InputType.Date && field.Input != InputType.MultiSelect"
+            kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] }}
+          </ng-template>
+        </kendo-grid-column>
+      </ng-template>
 
     </kendo-grid>
   </div>

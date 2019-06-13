@@ -40,7 +40,6 @@ namespace TradeshowTravel.Data.Models
             BadgeName = profile.BadgeName;
             Privileges = profile.Privileges;
 
-            Visa = profile.Visa;
             PassportName = profile.PassportName;
             PassportNumber = profile.PassportNumber;
             DOB = profile.DOB.ToDTOFormat();
@@ -61,7 +60,6 @@ namespace TradeshowTravel.Data.Models
         public string Mobile { get; set; }
         public string Telephone { get; set; }
         public string BadgeName { get; set; }
-        public string Visa { get; set; }
 
         [Encrypted]
         public string PassportNumber { get; set; }

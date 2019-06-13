@@ -56,7 +56,6 @@ namespace TradeshowTravel.Domain.DTOs
         public int EventsAttended { get; set; }
         public string DelegateUsername { get; set; }
         public UserInfo Delegate { get; set; }
-        public string Visa { get; set; }
         
         public UserProfile()
         {

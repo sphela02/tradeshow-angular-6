@@ -27,5 +27,4 @@ import { Role } from "./Enums";
         EventsAttended: number;
         DelegateUsername: string;
         Delegate: UserInfo;
-        Visa: string;
     }

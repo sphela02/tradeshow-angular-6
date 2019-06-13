@@ -42,8 +42,7 @@ namespace TradeshowTravel.Data
                 COI = (includePassportInfo) ? user.COI : null,
                 Privileges = user.Privileges,
                 Role = Role.Attendee,
-                ShowPicture = !string.IsNullOrWhiteSpace(user.EmplID),
-                Visa = user.Visa
+                ShowPicture = !string.IsNullOrWhiteSpace(user.EmplID)
             };
 
             if (user.Delegate != null)

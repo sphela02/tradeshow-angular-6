@@ -38,7 +38,7 @@
     "@progress/kendo-theme-material": "^0.8.0",
     "angular-font-awesome": "^3.1.2",
     "core-js": "^2.4.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.3.1",
     "jquery-touchswipe": "^1.6.18",
     "mdbootstrap": "^4.5.0",
     "rxjs": "^5.5.6",
