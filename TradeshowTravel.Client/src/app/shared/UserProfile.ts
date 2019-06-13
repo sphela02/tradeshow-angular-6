@@ -14,6 +14,7 @@ export interface UserProfile {
     BadgeName: string;
     PassportNumber: string;
     PassportName: string;
+    PassportExpirationDate: Date;
     DOB: Date;
     Nationality: string;
     COB: string;
