@@ -1640,6 +1640,13 @@ namespace TradeshowTravel.Domain
             return ValidationResponse<List<EventAttendee>>.CreateSuccess(eventAttendees);
         }
 
+        public void CompareEventAttendee(EventAttendee eventAttendee)
+        {
+            EventAttendee databaseEventAttendee = DataRepo.GetAttendee(eventAttendee.EventID);
+
+
+        }
+
         public ValidationResponse<Workbook> ExportEventAttendees(int eventID, QueryParams parameters = null)
         {
             try {
