@@ -130,6 +130,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS1R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS2R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIISDEVL1R2.pubxml" />
