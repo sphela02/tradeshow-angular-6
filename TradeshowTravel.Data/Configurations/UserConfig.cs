@@ -87,6 +87,12 @@
                 .IsUnicode(false)
                 .IsOptional();
 
+            Property(p => p.PassportExpirationDate)
+                .HasColumnOrder(19)
+                .IsMaxLength()
+                .IsUnicode(false)
+                .IsOptional();
+
             Property(p => p.DOB)
                 .HasColumnOrder(13)
                 .IsMaxLength()

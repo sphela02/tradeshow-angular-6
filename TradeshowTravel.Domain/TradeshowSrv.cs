@@ -1457,6 +1457,9 @@ namespace TradeshowTravel.Domain
                     return ValidationResponse<List<EventAttendee>>.CreateFailure("One or more attendee usernames were not specified.");
                 }
 
+                // Check if new user before saving user information
+                bool isNewUser = DataRepo.GetProfile(attendee.Username) == null;
+
                 // Check permissions
                 if (CurrentUser.Privileges != Permissions.Admin)
                 {
@@ -1570,7 +1573,7 @@ namespace TradeshowTravel.Domain
                 {
                     attendee.DateCompleted = null;
                 }
-
+                
                 try
                 {
                     attendee = DataRepo.SaveAttendee(attendee);
@@ -1605,6 +1608,12 @@ namespace TradeshowTravel.Domain
                                     attendee.DateRSVP = DateTime.Now;
                                     attendee = DataRepo.SaveAttendee(attendee);
                                     EmailSrv.SendRSVP(evt, attendee);
+
+                                    if (isNewUser)
+                                    {
+                                        EmailSrv.SendNewUser(evt, attendee);
+                                    }
+
                                     Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP to {attendee.Username} for event {eventID}.");
                                 }
                                 break;

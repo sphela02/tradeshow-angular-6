@@ -16,6 +16,7 @@ import { Role } from "./Enums";
         BadgeName: string;
         PassportNumber: string;
         PassportName: string;
+        PassportExpirationDate: Date;
         DOB: Date;
         Nationality: string;
         COB: string;
