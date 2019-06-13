@@ -17,6 +17,7 @@
     [COB]              VARCHAR (MAX) NULL,
     [COR]              VARCHAR (MAX) NULL,
     [COI]              VARCHAR (MAX) NULL,
+	[Visa]			   VARCHAR (11)	 NULL,
     [Privileges]	   INT			 CONSTRAINT [DF_Users_Privileges] DEFAULT ((0)) NOT NULL, 
     CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED ([Username] ASC),
     CONSTRAINT [FK_Users_Delegate] FOREIGN KEY ([DelegateUsername]) REFERENCES [dbo].[Users] ([Username])

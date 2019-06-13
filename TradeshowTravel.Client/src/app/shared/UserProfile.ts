@@ -25,4 +25,5 @@ export interface UserProfile {
     EventsAttended: number;
     DelegateUsername: string;
     Delegate: UserInfo;
+    Visa: string;
 }

@@ -121,6 +121,11 @@
                 .HasColumnOrder(18)
                 .IsRequired();
 
+            Property(p => p.Visa)
+                .HasColumnOrder(19)
+                .IsUnicode(false)
+                .IsOptional();
+
             HasKey(k => k.Username);
         }
     }
