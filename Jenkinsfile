@@ -64,7 +64,12 @@ node(agent) {
 
 				
 			  dir("TradeshowTravel.Client"){
-			  	bat "Robocopy /S dist ../Publish/${environment}"
+			    try {
+			  		bat "Robocopy /S dist ../Publish/${environment}"
+				  }
+                catch(e) {
+                    // gobble gobble gobble
+                }      
 			  }
             }
             catch(e) {
