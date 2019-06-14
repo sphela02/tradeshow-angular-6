@@ -15,6 +15,7 @@ export interface UserProfile {
     PassportNumber: string;
     PassportName: string;
     PassportExpirationDate: Date;
+    PassportExpirationDateNear: boolean;
     DOB: Date;
     Nationality: string;
     COB: string;
