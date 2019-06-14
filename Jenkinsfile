@@ -99,7 +99,7 @@ node(agent) {
             stage('Archive') {
                 try {
                     projects.each { proj ->
-                        archiveArtifacts artifacts: "\\${proj}\\Publish\\${environment}\\**\\*.*", onlyIfSuccessful: true    
+                        archiveArtifacts artifacts: "Publish\\${environment}\\**\\*.*", onlyIfSuccessful: true    
                     }
                 }
                 catch(e) {

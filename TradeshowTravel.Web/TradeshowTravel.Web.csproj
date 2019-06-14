@@ -227,7 +227,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>if $(ConfigurationName) == Debug (
+cd $(SolutionDir)TradeshowTravel.Client
+ng build --prod
+)</PreBuildEvent>
   </PropertyGroup>
 </Project>
