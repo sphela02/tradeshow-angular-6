@@ -53,10 +53,24 @@ namespace TradeshowTravel.Domain
         {
             var subject = $"[Action Requested] Event Travel Portal | RSVP: You have been invited to attend {evt.Name}";
 
-            var body = req.EmailText.Replace("<EventAttendee.Name>", attendee.Profile.FirstName)
+            const string RSVP_TEMPLATE = @"Hello<EventAttendee.Name>,
+
+We would like to inform you that you have been nominated to attend < EventInfo.Name > !RSVP by<Event.RsvpDueDate> to attend.
+
+Please Review : < Page: EventInfo.Name >
+
+ Thank you,";
+
+            var body = RSVP_TEMPLATE.Replace("<EventAttendee.Name>", attendee.Profile.FirstName)
                 .Replace("<Event.RsvpDueDate>", req.DueDate.ToShortDateString())
                 .Replace("<Page: EventInfo.Name>", getRSVPUrl(attendee.ID))
                 .Replace("<EventInfo.Name>", evt.Name);
+
+            List<Attachment> attachments = new List<Attachment>();
+            for(int i  =0; i< req.Attachments.Count; i++)
+            {
+                attachments.Add(new Attachment(req.Attachments[i].InputStream, req.Attachments[i].FileName));
+            }
 
             if (attendee.Profile.Delegate != null)
             {
@@ -64,11 +78,11 @@ namespace TradeshowTravel.Domain
                 cc.Add(attendee.Profile.Email);
                 cc.Add(evt.Owner.Email);
 
-                this.Send(attendee.Profile.Delegate.Email, subject, body, cc);
+                this.Send(attendee.Profile.Delegate.Email, subject, body, cc, attachments.ToArray());
             }
             else
             {
-                this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email);
+                this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email, attachments.ToArray());
             }
         }
 

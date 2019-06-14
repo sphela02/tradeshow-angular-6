@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 
 namespace TradeshowTravel.Domain.DTOs
 {
@@ -6,6 +7,6 @@ namespace TradeshowTravel.Domain.DTOs
     {
         public int[] AttendeeIDs { get; set; }
         public DateTime DueDate { get; set; }
-        public string EmailText { get; set; }
+        public HttpFileCollection Attachments { get; set; }
     }
 }

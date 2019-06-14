@@ -1,4 +1,4 @@
-﻿ 
+ 
     export interface RsvpRequest { 
         AttendeeIDs: number[];
         DueDate: Date;

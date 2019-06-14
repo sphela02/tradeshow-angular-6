@@ -496,7 +496,7 @@ export class TradeshowService {
     });
   }
 
-  sendRsvpRequest(eventID: number, req: RsvpRequest): Observable<boolean> {
+  sendRsvpRequest(eventID: number, req: FormData): Observable<boolean> {
     let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/sendrsvp";
     return new Observable(observer => {
       this.http.post(url, req, { withCredentials: true })

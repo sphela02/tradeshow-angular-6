@@ -10,6 +10,11 @@ namespace TradeshowTravel.Web.Controllers
     using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Web;
+    using Newtonsoft.Json;
+    using System;
+    using System.Collections.Specialized;
+    using System.Linq;
 
     [Authorize]
     [EnableCors]
@@ -273,8 +278,22 @@ namespace TradeshowTravel.Web.Controllers
 
         [HttpPost]
         [Route("~/api/events/{eventID}/sendrsvp")]
-        public IHttpActionResult SendRsvpRequests(int eventID, [FromBody] RsvpRequest req)
+        public IHttpActionResult SendRsvpRequests(int eventID)
         {
+            HttpRequest request = HttpContext.Current.Request;
+            RsvpRequest req = new RsvpRequest();
+
+            req.Attachments = request.Files;
+
+            string dateTime = request.Params["DueDate"];
+            DateTime dueDate;
+            if(DateTime.TryParse(dateTime.Substring(0, dateTime.IndexOf('-')), out dueDate))
+            {
+                req.DueDate = dueDate;
+            }
+
+            req.AttendeeIDs = request.Params["AttendeeIDs"].Split(',').Select(i => Convert.ToInt32(i)).ToArray();
+
             ValidationResponse<bool> response = Service.SendRSVPRequests(eventID, req);
 
             if (response.Success)

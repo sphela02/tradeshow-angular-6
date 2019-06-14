@@ -9,6 +9,7 @@ import { RsvpRequest } from '../shared/RsvpRequest';
 import { AttendeeStatus } from '../shared/Enums';
 
 import { UserProfile } from '../shared/UserProfile';
+import { Alert } from 'selenium-webdriver';
 
 const RSVP_TEMPLATE = `Hello <EventAttendee.Name>,
 
@@ -37,6 +38,7 @@ export class SendRsvpPopupComponent implements OnInit {
   private _currentUser: UserProfile;
 
   errorMsg: string;
+  attachmentList: File[];
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -51,6 +53,8 @@ export class SendRsvpPopupComponent implements OnInit {
         + "\n" + profile.Telephone
         + "\nEvent Management\nTeam Harris Corporation";
     });
+
+    this.attachmentList = [];
   }
 
   @Input()
@@ -106,6 +110,27 @@ export class SendRsvpPopupComponent implements OnInit {
     return true;
   }
 
+  onFileSelected(event) {
+    this.errorMsg = null;
+    if (event.target.files && event.target.files[0]) {
+      var isExist = false;
+      for (var i = 0; i < this.attachmentList.length; i++) {
+        if (this.attachmentList[i].name == event.target.files[0].name && this.attachmentList[i].size == event.target.files[0].size) {
+          isExist = true;
+          this.errorMsg = "Attachment already added.";
+        }
+      }
+
+      if (!isExist) {
+        this.attachmentList.push(<File>event.target.files[0]);
+      }
+    }
+  }
+
+  onRemoveAttachment(index) {
+    this.attachmentList.splice(index, 1);
+  }
+
   private onInputsChanged() {
     if (this.event) {
       if (this.event.StartDate) {
@@ -124,10 +149,10 @@ export class SendRsvpPopupComponent implements OnInit {
       Object.keys(this.attendees).forEach(k => {
         let attendee: EventAttendee = this.attendees[Number(k)];
         if (attendee.Status == AttendeeStatus.Pending ||
-            attendee.Status == AttendeeStatus.Invited) {
+          attendee.Status == AttendeeStatus.Invited) {
           let name: string = attendee.Profile.FirstName + " " +
-                              attendee.Profile.LastName + " (" +
-                              attendee.Username + ")";
+            attendee.Profile.LastName + " (" +
+            attendee.Username + ")";
           this._names.push(name);
           this.request.AttendeeIDs.push(Number(k));
         }
@@ -140,8 +165,20 @@ export class SendRsvpPopupComponent implements OnInit {
     if (!this.isValid) {
       return;
     }
+
     this.loading = true;
-    this.service.sendRsvpRequest(this.event.ID, this.request)
+
+    var fd = new FormData();
+
+    for (var key in this.request) {
+      alert(this.request[key]);
+      fd.append(key, this.request[key]);
+    }
+    for (var i = 0; i < this.attachmentList.length; i++) {
+      fd.append('file', this.attachmentList[i], this.attachmentList[i].name);
+    }
+
+    this.service.sendRsvpRequest(this.event.ID, fd)
       .subscribe(resp => {
         this.loading = false;
         this.event.RsvpDueDate = this.request.DueDate;
