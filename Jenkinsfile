@@ -84,7 +84,7 @@ node(agent) {
                 try {
                     projects.each { proj ->
                         dir(proj) {
-                            def source = ".\\Publish\\${environment}"
+                            def source = "../Publish/${environment}"
                             deploy(source, destinationPath)
                         }
                     }
