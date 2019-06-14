@@ -79,19 +79,6 @@ node(agent) {
             }
         }
 
-        stage('Test') {
-            try {
-                dir(proj) {
-                    test(compiler, testTool, testProjects, configuration)
-                }
-            }
-            catch(e) {
-                currentBuild.result = "Unstable"
-                notify(currentBuild.result, 'Test')
-                throw e
-            }
-        }
-
         if(shouldDeploy) {
             stage('Deploy') {		
                 try {
