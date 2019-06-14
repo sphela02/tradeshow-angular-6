@@ -10,7 +10,7 @@ def testTool = 'mstest'
 //def testProjects = ['CHANGE THIS'] as String[]
 
 def environment = 'Dev'
-def configuration = 'Debug'
+def configuration = 'MLBIISDEVL1R2'
 
 def shouldDeploy = false
 def destinationPath = "\\\\MLBIISDEVL1R2\\tradeshowtravel"
