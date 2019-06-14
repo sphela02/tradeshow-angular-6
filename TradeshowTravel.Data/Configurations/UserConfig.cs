@@ -131,8 +131,6 @@
                 .HasColumnOrder(20)
                 .IsUnicode(false)
                 .IsOptional();
-            
-
 
             HasKey(k => k.Username);
         }
