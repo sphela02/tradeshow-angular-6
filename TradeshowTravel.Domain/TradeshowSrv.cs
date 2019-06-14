@@ -1833,8 +1833,8 @@ namespace TradeshowTravel.Domain
                 ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Email);
                 ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Telephone != null) ? attendee.Profile.Telephone.Replace("+", "") : "");
                 ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Mobile != null) ? attendee.Profile.Mobile.Replace("+", "") : "");
-                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.BadgeName);
-                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.PassportExpirationDate?.ToString("MM dd, yyyy"));
+                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.BadgeName);
+                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.PassportExpirationDate?.ToString("MM dd, yyyy"));
 
                     //set the travel document booleans
                     var PassportDoc = "N";
