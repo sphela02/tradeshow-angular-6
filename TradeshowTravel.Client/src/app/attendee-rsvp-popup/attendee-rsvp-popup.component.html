@@ -11,6 +11,22 @@
         [event]="attendee?.Event" 
         [readonly]="true">
       </app-event-info>
+      <div class="p-3">
+        <input type="checkbox" class="filled-in" id="disclaimer" [(ngModel)]="isDisclaimerChecked">
+        <label for="disclaimer" class="mb-3">
+          <p class="mb-1">
+            <strong>A block of rooms have been reserved, so please do not make your own reservations.</strong> 
+            You will need to book your airfare through Concur. If you are driving and do not require lodging, 
+            <strong>you still need to fill out all required fields.</strong> 
+            Delegates will be assigned automatically for VP and above by anyone can assign a delegate. 
+            Both you and your delegate will receive all e-mails from the travel portal. 
+            Make sure date and changes or cancellations are made in the portal to keep all information up to date in real time.
+          </p>
+          <p class="mb-1">
+            This portal serves not only as the approved attendee list but also provides historical information for the Tradeshow planning team.
+          </p>
+        </label>
+      </div> 
     </div>
     <div class="mt-3">
       <span class="h6">Do you want to RSVP for this event?</span>
@@ -19,7 +35,7 @@
       <button class="btn btn-secondary p-2 m-0" style="border: 1px solid black!important" (click)="onNoClicked()">
         NO, I WILL NOT ATTEND
       </button>
-      <button class="btn btn-info py-2 my-0" (click)="onYesClicked()">
+      <button class="btn btn-info py-2 my-0" (click)="onYesClicked()" [disabled]="!isDisclaimerChecked">
         YES, I WILL ATTEND
       </button>
     </div>
