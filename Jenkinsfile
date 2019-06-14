@@ -62,9 +62,10 @@ node(agent) {
                     }
                 }
 
-				dir("TradeshowTravel.Client"){
-					bat "ng build"
-				}
+				
+			  dir("TradeshowTravel.Client"){
+			  	bat "Robocopy /S dist ../Publish/${environment}"
+			  }
             }
             catch(e) {
                 currentBuild.result = "Failed"
@@ -95,10 +96,6 @@ node(agent) {
                             deploy(source, destinationPath)
                         }
                     }
-
-					dir("TradeshowTravel.Client"){
-						bat "Robocopy /S dist ../Publish/Dev"
-					}
                 }
                 catch(e) {
                     currentBuild.result = "Failed"
