@@ -1730,8 +1730,8 @@ namespace TradeshowTravel.Domain
             ws.Cells[rowIndex, ++colIndex].SetValue("Name on Badge");
             ws.Cells[rowIndex, ++colIndex].SetValue("Passport Expiration Date");
             ws.Cells[rowIndex, ++colIndex].SetValue("Passport");
-                ws.Cells[rowIndex, ++colIndex].SetValue("VISA");
-                ws.Cells[rowIndex, ++colIndex].SetValue("Other");
+            ws.Cells[rowIndex, ++colIndex].SetValue("VISA");
+            ws.Cells[rowIndex, ++colIndex].SetValue("Other");
 
                 if (evt.Fields != null)
             {
