@@ -218,11 +218,6 @@ namespace TradeshowTravel.Domain
             }
         }
 
-        private void CompareEventAttendee(EventAttendee eventAttendee)
-        {
-
-        }
-
         // A new attendee has been added. RSVP request sent.
         public void SendAttendeeAddedNotifications(EventInfo evt, string username)
         {
