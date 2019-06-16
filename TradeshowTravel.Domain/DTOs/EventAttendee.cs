@@ -5,6 +5,74 @@ namespace TradeshowTravel.Domain.DTOs
 {
     public class EventAttendee
     {
+        public FieldComparisonResponse Compare(EventAttendee originalEventAttendee)
+        {
+            FieldComparisonResponse response = new FieldComparisonResponse();
+
+            if (DateRSVP != originalEventAttendee.DateRSVP)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(DateRSVP), originalEventAttendee.DateRSVP.ToDTOFormat(), DateRSVP.ToDTOFormat()));
+            }
+
+            if (DateCompleted != originalEventAttendee.DateCompleted)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(DateCompleted), originalEventAttendee.DateCompleted.ToDTOFormat(), DateCompleted.ToDTOFormat()));
+            }
+
+            if (Arrival != originalEventAttendee.Arrival)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(Arrival), originalEventAttendee.Arrival.ToDTOFormat(), Arrival.ToDTOFormat()));
+            }
+
+            if (Departure != originalEventAttendee.Departure)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(Departure), originalEventAttendee.Departure.ToDTOFormat(), Departure.ToDTOFormat()));
+            }
+
+            if (TravelMethod != originalEventAttendee.TravelMethod)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(TravelMethod), originalEventAttendee.TravelMethod, TravelMethod));
+            }
+
+            if (CCNumber != originalEventAttendee.CCNumber)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(CCNumber), originalEventAttendee.CCNumber, CCNumber));
+            }
+
+            if (CCExpiration != originalEventAttendee.CCExpiration)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(CCExpiration), originalEventAttendee.CCExpiration, CCExpiration));
+            }
+
+            if (CVVNumber != originalEventAttendee.CVVNumber)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(CVVNumber), originalEventAttendee.CVVNumber, CVVNumber));
+            }
+
+            if (IsHotelNeeded != originalEventAttendee.IsHotelNeeded)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(IsHotelNeeded), originalEventAttendee.IsHotelNeeded, IsHotelNeeded));
+            }
+
+            if (IsAttending != originalEventAttendee.IsAttending)
+            {
+                response.Values.Add(new FieldComparisionInfo(nameof(IsAttending), originalEventAttendee.IsAttending, IsAttending));
+            }
+
+            //User defined properties below
+            foreach (var property in Properties)
+            {
+                var originalPropertyValues = originalEventAttendee.Properties[property.Key];
+
+                if (string.Equals(originalPropertyValues, property.Value))
+                {
+                    response.Values.Add(new FieldComparisionInfo(nameof(property.Key), originalPropertyValues, property.Value));
+                }
+            }
+
+            return response;
+        }
+
         public int ID { get; set; }
         public int EventID { get; set; }
         public string Username { get; set; }
