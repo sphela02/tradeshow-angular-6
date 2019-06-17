@@ -26,6 +26,7 @@ namespace TradeshowTravel.Domain.DTOs
         {
             "PassportName",
             "PassportNumber",
+            "PassportExpirationDate",
             "DOB",
             "Nationality",
             "COB",
@@ -45,6 +46,14 @@ namespace TradeshowTravel.Domain.DTOs
         public string BadgeName { get; set; }
         public string PassportNumber { get; set; }
         public string PassportName { get; set; }
+        public DateTime? PassportExpirationDate { get;set; }
+        public bool PassportExpirationDateNear
+        {
+            get
+            {
+                return PassportExpirationDate == null ? false : PassportExpirationDate < DateTime.Now.AddMonths(6);
+            }
+        }
         public DateTime? DOB { get; set; }
         public string Nationality { get; set; }
         public string COB { get; set; }
@@ -56,6 +65,7 @@ namespace TradeshowTravel.Domain.DTOs
         public int EventsAttended { get; set; }
         public string DelegateUsername { get; set; }
         public UserInfo Delegate { get; set; }
+        public string Visa { get; set; }
         
         public UserProfile()
         {

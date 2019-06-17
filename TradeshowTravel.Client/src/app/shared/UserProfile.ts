@@ -14,6 +14,8 @@ export interface UserProfile {
     BadgeName: string;
     PassportNumber: string;
     PassportName: string;
+    PassportExpirationDate: Date;
+    PassportExpirationDateNear: boolean;
     DOB: Date;
     Nationality: string;
     COB: string;
@@ -25,4 +27,5 @@ export interface UserProfile {
     EventsAttended: number;
     DelegateUsername: string;
     Delegate: UserInfo;
+    Visa: string;
 }

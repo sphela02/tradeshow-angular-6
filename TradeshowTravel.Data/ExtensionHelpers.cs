@@ -35,6 +35,7 @@ namespace TradeshowTravel.Data
                 BadgeName = user.BadgeName,
                 PassportNumber = (includePassportInfo) ? user.PassportNumber : null,
                 PassportName = (includePassportInfo) ? user.PassportName : null,
+                PassportExpirationDate = (includePassportInfo) ? user.PassportExpirationDate.ToDateTime() : null,
                 DOB = (includePassportInfo) ? user.DOB.ToDateTime() : null,
                 Nationality = (includePassportInfo) ? user.Nationality : null,
                 COB = (includePassportInfo) ? user.COB : null,
@@ -42,7 +43,8 @@ namespace TradeshowTravel.Data
                 COI = (includePassportInfo) ? user.COI : null,
                 Privileges = user.Privileges,
                 Role = Role.Attendee,
-                ShowPicture = !string.IsNullOrWhiteSpace(user.EmplID)
+                ShowPicture = !string.IsNullOrWhiteSpace(user.EmplID),
+                Visa = user.Visa
             };
 
             if (user.Delegate != null)

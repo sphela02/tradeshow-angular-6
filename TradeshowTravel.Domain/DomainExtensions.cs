@@ -71,6 +71,7 @@ namespace TradeshowTravel.Domain
             {
                 profile.PassportName = null;
                 profile.PassportNumber = null;
+                profile.PassportExpirationDate = null;
                 profile.Nationality = null;
                 profile.DOB = null;
                 profile.COB = null;
@@ -329,6 +330,18 @@ namespace TradeshowTravel.Domain
             }
             
             return true;
+        }
+
+        public static bool IsBusinessLeadForSegment(this EventUser eventUser, string eventSegments)
+        {
+            //Business lead role is on a segment basis. In this method, we check if a given user belongs to the segment(s) of the current event
+            if (string.IsNullOrWhiteSpace(eventSegments))
+            {
+                return false;
+            }
+
+            string[] segments = eventSegments.Split(',');
+            return eventUser.Role.HasFlag(Role.Business) && segments.Contains(eventUser.User.Segment);
         }
     }
 }

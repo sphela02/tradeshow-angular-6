@@ -16,6 +16,7 @@ import { Role } from "./Enums";
         BadgeName: string;
         PassportNumber: string;
         PassportName: string;
+        PassportExpirationDate: Date;
         DOB: Date;
         Nationality: string;
         COB: string;
@@ -27,4 +28,5 @@ import { Role } from "./Enums";
         EventsAttended: number;
         DelegateUsername: string;
         Delegate: UserInfo;
+        Visa: string;
     }

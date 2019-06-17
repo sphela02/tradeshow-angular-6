@@ -101,7 +101,20 @@
           <input type="text" id="passportNumber" name="passportNumber" class="form-control"
                 [(ngModel)]="profile.PassportNumber">
         </div>
-        
+        <div class="md-form" *ngIf="showPassportInfo">
+          <label for="passportExpirationDate" class="active">
+            Passport Expiration Date <span class="text-danger" [hidden]="!event">*</span>
+          </label>
+          <kendo-datepicker
+            id="passportExpirationDate" name="passportExpirationDate"
+            [(ngModel)]="profile.PassportExpirationDate"
+            [activeView]="'decade'"
+            format="MM/dd/yyyy"
+            formatPlaceholder="formatPattern"
+            placeholder=" "
+            style="width: 100%;">
+          </kendo-datepicker>
+        </div>
         <div class="md-form" *ngIf="showPassportInfo">
           <label for="nationality" class="active">
             Nationality <span class="text-danger" [hidden]="!event">*</span>
