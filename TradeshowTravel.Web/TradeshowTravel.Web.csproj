@@ -231,10 +231,4 @@
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
-
-  <Target Name="NpmTasksBeforePublish" BeforeTargets="BeforePublish">
-    <Exec Command="cd $(SolutionDir)TradeshowTravel.Client" />
-    <Exec Command="node_modules/.bin/ng.cmd build --prod" />
-  </Target>
-
 </Project>
