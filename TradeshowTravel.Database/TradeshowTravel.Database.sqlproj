@@ -63,6 +63,7 @@
     <Folder Include="Properties" />
     <Folder Include="dbo\" />
     <Folder Include="dbo\Tables\" />
+    <Folder Include="dbo\Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\TradeshowUsers.sql" />
@@ -78,5 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="TradeshowTravel.Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dbo\Scripts\Sprint01.sql" />
   </ItemGroup>
 </Project>

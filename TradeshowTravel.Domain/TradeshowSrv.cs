@@ -1457,6 +1457,9 @@ namespace TradeshowTravel.Domain
                     return ValidationResponse<List<EventAttendee>>.CreateFailure("One or more attendee usernames were not specified.");
                 }
 
+                // Check if new user before saving user information
+                bool isNewUser = DataRepo.GetProfile(attendee.Username) == null;
+
                 // Check permissions
                 if (CurrentUser.Privileges != Permissions.Admin)
                 {
@@ -1570,7 +1573,7 @@ namespace TradeshowTravel.Domain
                 {
                     attendee.DateCompleted = null;
                 }
-
+                
                 try
                 {
                     attendee = DataRepo.SaveAttendee(attendee);
@@ -1606,7 +1609,7 @@ namespace TradeshowTravel.Domain
                                     attendee = DataRepo.SaveAttendee(attendee);
                                     EmailSrv.SendRSVP(evt, attendee);
 
-                                    if (curStatus == AttendeeStatus.Unknown)
+                                    if (isNewUser)
                                     {
                                         EmailSrv.SendNewUser(evt, attendee);
                                     }
@@ -1725,6 +1728,7 @@ namespace TradeshowTravel.Domain
             ws.Cells[rowIndex, ++colIndex].SetValue("Work Number");
             ws.Cells[rowIndex, ++colIndex].SetValue("Cell Number");
             ws.Cells[rowIndex, ++colIndex].SetValue("Name on Badge");
+            ws.Cells[rowIndex, ++colIndex].SetValue("Passport Expiration Date");
             ws.Cells[rowIndex, ++colIndex].SetValue("Passport");
             ws.Cells[rowIndex, ++colIndex].SetValue("VISA");
             ws.Cells[rowIndex, ++colIndex].SetValue("Other");
@@ -1830,6 +1834,7 @@ namespace TradeshowTravel.Domain
                 ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Telephone != null) ? attendee.Profile.Telephone.Replace("+", "") : "");
                 ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Mobile != null) ? attendee.Profile.Mobile.Replace("+", "") : "");
                 ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.BadgeName);
+                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.PassportExpirationDate?.ToString("MM dd, yyyy"));
 
                     //set the travel document booleans
                     var PassportDoc = "N";

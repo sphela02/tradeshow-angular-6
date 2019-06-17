@@ -90,7 +90,16 @@ Please Review : < Page: EventInfo.Name >
         public void SendRSVP(EventInfo evt, EventAttendee attendee)
         {
             var subject = $"[Action Requested] Event Travel Portal | RSVP: You have been invited to attend {evt.Name}";
-            var body = $"Hello {attendee.Profile.FirstName},\n\nYou have been nominated to attend {evt.Name}! RSVP by {evt.RsvpDueDate.GetValueOrDefault().ToShortDateString()} to attend.\n\nRSVP Here: {getRSVPUrl(attendee.ID)}\n\n{getSignature(evt)}";
+            var body = $"Hello {attendee.Profile.FirstName}," +
+                    $"\n\nYou have been nominated to attend {evt.Name}! " +
+                    $"You must RSVP by {evt.RsvpDueDate.GetValueOrDefault().ToShortDateString()} to attend. " +
+                    $"\n\nA block of rooms have been reserved, so please do not make your own reservations. " +
+                    $"You will need to book your airfare through Concur. If you are driving and do not require lodging, " +
+                    $"you still need to fill out all required fields. Delegates will be assigned automatically for VP and " +
+                    $"above but anyone can assign a delegate. Both you and your delegate will receive all e-mails from the travel portal. " +
+                    $"Make sure date and changes or cancellations are made in the portal to keep all information up to date in real time. " +
+                    $"\n\nThis portal serves not only as the approved attendee list but also provides historical information for the Tradeshow planning team." +
+                    $"\n\nRSVP Here: {getRSVPUrl(attendee.ID)}\n\n{getSignature(evt)}";
 
             if (attendee.Profile.Delegate != null)
             {

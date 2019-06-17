@@ -33,6 +33,7 @@ import { PersonFinderComponent } from './person-finder/person-finder.component';
 import { EventDeletePopupComponent } from './event-delete-popup/event-delete-popup.component';
 import { GridSegFilterComponent } from './shared/grid-seg-filter.component';
 import { GridRsvpFilterComponent } from './shared/grid-rsvp-filter.component';
+import { GridYesNoFilterComponent } from './shared/grid-yesno-filter.component';
 import { EventUsersPopupComponent } from './event-users-popup/event-users-popup.component';
 import { EventFieldPopupComponent } from './event-field-popup/event-field-popup.component';
 import { AlertPopupComponent } from './alert-popup/alert-popup.component';
@@ -107,7 +108,8 @@ import { UploadModule } from '@progress/kendo-angular-upload';
     EventInfoComponent,
     PrivilegedUsersListComponent,
     PrivilegedUsersPopupComponent,
-    ProfileImageUploadPopupComponent
+    ProfileImageUploadPopupComponent,
+    GridYesNoFilterComponent
   ],
   entryComponents: [
     ProfileEditPopupComponent,
