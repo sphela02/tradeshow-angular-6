@@ -285,14 +285,15 @@ namespace TradeshowTravel.Web.Controllers
 
             req.Attachments = request.Files;
 
-            string dateTime = request.Params["DueDate"];
+            string dateTime = HttpUtility.UrlDecode(request.Params["DueDate"]);
             DateTime dueDate;
             if(DateTime.TryParse(dateTime.Substring(0, dateTime.IndexOf('-')), out dueDate))
             {
                 req.DueDate = dueDate;
             }
 
-            req.AttendeeIDs = request.Params["AttendeeIDs"].Split(',').Select(i => Convert.ToInt32(i)).ToArray();
+            req.AttendeeIDs = HttpUtility.UrlDecode(request.Params["AttendeeIDs"]).Split(',').Select(i => Convert.ToInt32(i)).ToArray();
+            req.EmailText = HttpUtility.UrlDecode(request.Params["EmailText"]);
 
             ValidationResponse<bool> response = Service.SendRSVPRequests(eventID, req);
 

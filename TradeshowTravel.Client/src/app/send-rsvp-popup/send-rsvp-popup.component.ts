@@ -171,8 +171,7 @@ export class SendRsvpPopupComponent implements OnInit {
     var fd = new FormData();
 
     for (var key in this.request) {
-      alert(this.request[key]);
-      fd.append(key, this.request[key]);
+      fd.append(key, escape(this.request[key]));
     }
     for (var i = 0; i < this.attachmentList.length; i++) {
       fd.append('file', this.attachmentList[i], this.attachmentList[i].name);
