@@ -65,6 +65,13 @@ node(agent) {
 				
 			  dir("TradeshowTravel.Client"){
 			    try {
+					echo "Running npm install"
+					bat "npm install"
+
+					echo "Building Angular"
+					bat "node_modules/.bin/ng.cmd build --prod"
+
+					echo "Copying Angular files to project publish folder"
 			  		bat "Robocopy /S dist ../Publish/${environment}"
 				  }
                 catch(e) {
