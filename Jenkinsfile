@@ -15,7 +15,7 @@ def configuration = 'MLBIISDEVL1R2'
 def shouldDeploy = false
 def destinationPath = "\\\\MLBIISDEVL1R2\\tradeshowtravel"
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev')|| env.BRANCH_NAME.equalsIgnoreCase('feature/TSTRAV-1-ghuang01')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     //TODO Change the "CHANGE THIS" strings to the correct values and then uncomment.
    destinationPath = "\\\\MLBIISDEVL1R2\\tradeshowtravel"
 
@@ -62,22 +62,23 @@ node(agent) {
                     }
                 }
 
-				
-			  dir("TradeshowTravel.Client"){
-			    try {
-					echo "Running npm install"
-					bat "npm install"
+				if(shouldDeploy){
+                    dir("TradeshowTravel.Client"){
+                        try {
+                            echo "Running npm install"
+                            bat "npm install"
 
-					echo "Building Angular"
-					bat "node_modules/.bin/ng.cmd build --prod"
+                            echo "Building Angular"
+                            bat "node_modules/.bin/ng.cmd build --prod"
 
-					echo "Copying Angular files to project publish folder"
-			  		bat "Robocopy /S dist ../Publish/${environment}"
-				  }
-                catch(e) {
-                    // gobble gobble gobble
-                }      
-			  }
+                            echo "Copying Angular files to project publish folder"
+                            bat "Robocopy /S dist ../Publish/${environment}"
+                        }
+                        catch(e) {
+                            // gobble gobble gobble
+                        }      
+                    }
+                }
             }
             catch(e) {
                 currentBuild.result = "Failed"
