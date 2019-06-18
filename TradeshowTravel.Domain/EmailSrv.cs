@@ -6,6 +6,7 @@ namespace TradeshowTravel.Domain
 {
     using Domain.DTOs;
     using System.IO;
+    using System.Text;
     using System.Web;
 
     public class EmailSrv
@@ -13,6 +14,13 @@ namespace TradeshowTravel.Domain
         private readonly string smtpServer = "mail.harris.com";
         private readonly string sender = "noreply-eventtravelportal@harris.com";
         private readonly string baseUrl = "https://tradeshowtravel.harris.com/";
+        private const string FIELD_CHANGE_COMPARISON_TABLE = @"<table border='1'>
+	                                                                                                                                <thead><tr><th>Field</th><th>From</th><th>To</th></tr></thead>
+	                                                                                                                                <tbody>{0}</tbody>
+                                                                                                                                </table>";
+
+        private const string FIELD_CHANGE_ROW = "<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>";
+
         private IDataRepository repo = null;
 
         public EmailSrv(IDataRepository repo)
@@ -229,13 +237,14 @@ namespace TradeshowTravel.Domain
         }
 
         // attendee updated their info.
-        public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee)
+        public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee, FieldComparisonResponse fieldComparisonResponse)
         {
             var subject = $"Event Travel Portal | {evt.Name}: Attendee information has been updated";
-            var body = $"Hello {evt.Owner.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details or has canceled.\n\nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
+            var fieldComparisonTable = createFieldComparisonTable(fieldComparisonResponse);
+            var body = $"Hello {evt.Owner.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details. The following changes were made: \n {fieldComparisonTable} \nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
 
             // send to lead
-            this.Send(evt.Owner.Email, subject, body);
+            this.Send(evt.Owner.Email, subject, body, isBodyHtml: true);
 
             // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)
@@ -243,11 +252,12 @@ namespace TradeshowTravel.Domain
                 foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
                   || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
-                    body = $"Hello {eventUser.User.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details or has canceled.\n\nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
-                    this.Send(eventUser.User.Email, subject, body);
+                    body = $"Hello {eventUser.User.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details. The following changes were made: \n {fieldComparisonTable} \nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
+                    this.Send(eventUser.User.Email, subject, body, isBodyHtml: true);
                 }
             }
         }
+
 
         // A new attendee has been added. RSVP request sent.
         public void SendAttendeeAddedNotifications(EventInfo evt, string username)
@@ -337,9 +347,15 @@ namespace TradeshowTravel.Domain
             this.Send(evt.Owner.Email, subject, body);
         }
 
-        private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null)
+        private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null, bool isBodyHtml = false)
         {
             SmtpClient client = new SmtpClient(this.smtpServer);
+
+            if (isBodyHtml)
+            {
+                body = body.Replace("\n", "</br>");
+            }
+
             var message = new MailMessage(this.sender, to, subject, body);
 
             if (!string.IsNullOrWhiteSpace(cc))
@@ -355,6 +371,7 @@ namespace TradeshowTravel.Domain
                 }
             }
 
+            message.IsBodyHtml = isBodyHtml;
             client.Send(message);
         }
 
@@ -400,6 +417,16 @@ namespace TradeshowTravel.Domain
             return repo.GetProfile(username);
         }
 
+        private string createFieldComparisonTable(FieldComparisonResponse fieldComparisonResponse)
+        {
+            StringBuilder fieldChangeRows = new StringBuilder();
+            foreach (var fieldChangeSet in fieldComparisonResponse.Values)
+            {
+                fieldChangeRows.Append(string.Format(FIELD_CHANGE_ROW, fieldChangeSet.FieldName, fieldChangeSet.OriginalValue, fieldChangeSet.NewValue));
+            }
+
+            return string.Format(FIELD_CHANGE_COMPARISON_TABLE, fieldChangeRows);
+        }
         //public void test(string body = null)
         //{
         //    if(body == null)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TradeshowTravel.Domain.DTOs
 {
@@ -9,24 +10,19 @@ namespace TradeshowTravel.Domain.DTOs
         {
             FieldComparisonResponse response = new FieldComparisonResponse();
 
-            if (DateRSVP != originalEventAttendee.DateRSVP)
+            if (!DateRSVP.DatePartEquals(originalEventAttendee.DateRSVP))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(DateRSVP), originalEventAttendee.DateRSVP.ToDTOFormat(), DateRSVP.ToDTOFormat()));
+                response.Values.Add(new FieldComparisionInfo(nameof(DateRSVP), originalEventAttendee.DateRSVP.ToShortDateFormat(), DateRSVP.ToShortDateFormat()));
             }
 
-            if (DateCompleted != originalEventAttendee.DateCompleted)
+            if (!Arrival.DatePartEquals(originalEventAttendee.Arrival))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(DateCompleted), originalEventAttendee.DateCompleted.ToDTOFormat(), DateCompleted.ToDTOFormat()));
+                response.Values.Add(new FieldComparisionInfo(nameof(Arrival), originalEventAttendee.Arrival.ToShortDateFormat(), Arrival.ToShortDateFormat()));
             }
 
-            if (Arrival != originalEventAttendee.Arrival)
+            if (!Departure.DatePartEquals(originalEventAttendee.Departure))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(Arrival), originalEventAttendee.Arrival.ToDTOFormat(), Arrival.ToDTOFormat()));
-            }
-
-            if (Departure != originalEventAttendee.Departure)
-            {
-                response.Values.Add(new FieldComparisionInfo(nameof(Departure), originalEventAttendee.Departure.ToDTOFormat(), Departure.ToDTOFormat()));
+                response.Values.Add(new FieldComparisionInfo(nameof(Departure), originalEventAttendee.Departure.ToShortDateFormat(), Departure.ToShortDateFormat()));
             }
 
             if (TravelMethod != originalEventAttendee.TravelMethod)
@@ -62,11 +58,15 @@ namespace TradeshowTravel.Domain.DTOs
             //User defined properties below
             foreach (var property in Properties)
             {
-                var originalPropertyValues = originalEventAttendee.Properties[property.Key];
+                var originalPropertyValues = originalEventAttendee.Properties.ContainsKey(property.Key) ? originalEventAttendee.Properties[property.Key] : null;
 
-                if (string.Equals(originalPropertyValues, property.Value))
+                if (!string.Equals(originalPropertyValues, property.Value))
                 {
-                    response.Values.Add(new FieldComparisionInfo(nameof(property.Key), originalPropertyValues, property.Value));
+                    var eventField = Event.Fields.FirstOrDefault(f => f.ID == property.Key);
+                    if (eventField != null) //It should never be null but just in case.
+                    {
+                        response.Values.Add(new FieldComparisionInfo(eventField.Label, originalPropertyValues, property.Value));
+                    }
                 }
             }
 

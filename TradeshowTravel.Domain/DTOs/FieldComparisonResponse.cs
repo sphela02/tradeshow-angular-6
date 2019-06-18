@@ -23,7 +23,7 @@ namespace TradeshowTravel.Domain.DTOs
         {
             FieldName = fieldName;
             OriginalValue = originalValue;
-            NewValue = NewValue;
+            NewValue = newValue;
         }
         public string OriginalValue { get; private set; }
         public string NewValue { get; private set; }

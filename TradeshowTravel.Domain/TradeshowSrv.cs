@@ -1573,9 +1573,13 @@ namespace TradeshowTravel.Domain
                 {
                     attendee.DateCompleted = null;
                 }
-                
+
+                FieldComparisonResponse fieldComparisonResponse = null;
                 try
                 {
+                    EventAttendee oldEventAttendee = DataRepo.GetAttendee(attendee.ID);
+                    fieldComparisonResponse = attendee.Compare(oldEventAttendee);
+
                     attendee = DataRepo.SaveAttendee(attendee);
                     eventAttendees[i] = attendee;
                 }
@@ -1633,7 +1637,7 @@ namespace TradeshowTravel.Domain
                     else if (curStatus == AttendeeStatus.Accepted)
                     {
                         // TODO: Send notification to Lead / Support / BCD that user has updated their data.
-                        EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee);
+                        EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
                 }
