@@ -10,11 +10,6 @@ namespace TradeshowTravel.Domain.DTOs
         {
             FieldComparisonResponse response = new FieldComparisonResponse();
 
-            if (!DateRSVP.DatePartEquals(originalEventAttendee.DateRSVP))
-            {
-                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(DateRSVP)), originalEventAttendee.DateRSVP.ToShortDateFormat(), DateRSVP.ToShortDateFormat()));
-            }
-
             if (!Arrival.DatePartEquals(originalEventAttendee.Arrival))
             {
                 response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(Arrival)), originalEventAttendee.Arrival.ToShortDateFormat(), Arrival.ToShortDateFormat()));
@@ -33,6 +28,11 @@ namespace TradeshowTravel.Domain.DTOs
             if (!string.Equals(CCNumber,originalEventAttendee.CCNumber))
             {
                 response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(CCNumber)), originalEventAttendee.CCNumber, CCNumber));
+            }
+
+            if (!string.Equals(CVVNumber, originalEventAttendee.CVVNumber))
+            {
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(CVVNumber)), originalEventAttendee.CVVNumber, CVVNumber));
             }
 
             if (!string.Equals(CCExpiration,originalEventAttendee.CCExpiration))
