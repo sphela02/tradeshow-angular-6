@@ -9,7 +9,7 @@
       {{ item.File.name }} <a (click)="onRemoveAttachment(i)"><i class="fa fa-times" aria-hidden="true"></i></a>
     </span>
     <div class="add-attachment font-weight-bold mt-1">
-      <a (click)="inputFile.click()"><i class="fa fa-plus" aria-hidden="true"></i>Add Attachment</a><span class="max-size">max file size (4 MB)</span>
+      <a (click)="inputFile.click()"><i class="fa fa-plus mx-1" aria-hidden="true"></i>Add Attachment</a><span class="max-size mx-2">max file size (4 MB)</span>
       <input type="file" #inputFile
              (change)="onFileSelected($event)"
              accept="*" hidden>

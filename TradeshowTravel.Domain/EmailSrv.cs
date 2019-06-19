@@ -91,10 +91,10 @@ namespace TradeshowTravel.Domain
                 this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email, attachments.ToArray());
             }
 
-            TryRemoveTempFiles(folder, attachments);
+            RemoveTempFiles(folder, attachments);
         }
 
-        private static void TryRemoveTempFiles(string folder, List<Attachment> attachments)
+        private static void RemoveTempFiles(string folder, List<Attachment> attachments)
         {
             foreach (object o in attachments)
             {
