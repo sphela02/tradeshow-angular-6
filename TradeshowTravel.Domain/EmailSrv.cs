@@ -234,6 +234,39 @@ namespace TradeshowTravel.Domain
             //this.Send(attendee.Profile.Email, subject, body);
         }
 
+        // attendee cancels their reservation. It used to the same email as "Attendee information has been updated". Since TSTRAV-1, we splited it into two separate emails.
+        public void SendUserCancelledReservationNotification(EventInfo evt, EventAttendee attendee)
+        {
+            const string EMAIL_NOTIFICATION_NAME = "UserCancelledReservationNotification";
+
+            string subject = $"Event Travel Portal | {evt.Name}: Attendee has cancelled the reservation";
+            string eventUrl = getEventUrl(attendee.EventID);
+            string signature = getSignature(evt).Replace("\n", "</br>");
+
+            string emailTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, EMAIL_NOTIFICATION_NAME)));
+
+            string body = emailTemplate.Replace("{FirstName}", attendee.Profile.FirstName)
+                  .Replace("{LastName}", attendee.Profile.LastName)
+                  .Replace("{EventUrl}", eventUrl)
+                  .Replace("{Signature}", signature);
+
+            body = body.Replace("{Receipient}", evt.Owner.FirstName);
+
+            // send to lead
+            this.Send(evt.Owner.Email, subject, body, isBodyHtml: true);
+
+            // send to travel, support, leads, business leads (only receive emails for their segments)
+            if (evt.Users != null)
+            {
+                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
+                  || x.IsBusinessLeadForSegment(evt.Segments)))
+                {
+                    body = body.Replace("{Receipient}", eventUser.User.FirstName);
+                    this.Send(eventUser.User.Email, subject, body, isBodyHtml: true);
+                }
+            }
+        }
+
         // attendee updated their info.
         public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee, FieldComparisonResponse fieldComparisonResponse)
         {

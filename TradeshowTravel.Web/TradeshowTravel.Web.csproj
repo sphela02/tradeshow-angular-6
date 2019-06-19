@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="EmailTemplates\TableRowTemplate.html" />
+    <Content Include="EmailTemplates\UserCancelledReservationNotification.html" />
     <Content Include="EmailTemplates\UserDetailsUpdatedNotification.html" />
     <Content Include="Global.asax" />
     <Content Include="packages.config" />

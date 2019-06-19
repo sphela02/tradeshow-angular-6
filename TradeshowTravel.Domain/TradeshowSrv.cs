@@ -1630,8 +1630,10 @@ namespace TradeshowTravel.Domain
                                 Logging.LogMessage(LogLevel.DebugBasic, $"Send attending confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                             case AttendeeStatus.Declined:
-                                // TODO: Send declined notifcation
+                                // TODO: Send declined notifcation to the attendee who declined it and his/her delegate
                                 EmailSrv.SendDeclinedConfirmationNotification(evt, attendee);
+                                // Send user cancelled reservation email to Lead / Support / BCD
+                                EmailSrv.SendUserCancelledReservationNotification(evt, attendee);
                                 Logging.LogMessage(LogLevel.DebugBasic, $"Send declined confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                         }
