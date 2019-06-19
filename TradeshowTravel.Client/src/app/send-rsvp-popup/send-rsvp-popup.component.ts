@@ -7,6 +7,7 @@ import { DatePickerComponent } from '@progress/kendo-angular-dateinputs';
 import { TextAreaDirective } from '@progress/kendo-angular-inputs';
 import { RsvpRequest } from '../shared/RsvpRequest';
 import { AttendeeStatus } from '../shared/Enums';
+import { FileAttachmentComponent } from '../file-attachment/file-attachment.component'
 
 import { UserProfile } from '../shared/UserProfile';
 import { Alert } from 'selenium-webdriver';
@@ -27,7 +28,8 @@ Thank you,`;
 export class SendRsvpPopupComponent implements OnInit {
   @Output() sendClicked = new EventEmitter();
   @ViewChild("rsvpDueDate") private RsvpDueDate: DatePickerComponent;
-  @ViewChild(TextAreaDirective) private emailTextArea: TextAreaDirective
+  @ViewChild(TextAreaDirective) private emailTextArea: TextAreaDirective;
+  @ViewChild(FileAttachmentComponent) private fileAttachmentComponent: FileAttachmentComponent;
 
   private _loading: boolean;
   private _request: RsvpRequest = <RsvpRequest>{};
@@ -38,7 +40,6 @@ export class SendRsvpPopupComponent implements OnInit {
   private _currentUser: UserProfile;
 
   errorMsg: string;
-  attachmentList: File[];
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -54,7 +55,16 @@ export class SendRsvpPopupComponent implements OnInit {
         + "\nEvent Management\nTeam Harris Corporation";
     });
 
-    this.attachmentList = [];
+      // set up attachment component
+    this.fileAttachmentComponent.selectedAttachmentsChange.subscribe(allAttachments => {
+      this.request.Attachments = allAttachments
+    });
+    this.fileAttachmentComponent.errorMsg.subscribe(error => {
+      this.errorMsg = error;
+    });
+    this.fileAttachmentComponent.isLoading.subscribe(isLoading => {
+      this.loading = isLoading;
+    });
   }
 
   @Input()
@@ -110,27 +120,6 @@ export class SendRsvpPopupComponent implements OnInit {
     return true;
   }
 
-  onFileSelected(event) {
-    this.errorMsg = null;
-    if (event.target.files && event.target.files[0]) {
-      var isExist = false;
-      for (var i = 0; i < this.attachmentList.length; i++) {
-        if (this.attachmentList[i].name == event.target.files[0].name && this.attachmentList[i].size == event.target.files[0].size) {
-          isExist = true;
-          this.errorMsg = "Attachment already added.";
-        }
-      }
-
-      if (!isExist) {
-        this.attachmentList.push(<File>event.target.files[0]);
-      }
-    }
-  }
-
-  onRemoveAttachment(index) {
-    this.attachmentList.splice(index, 1);
-  }
-
   private onInputsChanged() {
     if (this.event) {
       if (this.event.StartDate) {
@@ -168,16 +157,7 @@ export class SendRsvpPopupComponent implements OnInit {
 
     this.loading = true;
 
-    var fd = new FormData();
-
-    for (var key in this.request) {
-      fd.append(key, escape(this.request[key]));
-    }
-    for (var i = 0; i < this.attachmentList.length; i++) {
-      fd.append('file', this.attachmentList[i], this.attachmentList[i].name);
-    }
-
-    this.service.sendRsvpRequest(this.event.ID, fd)
+    this.service.sendRsvpRequest(this.event.ID, this.request)
       .subscribe(resp => {
         this.loading = false;
         this.event.RsvpDueDate = this.request.DueDate;

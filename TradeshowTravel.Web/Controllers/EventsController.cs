@@ -11,10 +11,8 @@ namespace TradeshowTravel.Web.Controllers
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Web;
-    using Newtonsoft.Json;
     using System;
-    using System.Collections.Specialized;
-    using System.Linq;
+    using Common.Logging;
 
     [Authorize]
     [EnableCors]
@@ -277,24 +275,51 @@ namespace TradeshowTravel.Web.Controllers
         }
 
         [HttpPost]
-        [Route("~/api/events/{eventID}/sendrsvp")]
-        public IHttpActionResult SendRsvpRequests(int eventID)
+        [Route("~/api/events/{eventID}/uploadAttachment")]
+        public IHttpActionResult UploadAttachment(int eventID)
         {
-            HttpRequest request = HttpContext.Current.Request;
-            RsvpRequest req = new RsvpRequest();
-
-            req.Attachments = request.Files;
-
-            string dateTime = HttpUtility.UrlDecode(request.Params["DueDate"]);
-            DateTime dueDate;
-            if(DateTime.TryParse(dateTime.Substring(0, dateTime.IndexOf('-')), out dueDate))
+            HttpFileCollection collection = null;
+            try
             {
-                req.DueDate = dueDate;
+                collection = HttpContext.Current.Request.Files;
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage(LogLevel.Warning, $"Unable to upload file for event {eventID}. Exception: {ex} Message {ex.Message}");
+
+                string message = "Unable to upload file.";
+
+                if (ex.Message.Contains("length exceeded"))
+                {
+                    message = "Attachment is too large.";
+                }
+                               
+                return HttpResult.Create(Request, HttpStatusCode.BadRequest, message);
             }
 
-            req.AttendeeIDs = HttpUtility.UrlDecode(request.Params["AttendeeIDs"]).Split(',').Select(i => Convert.ToInt32(i)).ToArray();
-            req.EmailText = HttpUtility.UrlDecode(request.Params["EmailText"]);
+            if (collection != null && collection.Count == 0)
+            {
+                return HttpResult.Create(Request, HttpStatusCode.BadRequest, "Attachment not provided to upload.");
+            }
 
+            HttpPostedFile attachement = collection[0];
+           
+            ValidationResponse<string> response = Service.UploadAttachment(eventID, attachement);
+
+            if (response.Success)
+            {
+                return Ok(response.Result);
+            }
+            else
+            {
+                return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/events/{eventID}/sendrsvp")]
+        public IHttpActionResult SendRsvpRequests(int eventID, [FromBody] RsvpRequest req)
+        {
             ValidationResponse<bool> response = Service.SendRSVPRequests(eventID, req);
 
             if (response.Success)

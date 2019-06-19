@@ -22,6 +22,8 @@ namespace TradeshowTravel.Domain
         private IUserProfileQuery UserSrv { get; set; }
         private EmailSrv EmailSrv { get; set; }
 
+        private readonly string TempFolderRoot = ConfigurationManager.AppSettings["TempFolderRoot"];
+
         public string CurrentNetworkID { get; set; }
         public string CurrentUsername
         {
@@ -49,11 +51,16 @@ namespace TradeshowTravel.Domain
                 CurrentNetworkID = HttpContext.Current.User.Identity.Name;
             }
 
+            if (string.IsNullOrWhiteSpace(TempFolderRoot))
+            {
+                TempFolderRoot = Path.Combine(Path.GetTempPath(), "TradeShowTravel");
+            }
+
             EmailSrv = new EmailSrv(dataRepository,
                 ConfigurationManager.AppSettings["SmtpServer"],
                 ConfigurationManager.AppSettings["SenderEmailAddress"],
-                ConfigurationManager.AppSettings["BaseUrl"]
-                );
+                ConfigurationManager.AppSettings["BaseUrl"],
+                TempFolderRoot);
         }
 
         #region Cache
@@ -1134,6 +1141,45 @@ namespace TradeshowTravel.Domain
             onEventFieldsChanged(evt);
 
             return ValidationResponse<bool>.CreateSuccess(true);
+        }
+
+        public ValidationResponse<string> UploadAttachment(int eventID, HttpPostedFile attachment)
+        {
+            string folder = Path.Combine(TempFolderRoot, eventID.ToString());
+            string filePath = Path.Combine(folder, attachment.FileName);
+
+            bool success = true;
+
+            try
+            {
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    using (var fileStream = File.Create(filePath))
+                    {
+                        attachment.InputStream.CopyTo(fileStream);
+                    }
+                }
+
+                // after creating the file check if it exists
+                if (!File.Exists(filePath))
+                {
+                    success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage(LogLevel.Error, $"Error saving the attacment '{attachment.FileName}' for event: {eventID}.  Ex: {ex}");
+                success = false;
+            }
+
+            return success
+                ? ValidationResponse<string>.CreateSuccess(filePath)
+                : ValidationResponse<string>.CreateFailure($"Attachment {attachment.FileName} did not save.");
         }
 
         public ValidationResponse<bool> SendRSVPRequests(int eventID, RsvpRequest req)

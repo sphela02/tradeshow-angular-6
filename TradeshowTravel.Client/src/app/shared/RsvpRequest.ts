@@ -3,4 +3,5 @@
         AttendeeIDs: number[];
         DueDate: Date;
         EmailText: string;
+        Attachments: string[]
     }

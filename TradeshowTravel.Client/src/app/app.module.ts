@@ -42,6 +42,7 @@ import { ProfileInfoComponent } from './profile-info/profile-info.component';
 import { AttendeeFieldsPopupComponent } from './attendee-fields-popup/attendee-fields-popup.component';
 import { AttendeeFieldsComponent } from './attendee-fields/attendee-fields.component';
 import { AttendeeDeletePopupComponent } from './attendee-delete-popup/attendee-delete-popup.component';
+import { FileAttachmentComponent } from './file-attachment/file-attachment.component';
 import { SendRsvpPopupComponent } from './send-rsvp-popup/send-rsvp-popup.component';
 import { SendReminderPopupComponent } from './send-reminder-popup/send-reminder-popup.component';
 import { AttendeeViewComponent } from './attendee-view/attendee-view.component';
@@ -109,7 +110,8 @@ import { UploadModule } from '@progress/kendo-angular-upload';
     PrivilegedUsersListComponent,
     PrivilegedUsersPopupComponent,
     ProfileImageUploadPopupComponent,
-    GridYesNoFilterComponent
+    GridYesNoFilterComponent,
+    FileAttachmentComponent
   ],
   entryComponents: [
     ProfileEditPopupComponent,

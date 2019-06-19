@@ -1,0 +1,18 @@
+<div class="row mt-3">
+  <div class="col-md">
+    <span class="font-weight-bold">Attachments</span>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md">
+    <span class="badge badge-info badge-pill mr-1 font-weight-normal p-1 px-2" *ngFor="let item of attachmentList; let i = index" [attr.data-index]="i">
+      {{ item.File.name }} <a (click)="onRemoveAttachment(i)"><i class="fa fa-times" aria-hidden="true"></i></a>
+    </span>
+    <div class="add-attachment font-weight-bold mt-1">
+      <a (click)="inputFile.click()"><i class="fa fa-plus" aria-hidden="true"></i>Add Attachment</a><span class="max-size">max file size (4 MB)</span>
+      <input type="file" #inputFile
+             (change)="onFileSelected($event)"
+             accept="*" hidden>
+    </div>
+  </div>
+</div>

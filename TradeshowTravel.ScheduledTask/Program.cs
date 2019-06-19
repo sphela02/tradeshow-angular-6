@@ -7,20 +7,29 @@ namespace TradeshowTravel.ScheduledTask
     using Data;
     using Domain;
     using Domain.DTOs;
+    using System.IO;
 
     class Program
     {
         static void Main(string[] args)
         {
             Console.WriteLine("Starting...");
-            
+
+            string tempFolderRoot = ConfigurationManager.AppSettings["TempFolderRoot"];
+
+            if (string.IsNullOrWhiteSpace(tempFolderRoot))
+            {
+                tempFolderRoot = Path.Combine(Path.GetTempPath(), "TradeShowTravel");
+            }
+
             IDataRepository repo = new TSDataRepository();
 
             EmailSrv EmailSrv = new EmailSrv(
                 repo,
                 ConfigurationManager.AppSettings["SmtpServer"],
                 ConfigurationManager.AppSettings["SenderEmailAddress"],
-                ConfigurationManager.AppSettings["BaseUrl"]
+                ConfigurationManager.AppSettings["BaseUrl"],
+                tempFolderRoot
             );
 
             Console.WriteLine("Getting events...");
