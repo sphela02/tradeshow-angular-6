@@ -10,7 +10,6 @@ import { AttendeeStatus } from '../shared/Enums';
 import { FileAttachmentComponent } from '../file-attachment/file-attachment.component'
 
 import { UserProfile } from '../shared/UserProfile';
-import { Alert } from 'selenium-webdriver';
 
 const RSVP_TEMPLATE = `Hello <EventAttendee.Name>,
 
