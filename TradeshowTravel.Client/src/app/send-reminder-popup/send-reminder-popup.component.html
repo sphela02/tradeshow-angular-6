@@ -24,6 +24,7 @@
           </span>
         </div>
       </div>
+      <file-attachment-component [eventId]="eventID"></file-attachment-component>
       <div class="row mt-3">
         <div class="col-md">
           <span class="font-weight-bold">Email Text</span> <span class="text-danger">*</span>
@@ -32,7 +33,7 @@
       <div class="row">
         <div class="col-md">
           <textarea kendoTextArea class="w-100" rows="20"
-            [(ngModel)]="request.EmailText">
+                    [(ngModel)]="request.EmailText">
           </textarea>
         </div>
       </div>

@@ -352,6 +352,14 @@
         </ng-template>
       </kendo-grid-column>
 
+      <kendo-grid-column field="User.PassportExpirationDate" title="Passport Expiration Date" [filterable]="false" width="200" *ngIf="canViewPassportInfo">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <div [className]="dataItem.Profile.PassportExpirationDateNear ? 'near_expire' : ''">
+            {{ dataItem.Profile.PassportExpirationDate | date:'MM/dd/yyyy' }}
+          </div>
+        </ng-template>
+      </kendo-grid-column>
+
       <kendo-grid-column field="User.Nationality" title="Nationality" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
