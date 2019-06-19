@@ -4,7 +4,10 @@ using System.Net.Mail;
 
 namespace TradeshowTravel.Domain
 {
+    using Common.Logging;
     using Domain.DTOs;
+    using System;
+    using System.Configuration;
     using System.IO;
     using System.Web;
 
@@ -15,17 +18,23 @@ namespace TradeshowTravel.Domain
         private readonly string baseUrl = "https://tradeshowtravel.harris.com/";
         private IDataRepository repo = null;
 
-        public EmailSrv(IDataRepository repo)
+        public readonly string TempFolderRoot;
+
+        public EmailSrv(IDataRepository repo, string aTempFolderRoot)
         {
             this.repo = repo;
+
+            TempFolderRoot = aTempFolderRoot;
         }
 
-        public EmailSrv(IDataRepository repo, string smtpServer, string sender, string baseUrl)
+        public EmailSrv(IDataRepository repo, string smtpServer, string sender, string baseUrl, string aTempFolderRoot)
         {
             this.repo = repo;
             this.smtpServer = smtpServer;
             this.sender = sender;
             this.baseUrl = baseUrl;
+
+            TempFolderRoot = aTempFolderRoot;
         }
 
         // User creates new event.
@@ -51,6 +60,8 @@ namespace TradeshowTravel.Domain
         // send RSVP using custom text from user.
         public void SendRSVP(EventInfo evt, EventAttendee attendee, RsvpRequest req)
         {
+            string folder = Path.Combine(TempFolderRoot, evt.ID.ToString());
+
             var subject = $"[Action Requested] Event Travel Portal | RSVP: You have been invited to attend {evt.Name}";
 
             var body = req.EmailText.Replace("<EventAttendee.Name>", attendee.Profile.FirstName)
@@ -58,17 +69,62 @@ namespace TradeshowTravel.Domain
                 .Replace("<Page: EventInfo.Name>", getRSVPUrl(attendee.ID))
                 .Replace("<EventInfo.Name>", evt.Name);
 
+            List<Attachment> attachments = new List<Attachment>();
+            if (req.Attachments != null)
+            {
+                foreach (string attachment in req.Attachments)
+                {
+                    attachments.Add(new Attachment(attachment));
+                }
+            }
+
             if (attendee.Profile.Delegate != null)
             {
                 var cc = new List<string>();
                 cc.Add(attendee.Profile.Email);
                 cc.Add(evt.Owner.Email);
 
-                this.Send(attendee.Profile.Delegate.Email, subject, body, cc);
+                this.Send(attendee.Profile.Delegate.Email, subject, body, cc, attachments.ToArray());
             }
             else
             {
-                this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email);
+                this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email, attachments.ToArray());
+            }
+
+            RemoveTempFiles(folder, attachments);
+        }
+
+        private static void RemoveTempFiles(string folder, List<Attachment> attachments)
+        {
+            foreach (object o in attachments)
+            {
+                System.IDisposable disposableObject = o as System.IDisposable;
+                if (disposableObject != null)
+                {
+                    disposableObject.Dispose();
+                }
+            }
+
+            foreach (var item in Directory.GetFiles(folder))
+            {
+                try
+                {
+                    File.Delete(item);
+                }
+                catch (Exception ex)
+                {
+                    Logging.LogMessage(LogLevel.DebugDetailed, $"Unable to delete file {item}. Exception: {ex} Message {ex.Message}");
+                }
+            }
+
+            try
+            {
+                Directory.Delete(folder);
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage(LogLevel.DebugDetailed, $"Unable to delete folder {folder}. Exception: {ex} Message {ex.Message}");
+
             }
         }
 
@@ -163,17 +219,26 @@ namespace TradeshowTravel.Domain
                     .Replace("<Page: EventInfo.Name>", getRSVPUrl(attendee.ID))
                     .Replace("<EventInfo.Name>", evt.Name);
 
+                List<Attachment> attachments = new List<Attachment>();
+                if (req.Attachments != null)
+                {
+                    foreach (string attachment in req.Attachments)
+                    {
+                        attachments.Add(new Attachment(attachment));
+                    }
+                }
+
                 if (attendee.Profile.Delegate != null)
                 {
                     var cc = new List<string>();
                     cc.Add(attendee.Profile.Email);
                     cc.Add(evt.Owner.Email);
 
-                    this.Send(attendee.Profile.Delegate.Email, subject, body, cc);
+                    this.Send(attendee.Profile.Delegate.Email, subject, body, cc, attachments.ToArray());
                 }
                 else
                 {
-                    this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email);
+                    this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email, attachments.ToArray());
                 }
 
                 //this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email);

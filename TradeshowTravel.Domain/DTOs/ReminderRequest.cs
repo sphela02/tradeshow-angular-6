@@ -4,5 +4,6 @@
     {
         public int[] AttendeeIDs { get; set; }
         public string EmailText { get; set; }
+        public string[] Attachments { get; set; }
     }
 }

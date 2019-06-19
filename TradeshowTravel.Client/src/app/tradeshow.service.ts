@@ -496,6 +496,20 @@ export class TradeshowService {
     });
   }
 
+  uploadAttachment(eventID: number, req: FormData): Observable<string> {
+    let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/uploadAttachment";
+    return new Observable(observer => {
+      this.http.post(url, req, { withCredentials: true })
+        .pipe(catchError(this.handleError))
+        .subscribe(result => {
+          observer.next(result);
+          observer.complete();
+        }, error => {
+          observer.error(error);
+        });
+    });
+  }
+
   sendRsvpRequest(eventID: number, req: RsvpRequest): Observable<boolean> {
     let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/sendrsvp";
     return new Observable(observer => {
