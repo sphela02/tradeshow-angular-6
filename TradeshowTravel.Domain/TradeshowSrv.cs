@@ -1452,6 +1452,8 @@ namespace TradeshowTravel.Domain
             {
                 var attendee = eventAttendees[i];
 
+                attendee.Event = evt;
+
                 if (string.IsNullOrWhiteSpace(attendee.Username))
                 {
                     return ValidationResponse<List<EventAttendee>>.CreateFailure("One or more attendee usernames were not specified.");

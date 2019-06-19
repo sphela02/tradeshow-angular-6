@@ -5,6 +5,8 @@ using System.Net.Mail;
 namespace TradeshowTravel.Domain
 {
     using Domain.DTOs;
+    using System;
+    using System.Configuration;
     using System.IO;
     using System.Text;
     using System.Web;
@@ -14,12 +16,8 @@ namespace TradeshowTravel.Domain
         private readonly string smtpServer = "mail.harris.com";
         private readonly string sender = "noreply-eventtravelportal@harris.com";
         private readonly string baseUrl = "https://tradeshowtravel.harris.com/";
-        private const string FIELD_CHANGE_COMPARISON_TABLE = @"<table border='1'>
-	                                                                                                                                <thead><tr><th>Field</th><th>From</th><th>To</th></tr></thead>
-	                                                                                                                                <tbody>{0}</tbody>
-                                                                                                                                </table>";
 
-        private const string FIELD_CHANGE_ROW = "<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>";
+        private readonly string EMAIL_TEMPLATE_PATH = ConfigurationManager.AppSettings["EmailTemplatesPath"];
 
         private IDataRepository repo = null;
 
@@ -220,7 +218,7 @@ namespace TradeshowTravel.Domain
         // Attendee declines event invite.
         public void SendDeclinedConfirmationNotification(EventInfo evt, EventAttendee attendee)
         {
-            var subject = $"Event Travel Portal | {{attendee.Event.Name}}: Attendance Declined";
+            var subject = $"Event Travel Portal | {evt.Name}: Attendance Declined";
             var body = $"Hello {attendee.Profile.FirstName}\n\nYou are receiving this email to confirm that you decline attendance to {evt.Name}.\n\nIf this is an error or you have changed your mind, please resubmit your RSVP information by {evt.RsvpDueDate.GetValueOrDefault().ToShortDateString()}: {getRSVPUrl(attendee.ID)}\n\n{getSignature(evt)}";
 
             if (attendee.Profile.Delegate != null)
@@ -239,9 +237,31 @@ namespace TradeshowTravel.Domain
         // attendee updated their info.
         public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee, FieldComparisonResponse fieldComparisonResponse)
         {
-            var subject = $"Event Travel Portal | {evt.Name}: Attendee information has been updated";
-            var fieldComparisonTable = createFieldComparisonTable(fieldComparisonResponse);
-            var body = $"Hello {evt.Owner.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details. The following changes were made: \n {fieldComparisonTable} \nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
+            const string EMAIL_NOTIFICATION_NAME = "UserDetailsUpdatedNotification";
+            const string TABLE_ROW_TEMPLATE_FILE_NAME = "TableRowTemplate";
+
+            string subject = $"Event Travel Portal | {evt.Name}: Attendee information has been updated";
+            string eventUrl = getEventUrl(attendee.EventID);
+            string signature = getSignature(evt).Replace("\n", "</br>");
+
+            string emailTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, EMAIL_NOTIFICATION_NAME)));
+            string tableRowTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, TABLE_ROW_TEMPLATE_FILE_NAME)));
+
+            StringBuilder tableRows = new StringBuilder();
+            foreach (var fieldChangeSet in fieldComparisonResponse.Values)
+            {
+                tableRows.Append(tableRowTemplate.Replace("{Field}", fieldChangeSet.FieldName)
+                    .Replace("{From}", fieldChangeSet.OriginalValue)
+                    .Replace("{To}", fieldChangeSet.NewValue));
+            }
+
+            string body = emailTemplate.Replace("{FirstName}", attendee.Profile.FirstName)
+                  .Replace("{LastName}", attendee.Profile.LastName)
+                  .Replace("{EventUrl}", eventUrl)
+                  .Replace("{Signature}", signature)
+                  .Replace("{TableRows}", tableRows.ToString());
+
+            body = body.Replace("{Receipient}", evt.Owner.FirstName);
 
             // send to lead
             this.Send(evt.Owner.Email, subject, body, isBodyHtml: true);
@@ -252,7 +272,7 @@ namespace TradeshowTravel.Domain
                 foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
                   || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
-                    body = $"Hello {eventUser.User.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details. The following changes were made: \n {fieldComparisonTable} \nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
+                    body = body.Replace("{Receipient}", eventUser.User.FirstName);
                     this.Send(eventUser.User.Email, subject, body, isBodyHtml: true);
                 }
             }
@@ -351,11 +371,6 @@ namespace TradeshowTravel.Domain
         {
             SmtpClient client = new SmtpClient(this.smtpServer);
 
-            if (isBodyHtml)
-            {
-                body = body.Replace("\n", "</br>");
-            }
-
             var message = new MailMessage(this.sender, to, subject, body);
 
             if (!string.IsNullOrWhiteSpace(cc))
@@ -416,23 +431,5 @@ namespace TradeshowTravel.Domain
         {
             return repo.GetProfile(username);
         }
-
-        private string createFieldComparisonTable(FieldComparisonResponse fieldComparisonResponse)
-        {
-            StringBuilder fieldChangeRows = new StringBuilder();
-            foreach (var fieldChangeSet in fieldComparisonResponse.Values)
-            {
-                fieldChangeRows.Append(string.Format(FIELD_CHANGE_ROW, fieldChangeSet.FieldName, fieldChangeSet.OriginalValue, fieldChangeSet.NewValue));
-            }
-
-            return string.Format(FIELD_CHANGE_COMPARISON_TABLE, fieldChangeRows);
-        }
-        //public void test(string body = null)
-        //{
-        //    if(body == null)
-        //        this.Send("rcrum@harris.com", "test", "test");
-        //    else
-        //        this.Send("rcrum@harris.com", "test", body);
-        //}
     }
 }

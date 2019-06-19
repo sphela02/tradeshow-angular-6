@@ -367,5 +367,10 @@ namespace TradeshowTravel.Domain
             string[] segments = eventSegments.Split(',');
             return eventUser.Role.HasFlag(Role.Business) && segments.Contains(eventUser.User.Segment);
         }
+
+        public static string GetLabel(this List<EventField> eventFields, string source)
+        {
+            return eventFields.FirstOrDefault(f => f.Source == source)?.Label ?? source;
+        }
     }
 }

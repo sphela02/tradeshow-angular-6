@@ -12,47 +12,42 @@ namespace TradeshowTravel.Domain.DTOs
 
             if (!DateRSVP.DatePartEquals(originalEventAttendee.DateRSVP))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(DateRSVP), originalEventAttendee.DateRSVP.ToShortDateFormat(), DateRSVP.ToShortDateFormat()));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(DateRSVP)), originalEventAttendee.DateRSVP.ToShortDateFormat(), DateRSVP.ToShortDateFormat()));
             }
 
             if (!Arrival.DatePartEquals(originalEventAttendee.Arrival))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(Arrival), originalEventAttendee.Arrival.ToShortDateFormat(), Arrival.ToShortDateFormat()));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(Arrival)), originalEventAttendee.Arrival.ToShortDateFormat(), Arrival.ToShortDateFormat()));
             }
 
             if (!Departure.DatePartEquals(originalEventAttendee.Departure))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(Departure), originalEventAttendee.Departure.ToShortDateFormat(), Departure.ToShortDateFormat()));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(Departure)), originalEventAttendee.Departure.ToShortDateFormat(), Departure.ToShortDateFormat()));
             }
 
-            if (TravelMethod != originalEventAttendee.TravelMethod)
+            if (!string.Equals(TravelMethod,originalEventAttendee.TravelMethod))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(TravelMethod), originalEventAttendee.TravelMethod, TravelMethod));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(TravelMethod)), originalEventAttendee.TravelMethod, TravelMethod));
             }
 
-            if (CCNumber != originalEventAttendee.CCNumber)
+            if (!string.Equals(CCNumber,originalEventAttendee.CCNumber))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(CCNumber), originalEventAttendee.CCNumber, CCNumber));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(CCNumber)), originalEventAttendee.CCNumber, CCNumber));
             }
 
-            if (CCExpiration != originalEventAttendee.CCExpiration)
+            if (!string.Equals(CCExpiration,originalEventAttendee.CCExpiration))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(CCExpiration), originalEventAttendee.CCExpiration, CCExpiration));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(CCExpiration)), originalEventAttendee.CCExpiration, CCExpiration));
             }
 
-            if (CVVNumber != originalEventAttendee.CVVNumber)
+            if (!string.Equals(IsHotelNeeded,originalEventAttendee.IsHotelNeeded))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(CVVNumber), originalEventAttendee.CVVNumber, CVVNumber));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(IsHotelNeeded)), originalEventAttendee.IsHotelNeeded, IsHotelNeeded));
             }
 
-            if (IsHotelNeeded != originalEventAttendee.IsHotelNeeded)
+            if (!string.Equals(IsAttending,originalEventAttendee.IsAttending))
             {
-                response.Values.Add(new FieldComparisionInfo(nameof(IsHotelNeeded), originalEventAttendee.IsHotelNeeded, IsHotelNeeded));
-            }
-
-            if (IsAttending != originalEventAttendee.IsAttending)
-            {
-                response.Values.Add(new FieldComparisionInfo(nameof(IsAttending), originalEventAttendee.IsAttending, IsAttending));
+                response.Values.Add(new FieldComparisionInfo(Event.Fields.GetLabel(nameof(IsAttending)), originalEventAttendee.IsAttending, IsAttending));
             }
 
             //User defined properties below
