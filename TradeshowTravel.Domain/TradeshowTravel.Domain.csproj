@@ -76,6 +76,7 @@
     <Compile Include="DTOs\EventAttendeeQuery.cs" />
     <Compile Include="DTOs\EventInfo.cs" />
     <Compile Include="DTOs\EventQuery.cs" />
+    <Compile Include="DTOs\FieldComparisonResponse.cs" />
     <Compile Include="DTOs\QueryParams.cs" />
     <Compile Include="DTOs\ReminderRequest.cs" />
     <Compile Include="DTOs\RsvpRequest.cs" />

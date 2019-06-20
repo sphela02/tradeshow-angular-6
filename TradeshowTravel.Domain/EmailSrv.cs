@@ -9,6 +9,7 @@ namespace TradeshowTravel.Domain
     using System;
     using System.Configuration;
     using System.IO;
+    using System.Text;
     using System.Web;
 
     public class EmailSrv
@@ -16,6 +17,9 @@ namespace TradeshowTravel.Domain
         private readonly string smtpServer = "mail.harris.com";
         private readonly string sender = "noreply-eventtravelportal@harris.com";
         private readonly string baseUrl = "https://tradeshowtravel.harris.com/";
+
+        private readonly string EMAIL_TEMPLATE_PATH = ConfigurationManager.AppSettings["EmailTemplatesPath"];
+
         private IDataRepository repo = null;
 
         public readonly string TempFolderRoot;
@@ -277,7 +281,7 @@ namespace TradeshowTravel.Domain
         // Attendee declines event invite.
         public void SendDeclinedConfirmationNotification(EventInfo evt, EventAttendee attendee)
         {
-            var subject = $"Event Travel Portal | {{attendee.Event.Name}}: Attendance Declined";
+            var subject = $"Event Travel Portal | {evt.Name}: Attendance Declined";
             var body = $"Hello {attendee.Profile.FirstName}\n\nYou are receiving this email to confirm that you decline attendance to {evt.Name}.\n\nIf this is an error or you have changed your mind, please resubmit your RSVP information by {evt.RsvpDueDate.GetValueOrDefault().ToShortDateString()}: {getRSVPUrl(attendee.ID)}\n\n{getSignature(evt)}";
 
             if (attendee.Profile.Delegate != null)
@@ -293,14 +297,26 @@ namespace TradeshowTravel.Domain
             //this.Send(attendee.Profile.Email, subject, body);
         }
 
-        // attendee updated their info.
-        public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee)
+        // attendee cancels their reservation. It used to the same email as "Attendee information has been updated". Since TSTRAV-1, we splited it into two separate emails.
+        public void SendUserCancelledReservationNotification(EventInfo evt, EventAttendee attendee)
         {
-            var subject = $"Event Travel Portal | {evt.Name}: Attendee information has been updated";
-            var body = $"Hello {evt.Owner.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details or has canceled.\n\nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
+            const string EMAIL_NOTIFICATION_NAME = "UserCancelledReservationNotification";
+
+            string subject = $"Event Travel Portal | {evt.Name}: Attendee has cancelled the reservation";
+            string eventUrl = getEventUrl(attendee.EventID);
+            string signature = getSignature(evt).Replace("\n", "</br>");
+
+            string emailTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, EMAIL_NOTIFICATION_NAME)));
+
+            string body = emailTemplate.Replace("{FirstName}", attendee.Profile.FirstName)
+                  .Replace("{LastName}", attendee.Profile.LastName)
+                  .Replace("{EventUrl}", eventUrl)
+                  .Replace("{Signature}", signature);
+
+            body = body.Replace("{Receipient}", evt.Owner.FirstName);
 
             // send to lead
-            this.Send(evt.Owner.Email, subject, body);
+            this.Send(evt.Owner.Email, subject, body, isBodyHtml: true);
 
             // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)
@@ -308,11 +324,56 @@ namespace TradeshowTravel.Domain
                 foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
                   || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
-                    body = $"Hello {eventUser.User.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details or has canceled.\n\nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
-                    this.Send(eventUser.User.Email, subject, body);
+                    body = body.Replace("{Receipient}", eventUser.User.FirstName);
+                    this.Send(eventUser.User.Email, subject, body, isBodyHtml: true);
                 }
             }
         }
+
+        // attendee updated their info.
+        public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee, FieldComparisonResponse fieldComparisonResponse)
+        {
+            const string EMAIL_NOTIFICATION_NAME = "UserDetailsUpdatedNotification";
+            const string TABLE_ROW_TEMPLATE_FILE_NAME = "TableRowTemplate";
+
+            string subject = $"Event Travel Portal | {evt.Name}: Attendee information has been updated";
+            string eventUrl = getEventUrl(attendee.EventID);
+            string signature = getSignature(evt).Replace("\n", "</br>");
+
+            string emailTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, EMAIL_NOTIFICATION_NAME)));
+            string tableRowTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, TABLE_ROW_TEMPLATE_FILE_NAME)));
+
+            StringBuilder tableRows = new StringBuilder();
+            foreach (var fieldChangeSet in fieldComparisonResponse.Values)
+            {
+                tableRows.Append(tableRowTemplate.Replace("{Field}", fieldChangeSet.FieldName)
+                    .Replace("{From}", fieldChangeSet.OriginalValue)
+                    .Replace("{To}", fieldChangeSet.NewValue));
+            }
+
+            string body = emailTemplate.Replace("{FirstName}", attendee.Profile.FirstName)
+                  .Replace("{LastName}", attendee.Profile.LastName)
+                  .Replace("{EventUrl}", eventUrl)
+                  .Replace("{Signature}", signature)
+                  .Replace("{TableRows}", tableRows.ToString());
+
+            body = body.Replace("{Receipient}", evt.Owner.FirstName);
+
+            // send to lead
+            this.Send(evt.Owner.Email, subject, body, isBodyHtml: true);
+
+            // send to travel, support, leads, business leads (only receive emails for their segments)
+            if (evt.Users != null)
+            {
+                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
+                  || x.IsBusinessLeadForSegment(evt.Segments)))
+                {
+                    body = body.Replace("{Receipient}", eventUser.User.FirstName);
+                    this.Send(eventUser.User.Email, subject, body, isBodyHtml: true);
+                }
+            }
+        }
+
 
         // A new attendee has been added. RSVP request sent.
         public void SendAttendeeAddedNotifications(EventInfo evt, string username)
@@ -402,9 +463,10 @@ namespace TradeshowTravel.Domain
             this.Send(evt.Owner.Email, subject, body);
         }
 
-        private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null)
+        private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null, bool isBodyHtml = false)
         {
             SmtpClient client = new SmtpClient(this.smtpServer);
+
             var message = new MailMessage(this.sender, to, subject, body);
 
             if (!string.IsNullOrWhiteSpace(cc))
@@ -420,6 +482,7 @@ namespace TradeshowTravel.Domain
                 }
             }
 
+            message.IsBodyHtml = isBodyHtml;
             client.Send(message);
         }
 
@@ -464,13 +527,5 @@ namespace TradeshowTravel.Domain
         {
             return repo.GetProfile(username);
         }
-
-        //public void test(string body = null)
-        //{
-        //    if(body == null)
-        //        this.Send("rcrum@harris.com", "test", "test");
-        //    else
-        //        this.Send("rcrum@harris.com", "test", body);
-        //}
     }
 }

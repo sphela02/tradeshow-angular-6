@@ -1498,6 +1498,8 @@ namespace TradeshowTravel.Domain
             {
                 var attendee = eventAttendees[i];
 
+                attendee.Event = evt;
+
                 if (string.IsNullOrWhiteSpace(attendee.Username))
                 {
                     return ValidationResponse<List<EventAttendee>>.CreateFailure("One or more attendee usernames were not specified.");
@@ -1619,9 +1621,13 @@ namespace TradeshowTravel.Domain
                 {
                     attendee.DateCompleted = null;
                 }
-                
+
+                FieldComparisonResponse fieldComparisonResponse = null;
                 try
                 {
+                    EventAttendee oldEventAttendee = DataRepo.GetAttendee(attendee.ID);
+                    fieldComparisonResponse = attendee.Compare(oldEventAttendee);
+
                     attendee = DataRepo.SaveAttendee(attendee);
                     eventAttendees[i] = attendee;
                 }
@@ -1670,8 +1676,10 @@ namespace TradeshowTravel.Domain
                                 Logging.LogMessage(LogLevel.DebugBasic, $"Send attending confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                             case AttendeeStatus.Declined:
-                                // TODO: Send declined notifcation
+                                // TODO: Send declined notifcation to the attendee who declined it and his/her delegate
                                 EmailSrv.SendDeclinedConfirmationNotification(evt, attendee);
+                                // Send user cancelled reservation email to Lead / Support / BCD
+                                EmailSrv.SendUserCancelledReservationNotification(evt, attendee);
                                 Logging.LogMessage(LogLevel.DebugBasic, $"Send declined confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                         }
@@ -1679,7 +1687,7 @@ namespace TradeshowTravel.Domain
                     else if (curStatus == AttendeeStatus.Accepted)
                     {
                         // TODO: Send notification to Lead / Support / BCD that user has updated their data.
-                        EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee);
+                        EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
                 }
@@ -1694,6 +1702,8 @@ namespace TradeshowTravel.Domain
             
             return ValidationResponse<List<EventAttendee>>.CreateSuccess(eventAttendees);
         }
+
+
 
         public ValidationResponse<Workbook> ExportEventAttendees(int eventID, QueryParams parameters = null)
         {

@@ -128,7 +128,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\Dummyfile.txt" />
+    <Content Include="EmailTemplates\TableRowTemplate.html" />
+    <Content Include="EmailTemplates\UserCancelledReservationNotification.html" />
+    <Content Include="EmailTemplates\UserDetailsUpdatedNotification.html" />
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
     <Content Include="App_Data\EventTravelPortal_UserManual_Attendee.pptx" />
