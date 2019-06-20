@@ -14,22 +14,15 @@ namespace TradeshowTravel.Domain
 
     public class EmailSrv
     {
-        private readonly string smtpServer = "mail.harris.com";
-        private readonly string sender = "noreply-eventtravelportal@harris.com";
-        private readonly string baseUrl = "https://tradeshowtravel.harris.com/";
+        private readonly string smtpServer;
+        private readonly string sender;
+        private readonly string baseUrl;
 
         private readonly string EMAIL_TEMPLATE_PATH = ConfigurationManager.AppSettings["EmailTemplatesPath"];
 
         private IDataRepository repo = null;
 
         public readonly string TempFolderRoot;
-
-        public EmailSrv(IDataRepository repo, string aTempFolderRoot)
-        {
-            this.repo = repo;
-
-            TempFolderRoot = aTempFolderRoot;
-        }
 
         public EmailSrv(IDataRepository repo, string smtpServer, string sender, string baseUrl, string aTempFolderRoot)
         {

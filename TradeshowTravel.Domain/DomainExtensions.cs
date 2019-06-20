@@ -6,6 +6,7 @@ namespace TradeshowTravel.Domain
 {
     using DTOs;
     using Common.Logging;
+    using System.Text.RegularExpressions;
 
     public class Encrypted : Attribute
     { }
@@ -371,6 +372,11 @@ namespace TradeshowTravel.Domain
         public static string GetLabel(this List<EventField> eventFields, string source)
         {
             return eventFields.FirstOrDefault(f => f.Source == source)?.Label ?? source;
+        }
+
+        public static string GetUserName(this string userIdentity)
+        {
+            return string.IsNullOrWhiteSpace(userIdentity) ? string.Empty : Regex.Replace(userIdentity, ".*\\\\|@.*", string.Empty);
         }
     }
 }
