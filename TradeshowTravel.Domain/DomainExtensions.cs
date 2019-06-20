@@ -376,10 +376,7 @@ namespace TradeshowTravel.Domain
 
         public static string GetUserName(this string userIdentity)
         {
-            return userIdentity == null ? string.Empty
-            : userIdentity.Contains("\\\\") ? Regex.Replace(userIdentity, ".*\\\\", string.Empty)
-            : userIdentity.Contains("@") ? Regex.Replace(userIdentity, "@.*", string.Empty)
-            : userIdentity;
+            return string.IsNullOrWhiteSpace(userIdentity) ? string.Empty : Regex.Replace(userIdentity, ".*\\\\|@.*", string.Empty);
         }
     }
 }

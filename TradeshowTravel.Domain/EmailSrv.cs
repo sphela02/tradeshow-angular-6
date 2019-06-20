@@ -24,13 +24,6 @@ namespace TradeshowTravel.Domain
 
         public readonly string TempFolderRoot;
 
-        public EmailSrv(IDataRepository repo, string aTempFolderRoot)
-        {
-            this.repo = repo;
-
-            TempFolderRoot = aTempFolderRoot;
-        }
-
         public EmailSrv(IDataRepository repo, string smtpServer, string sender, string baseUrl, string aTempFolderRoot)
         {
             this.repo = repo;

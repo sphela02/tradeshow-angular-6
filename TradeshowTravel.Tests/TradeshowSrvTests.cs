@@ -19,6 +19,12 @@ namespace TradeshowTravel.Tests
         }
 
         [TestMethod]
+        public void Get_User_Name_From_Domain_And_Email()
+        {
+            Assert.AreEqual(@"HARRIS\\jbaldw99@harris.com".GetUserName(), "jbaldw99");
+        }
+
+        [TestMethod]
         public void Get_User_Name_Identity()
         {
             string identity = "jbaldw99";
