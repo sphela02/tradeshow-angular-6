@@ -25,21 +25,7 @@ namespace TradeshowTravel.Domain
         private readonly string TempFolderRoot = ConfigurationManager.AppSettings["TempFolderRoot"];
 
         public string CurrentNetworkID { get; set; }
-        public string CurrentUsername
-        {
-            get
-            {
-                if (CurrentNetworkID == null)
-                {
-                    return string.Empty;
-                }
-
-                return CurrentNetworkID
-                    .Trim().ToUpper()
-                    .Replace("@HARRIS.COM", "")
-                    .Replace("HARRIS\\", "");
-            }
-        }
+        public string CurrentUsername => CurrentNetworkID.GetUserName();
 
         public TradeshowSrv(IDataRepository dataRepository, IUserProfileQuery userService)
         {
@@ -1626,7 +1612,11 @@ namespace TradeshowTravel.Domain
                 try
                 {
                     EventAttendee oldEventAttendee = DataRepo.GetAttendee(attendee.ID);
-                    fieldComparisonResponse = attendee.Compare(oldEventAttendee);
+
+                    if (oldEventAttendee != null)
+                    {
+                        fieldComparisonResponse = attendee.Compare(oldEventAttendee);
+                    }
 
                     attendee = DataRepo.SaveAttendee(attendee);
                     eventAttendees[i] = attendee;
