@@ -14,6 +14,7 @@ namespace TradeshowTravel.Data.Models
             Attendees = new HashSet<Attendee>();
             ShowTeams = new HashSet<TradeshowUser>();
             Tradeshows = new HashSet<Tradeshow>();
+            TradeshowsUpdated = new HashSet<Tradeshow>();
         }
         
         public User(UserInfo user) : this()

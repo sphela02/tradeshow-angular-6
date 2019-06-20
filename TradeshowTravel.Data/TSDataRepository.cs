@@ -479,6 +479,8 @@ namespace TradeshowTravel.Data
             evt.StartDate = eventInfo.StartDate;
             evt.Tier = eventInfo.Tier;
             evt.Venue = eventInfo.Venue;
+            evt.LastBcdUpdatedDateTime = eventInfo.LastBcdUpdatedDateTime;
+            evt.LastBcdUpdatedUsername = eventInfo.LastBcdUpdatedUsername;
 
             this.DB.SaveChanges();
 

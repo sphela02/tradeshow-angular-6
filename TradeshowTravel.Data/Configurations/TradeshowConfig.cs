@@ -101,13 +101,13 @@
                 .HasColumnOrder(17)
                 .IsRequired();
 
-            Property(p => p.LastBcdUpdateUsername)
+            Property(p => p.LastBcdUpdatedUsername)
                .HasColumnOrder(18)
-               .IsRequired();
+               .IsOptional();
 
             Property(p => p.LastBcdUpdatedDateTime)
                .HasColumnOrder(19)
-               .IsRequired();
+               .IsOptional();
 
             HasKey(k => k.ID);
         }

@@ -95,10 +95,10 @@ namespace TradeshowTravel.Data
 
             // Tradeshow has one Bcd that updated the tradeshow the last
             // and that Bcd can update many tradeshows
-            //modelBuilder.Entity<Tradeshow>()
-            //    .HasOptional(ts => ts.LastBcdUpdated)
-            //    .WithMany(u => u.TradeshowsUpdated)
-            //    .HasForeignKey(f => f.LastBcdUpdateUsername);
+            modelBuilder.Entity<Tradeshow>()
+                .HasRequired(t => t.LastBcdUpdated)
+                .WithMany(u => u.TradeshowsUpdated)
+                .HasForeignKey(f => f.LastBcdUpdatedUsername);
 
             // Attendee has many field values
             // and field value has one attendee
