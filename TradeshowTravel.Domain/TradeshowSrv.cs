@@ -1626,7 +1626,11 @@ namespace TradeshowTravel.Domain
                 try
                 {
                     EventAttendee oldEventAttendee = DataRepo.GetAttendee(attendee.ID);
-                    fieldComparisonResponse = attendee.Compare(oldEventAttendee);
+
+                    if (oldEventAttendee != null)
+                    {
+                        fieldComparisonResponse = attendee.Compare(oldEventAttendee);
+                    }
 
                     attendee = DataRepo.SaveAttendee(attendee);
                     eventAttendees[i] = attendee;
