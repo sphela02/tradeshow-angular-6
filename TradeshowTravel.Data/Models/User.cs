@@ -88,5 +88,7 @@ namespace TradeshowTravel.Data.Models
         public virtual ICollection<Attendee> Attendees { get; set; }
         public virtual ICollection<TradeshowUser> ShowTeams { get; set; }
         public virtual ICollection<Tradeshow> Tradeshows { get; set; }
+
+        public virtual ICollection<Tradeshow> TradeshowsUpdated { get; set; }
     }
 }

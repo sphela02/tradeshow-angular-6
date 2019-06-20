@@ -101,6 +101,14 @@
                 .HasColumnOrder(17)
                 .IsRequired();
 
+            Property(p => p.LastBcdUpdateUsername)
+               .HasColumnOrder(18)
+               .IsRequired();
+
+            Property(p => p.LastBcdUpdatedDateTime)
+               .HasColumnOrder(19)
+               .IsRequired();
+
             HasKey(k => k.ID);
         }
     }
