@@ -5,6 +5,7 @@ import { EventAttendee } from '../shared/EventAttendee';
 import { AttendeeStatus } from '../shared/Enums';
 import { TradeshowService } from '../tradeshow.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FileAttachmentComponent } from '../file-attachment/file-attachment.component'
 
 const REMINDER_TEMPLATE = `Hello <EventAttendee.Name>,
 
@@ -20,6 +21,7 @@ Thank you,`;
 export class SendReminderPopupComponent implements OnInit {
   @Output() sendClicked = new EventEmitter();
   @ViewChild(TextAreaDirective) private emailTextArea: TextAreaDirective
+  @ViewChild(FileAttachmentComponent) private fileAttachmentComponent: FileAttachmentComponent;
 
   private _loading: boolean;
   private _request: ReminderRequest = <ReminderRequest>{};
@@ -43,6 +45,17 @@ export class SendReminderPopupComponent implements OnInit {
           + "\n" + profile.Telephone
           + "\nEvent Management\nTeam Harris Corporation";
       });
+    });
+
+    // set up attachment component
+    this.fileAttachmentComponent.selectedAttachmentsChange.subscribe(allAttachments => {
+      this.request.Attachments = allAttachments;
+    });
+    this.fileAttachmentComponent.errorMsg.subscribe(error => {
+      this.errorMsg = error;
+    });
+    this.fileAttachmentComponent.isLoading.subscribe(isLoading => {
+      this.loading = isLoading;
     });
   }
 

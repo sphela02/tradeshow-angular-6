@@ -22,6 +22,8 @@ namespace TradeshowTravel.Domain
         private IUserProfileQuery UserSrv { get; set; }
         private EmailSrv EmailSrv { get; set; }
 
+        private readonly string TempFolderRoot = ConfigurationManager.AppSettings["TempFolderRoot"];
+
         public string CurrentNetworkID { get; set; }
         public string CurrentUsername => CurrentNetworkID.GetUserName();
 
@@ -35,11 +37,16 @@ namespace TradeshowTravel.Domain
                 CurrentNetworkID = HttpContext.Current.User.Identity.Name;
             }
 
+            if (string.IsNullOrWhiteSpace(TempFolderRoot))
+            {
+                TempFolderRoot = Path.Combine(Path.GetTempPath(), "TradeShowTravel");
+            }
+
             EmailSrv = new EmailSrv(dataRepository,
                 ConfigurationManager.AppSettings["SmtpServer"],
                 ConfigurationManager.AppSettings["SenderEmailAddress"],
-                ConfigurationManager.AppSettings["BaseUrl"]
-                );
+                ConfigurationManager.AppSettings["BaseUrl"],
+                TempFolderRoot);
         }
 
         #region Cache
@@ -1122,6 +1129,45 @@ namespace TradeshowTravel.Domain
             return ValidationResponse<bool>.CreateSuccess(true);
         }
 
+        public ValidationResponse<string> UploadAttachment(int eventID, HttpPostedFile attachment)
+        {
+            string folder = Path.Combine(TempFolderRoot, eventID.ToString());
+            string filePath = Path.Combine(folder, attachment.FileName);
+
+            bool success = true;
+
+            try
+            {
+                if (!Directory.Exists(folder))
+                {
+                    Directory.CreateDirectory(folder);
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    using (var fileStream = File.Create(filePath))
+                    {
+                        attachment.InputStream.CopyTo(fileStream);
+                    }
+                }
+
+                // after creating the file check if it exists
+                if (!File.Exists(filePath))
+                {
+                    success = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage(LogLevel.Error, $"Error saving the attacment '{attachment.FileName}' for event: {eventID}.  Ex: {ex}");
+                success = false;
+            }
+
+            return success
+                ? ValidationResponse<string>.CreateSuccess(filePath)
+                : ValidationResponse<string>.CreateFailure($"Attachment {attachment.FileName} did not save.");
+        }
+
         public ValidationResponse<bool> SendRSVPRequests(int eventID, RsvpRequest req)
         {
             if (req == null)
@@ -1438,10 +1484,15 @@ namespace TradeshowTravel.Domain
             {
                 var attendee = eventAttendees[i];
 
+                attendee.Event = evt;
+
                 if (string.IsNullOrWhiteSpace(attendee.Username))
                 {
                     return ValidationResponse<List<EventAttendee>>.CreateFailure("One or more attendee usernames were not specified.");
                 }
+
+                // Check if new user before saving user information
+                bool isNewUser = DataRepo.GetProfile(attendee.Username) == null;
 
                 // Check permissions
                 if (CurrentUser.Privileges != Permissions.Admin)
@@ -1557,8 +1608,12 @@ namespace TradeshowTravel.Domain
                     attendee.DateCompleted = null;
                 }
 
+                FieldComparisonResponse fieldComparisonResponse = null;
                 try
                 {
+                    EventAttendee oldEventAttendee = DataRepo.GetAttendee(attendee.ID);
+                    fieldComparisonResponse = attendee.Compare(oldEventAttendee);
+
                     attendee = DataRepo.SaveAttendee(attendee);
                     eventAttendees[i] = attendee;
                 }
@@ -1591,6 +1646,12 @@ namespace TradeshowTravel.Domain
                                     attendee.DateRSVP = DateTime.Now;
                                     attendee = DataRepo.SaveAttendee(attendee);
                                     EmailSrv.SendRSVP(evt, attendee);
+
+                                    if (isNewUser)
+                                    {
+                                        EmailSrv.SendNewUser(evt, attendee);
+                                    }
+
                                     Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP to {attendee.Username} for event {eventID}.");
                                 }
                                 break;
@@ -1601,8 +1662,10 @@ namespace TradeshowTravel.Domain
                                 Logging.LogMessage(LogLevel.DebugBasic, $"Send attending confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                             case AttendeeStatus.Declined:
-                                // TODO: Send declined notifcation
+                                // TODO: Send declined notifcation to the attendee who declined it and his/her delegate
                                 EmailSrv.SendDeclinedConfirmationNotification(evt, attendee);
+                                // Send user cancelled reservation email to Lead / Support / BCD
+                                EmailSrv.SendUserCancelledReservationNotification(evt, attendee);
                                 Logging.LogMessage(LogLevel.DebugBasic, $"Send declined confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                         }
@@ -1610,7 +1673,7 @@ namespace TradeshowTravel.Domain
                     else if (curStatus == AttendeeStatus.Accepted)
                     {
                         // TODO: Send notification to Lead / Support / BCD that user has updated their data.
-                        EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee);
+                        EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
                 }
@@ -1625,6 +1688,8 @@ namespace TradeshowTravel.Domain
             
             return ValidationResponse<List<EventAttendee>>.CreateSuccess(eventAttendees);
         }
+
+
 
         public ValidationResponse<Workbook> ExportEventAttendees(int eventID, QueryParams parameters = null)
         {
@@ -1705,6 +1770,7 @@ namespace TradeshowTravel.Domain
             ws.Cells[rowIndex, ++colIndex].SetValue("Work Number");
             ws.Cells[rowIndex, ++colIndex].SetValue("Cell Number");
             ws.Cells[rowIndex, ++colIndex].SetValue("Name on Badge");
+            ws.Cells[rowIndex, ++colIndex].SetValue("Passport Expiration Date");
             ws.Cells[rowIndex, ++colIndex].SetValue("Passport");
             ws.Cells[rowIndex, ++colIndex].SetValue("VISA");
             ws.Cells[rowIndex, ++colIndex].SetValue("Other");
@@ -1810,6 +1876,7 @@ namespace TradeshowTravel.Domain
                 ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Telephone != null) ? attendee.Profile.Telephone.Replace("+", "") : "");
                 ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Mobile != null) ? attendee.Profile.Mobile.Replace("+", "") : "");
                 ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.BadgeName);
+                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.PassportExpirationDate?.ToString("MM dd, yyyy"));
 
                     //set the travel document booleans
                     var PassportDoc = "N";

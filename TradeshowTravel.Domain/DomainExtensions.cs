@@ -23,6 +23,30 @@ namespace TradeshowTravel.Domain
             return null;
         }
 
+        public static string ToShortDateFormat(this DateTime? datetime)
+        {
+            if (datetime.HasValue)
+            {
+                return datetime.Value.ToShortDateString();
+            }
+
+            return null;
+        }
+
+        public static bool DatePartEquals(this DateTime? sourceDateTime, DateTime? targetDateTime)
+        {
+            //Both of them don't have value so they're equal
+            if(!sourceDateTime.HasValue && !targetDateTime.HasValue)
+            {
+                return true;
+            }
+
+            DateTime sourceDate = sourceDateTime.HasValue ? sourceDateTime.Value.Date : DateTime.MinValue.Date;
+            DateTime targetDate = targetDateTime.HasValue ? targetDateTime.Value.Date : DateTime.MinValue.Date;
+
+            return sourceDate == targetDate;
+        }
+
         public static string ToYesNoString(this bool? str)
         {
             if (str == null)
@@ -72,6 +96,7 @@ namespace TradeshowTravel.Domain
             {
                 profile.PassportName = null;
                 profile.PassportNumber = null;
+                profile.PassportExpirationDate = null;
                 profile.Nationality = null;
                 profile.DOB = null;
                 profile.COB = null;
@@ -330,6 +355,23 @@ namespace TradeshowTravel.Domain
             }
             
             return true;
+        }
+
+        public static bool IsBusinessLeadForSegment(this EventUser eventUser, string eventSegments)
+        {
+            //Business lead role is on a segment basis. In this method, we check if a given user belongs to the segment(s) of the current event
+            if (string.IsNullOrWhiteSpace(eventSegments))
+            {
+                return false;
+            }
+
+            string[] segments = eventSegments.Split(',');
+            return eventUser.Role.HasFlag(Role.Business) && segments.Contains(eventUser.User.Segment);
+        }
+
+        public static string GetLabel(this List<EventField> eventFields, string source)
+        {
+            return eventFields.FirstOrDefault(f => f.Source == source)?.Label ?? source;
         }
 
         public static string GetUserName(this string userIdentity)

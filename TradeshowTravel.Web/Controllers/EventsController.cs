@@ -10,6 +10,9 @@ namespace TradeshowTravel.Web.Controllers
     using Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.Xlsx;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Web;
+    using System;
+    using Common.Logging;
 
     [Authorize]
     [EnableCors]
@@ -260,6 +263,48 @@ namespace TradeshowTravel.Web.Controllers
         public IHttpActionResult DeleteAttendees(int eventID, [FromUri] int[] ids)
         {
             ValidationResponse<bool> response = Service.DeleteAttendees(eventID, ids);
+
+            if (response.Success)
+            {
+                return Ok(response.Result);
+            }
+            else
+            {
+                return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/events/{eventID}/uploadAttachment")]
+        public IHttpActionResult UploadAttachment(int eventID)
+        {
+            HttpFileCollection collection = null;
+            try
+            {
+                collection = HttpContext.Current.Request.Files;
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage(LogLevel.Warning, $"Unable to upload file for event {eventID}. Exception: {ex} Message {ex.Message}");
+
+                string message = "Unable to upload file.";
+
+                if (ex.Message.Contains("length exceeded"))
+                {
+                    message = "Attachment is too large.";
+                }
+                               
+                return HttpResult.Create(Request, HttpStatusCode.BadRequest, message);
+            }
+
+            if (collection != null && collection.Count == 0)
+            {
+                return HttpResult.Create(Request, HttpStatusCode.BadRequest, "Attachment not provided to upload.");
+            }
+
+            HttpPostedFile attachement = collection[0];
+           
+            ValidationResponse<string> response = Service.UploadAttachment(eventID, attachement);
 
             if (response.Success)
             {

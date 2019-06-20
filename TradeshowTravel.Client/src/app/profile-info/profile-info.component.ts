@@ -118,6 +118,7 @@ export class ProfileInfoComponent implements OnInit {
       else if (this.event.ShowType == ShowType.International) {
         if (!this.profile.PassportName ||
             !this.profile.PassportNumber ||
+            !this.profile.PassportExpirationDate ||
             !this.profile.Nationality ||
             !this.profile.DOB ||
             !this.profile.COB ||
