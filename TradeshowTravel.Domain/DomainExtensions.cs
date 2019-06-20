@@ -6,6 +6,7 @@ namespace TradeshowTravel.Domain
 {
     using DTOs;
     using Common.Logging;
+    using System.Text.RegularExpressions;
 
     public class Encrypted : Attribute
     { }
@@ -329,6 +330,14 @@ namespace TradeshowTravel.Domain
             }
             
             return true;
+        }
+
+        public static string GetUserName(this string userIdentity)
+        {
+            return userIdentity == null ? string.Empty
+            : userIdentity.Contains("\\\\") ? Regex.Replace(userIdentity, ".*\\\\", string.Empty)
+            : userIdentity.Contains("@") ? Regex.Replace(userIdentity, "@.*", string.Empty)
+            : userIdentity;
         }
     }
 }

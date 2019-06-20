@@ -14,9 +14,9 @@ namespace TradeshowTravel.Domain
 
     public class EmailSrv
     {
-        private readonly string smtpServer = "mail.harris.com";
-        private readonly string sender = "noreply-eventtravelportal@harris.com";
-        private readonly string baseUrl = "https://tradeshowtravel.harris.com/";
+        private readonly string smtpServer;
+        private readonly string sender;
+        private readonly string baseUrl;
         private IDataRepository repo = null;
 
         public EmailSrv(IDataRepository repo)
@@ -360,13 +360,5 @@ namespace TradeshowTravel.Domain
         {
             return repo.GetProfile(username);
         }
-    
-        //public void test(string body = null)
-        //{
-        //    if(body == null)
-        //        this.Send("rcrum@harris.com", "test", "test");
-        //    else
-        //        this.Send("rcrum@harris.com", "test", body);
-        //}
     }
 }
