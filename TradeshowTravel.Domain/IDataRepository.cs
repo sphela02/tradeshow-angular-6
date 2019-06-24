@@ -67,5 +67,7 @@ namespace TradeshowTravel.Domain
         AttendeeQueryResult GetAttendeeProfiles(QueryParams parameters, string identityUser = null);
         
         List<AttendeeEvent> GetAttendeeEvents(string username, string identityUser = null);
+
+        bool IsUserNew(string username);
     }
 }

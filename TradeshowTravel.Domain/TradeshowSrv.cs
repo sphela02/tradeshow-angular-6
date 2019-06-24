@@ -1235,6 +1235,13 @@ namespace TradeshowTravel.Domain
 
             foreach (var attendee in attendees)
             {
+                // Send welcome package is user has not been invited to an event
+                if(DataRepo.IsUserNew(attendee.Username))
+                {
+                    EmailSrv.SendNewUser(evt, attendee);
+                    Logging.LogMessage(LogLevel.DebugBasic, $"Send Welcome notification to {attendee.Username}.");
+                }
+
                 // TODO: Replace email text placeholders with object property values
                 // TODO: Send email to attendee and update RSVP date
                 EmailSrv.SendRSVP(evt, attendee, req);
