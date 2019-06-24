@@ -1678,12 +1678,11 @@ namespace TradeshowTravel.Domain
                     {
                         if ((fieldComparisonResponse?.IsChanged ?? false) && evt != null)
                         {
-                            // TODO: Send notification to Lead / Support / BCD that user has updated their data.
-                            EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
-
                             evt.LastBcdUpdated = null;
                             evt.LastBcdUpdatedDateTime = null;
                             DataRepo.SaveEvent(evt);
+                            // TODO: Send notification to Lead / Support / BCD that user has updated their data.
+                            EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
                         }
 
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
