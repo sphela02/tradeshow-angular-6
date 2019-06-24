@@ -346,6 +346,11 @@ namespace TradeshowTravel.Data
             return GetProfile(profile.Username);
         }
 
+        public bool IsUserNew(string username)
+        {
+            return !DB.Attendees.Any(x => x.Username == username && x.SendRSVP);
+        }
+
         #endregion
 
         #region Events
