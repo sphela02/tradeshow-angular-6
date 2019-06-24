@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace TradeshowTravel.Domain.DTOs
 {
@@ -15,6 +16,8 @@ namespace TradeshowTravel.Domain.DTOs
         }
 
         public IList<FieldComparisionInfo> Values { get; private set; }
+
+        public bool IsChanged => Values?.Any() ?? false;
     }
 
     public class FieldComparisionInfo

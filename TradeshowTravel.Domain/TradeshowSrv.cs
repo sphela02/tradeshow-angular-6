@@ -126,7 +126,7 @@ namespace TradeshowTravel.Domain
 
         #endregion
 
-         #region User Images
+        #region User Images
 
         public UserImages GetAvatar(string username)
         {
@@ -209,9 +209,9 @@ namespace TradeshowTravel.Domain
         //    }
         //}
 
-        public ValidationResponse<bool> SaveImage (string username, HttpPostedFile file, string category, string description)
+        public ValidationResponse<bool> SaveImage(string username, HttpPostedFile file, string category, string description)
         {
-            
+
             // Validate username
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -462,7 +462,7 @@ namespace TradeshowTravel.Domain
                     return ValidationResponse<UserProfile>.CreateFailure($"The {propname} is required.");
                 }
             }
-            
+
             bool hasUserDelegateChanged = false;
 
             // Validate delegate if specified.
@@ -1052,7 +1052,7 @@ namespace TradeshowTravel.Domain
                     return ValidationResponse<EventField>.CreateFailure($"User '{CurrentUsername}' does not have permission to modify fields of event {eventID}.");
                 }
             }
-            
+
             bool nowRequired = field.Included && field.Required;
             bool wasRequired = false;
 
@@ -1081,12 +1081,12 @@ namespace TradeshowTravel.Domain
                 Logging.LogMessage(LogLevel.Error, $"Error saving fields for event ID: {eventID}.  Ex: {ex}");
                 return ValidationResponse<EventField>.CreateFailure($"Error saving fields for event ID: {eventID}");
             }
-            
+
             if (nowRequired != wasRequired && field.Access.HasFlag(Role.Attendee))
             {
                 onEventFieldsChanged(evt, nowRequired);
             }
-            
+
             return ValidationResponse<EventField>.CreateSuccess(field);
         }
 
@@ -1225,7 +1225,7 @@ namespace TradeshowTravel.Domain
 
             QueryParams parameters = new QueryParams();
             parameters.Filters = new List<FilterParams>();
-            
+
             // filter for this event
             parameters.Filters.Add(new FilterParams
             {
@@ -1270,7 +1270,7 @@ namespace TradeshowTravel.Domain
                 // TODO: Replace email text placeholders with object property values
                 // TODO: Send email to attendee and update RSVP date
                 EmailSrv.SendRSVP(evt, attendee, req);
-                Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP notification to {attendee.Username} for event {eventID}.");   
+                Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP notification to {attendee.Username} for event {eventID}.");
                 attendee.SendRSVP = true;
                 attendee.DateRSVP = timestamp;
             }
@@ -1332,7 +1332,7 @@ namespace TradeshowTravel.Domain
                 Operator = "eq",
                 Value = eventID.ToString()
             });
-                        
+
             // filter for ids
             foreach (int id in req.AttendeeIDs)
             {
@@ -1405,7 +1405,7 @@ namespace TradeshowTravel.Domain
             {
                 return ValidationResponse<EventAttendee>.CreateFailure($"The attendee {attendeeID} was not found.");
             }
-            
+
             var attendee = DataRepo.GetAttendee(attendeeID);
 
             if (attendee == null)
@@ -1419,7 +1419,7 @@ namespace TradeshowTravel.Domain
             {
                 return ValidationResponse<EventAttendee>.CreateFailure($"The event {attendee.EventID} does not exist.");
             }
-            
+
             // Check permissions
             if (CurrentUser.Privileges != Permissions.Admin)
             {
@@ -1434,7 +1434,7 @@ namespace TradeshowTravel.Domain
                     {
                         return ValidationResponse<EventAttendee>.CreateFailure($"User '{CurrentUsername}' does not have permission to access attendees of event {attendee.EventID}.");
                     }
-                    
+
                     if (role == Role.Travel)
                     {
                         // Hide Passport Info
@@ -1461,7 +1461,7 @@ namespace TradeshowTravel.Domain
                 return ValidationResponse<EventAttendee>.CreateFailure(response.Message);
             }
         }
-        
+
         public ValidationResponse<List<EventAttendee>> SaveAttendees(int eventID, List<EventAttendee> eventAttendees)
         {
             if (eventAttendees == null || eventAttendees.Count == 0)
@@ -1479,7 +1479,7 @@ namespace TradeshowTravel.Domain
             Role currentRole = evt.GetUserRole(CurrentUsername);
 
             int newAttendeeCount = 0;
-            
+
             for (int i = 0; i < eventAttendees.Count; ++i)
             {
                 var attendee = eventAttendees[i];
@@ -1559,7 +1559,7 @@ namespace TradeshowTravel.Domain
 
                 // Check if a new delegate was assigned
                 bool hasUserDelegateChanged = false;
-                
+
                 if (!string.IsNullOrWhiteSpace(attendee.Profile.DelegateUsername))
                 {
                     var del = GetOrCreateProfile(attendee.Profile.DelegateUsername);
@@ -1643,23 +1643,23 @@ namespace TradeshowTravel.Domain
                         switch (newStatus)
                         {
                             case AttendeeStatus.Pending:
-                            {
-                                if (attendee.SendRSVP && !attendee.DateRSVP.HasValue)
                                 {
-                                    // TODO: Send RSVP Request and update DateRSVP
-                                    attendee.DateRSVP = DateTime.Now;
-                                    attendee = DataRepo.SaveAttendee(attendee);
-                                    EmailSrv.SendRSVP(evt, attendee);
-
-                                    if (isNewUser)
+                                    if (attendee.SendRSVP && !attendee.DateRSVP.HasValue)
                                     {
-                                        EmailSrv.SendNewUser(evt, attendee);
-                                    }
+                                        // TODO: Send RSVP Request and update DateRSVP
+                                        attendee.DateRSVP = DateTime.Now;
+                                        attendee = DataRepo.SaveAttendee(attendee);
+                                        EmailSrv.SendRSVP(evt, attendee);
 
-                                    Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP to {attendee.Username} for event {eventID}.");
+                                        if (isNewUser)
+                                        {
+                                            EmailSrv.SendNewUser(evt, attendee);
+                                        }
+
+                                        Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP to {attendee.Username} for event {eventID}.");
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
                             case AttendeeStatus.Accepted:
                                 // TODO: Send attending notifcation
                                 EmailSrv.SendAttendingConfirmationNotification(evt, attendee);
@@ -1676,8 +1676,15 @@ namespace TradeshowTravel.Domain
                     }
                     else if (curStatus == AttendeeStatus.Accepted)
                     {
-                        // TODO: Send notification to Lead / Support / BCD that user has updated their data.
-                        EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
+                        if ((fieldComparisonResponse?.IsChanged ?? false) && evt != null)
+                        {
+                            evt.LastBcdUpdated = null;
+                            evt.LastBcdUpdatedDateTime = null;
+                            DataRepo.SaveEvent(evt);
+                            // TODO: Send notification to Lead / Support / BCD that user has updated their data.
+                            EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
+                        }
+
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
                 }
@@ -1689,7 +1696,7 @@ namespace TradeshowTravel.Domain
                 EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername);
                 Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
             }
-            
+
             return ValidationResponse<List<EventAttendee>>.CreateSuccess(eventAttendees);
         }
 
@@ -1697,110 +1704,111 @@ namespace TradeshowTravel.Domain
 
         public ValidationResponse<Workbook> ExportEventAttendees(int eventID, QueryParams parameters = null)
         {
-            try {
-            // Get event
-            var evt = DataRepo.GetEvent(eventID);
-
-            if (evt == null)
-            {
-                return ValidationResponse<Workbook>.CreateFailure($"Event {eventID} was not found.");
-            }
-
-            // Validate user access to event.
-            if (GetCurrentUserRole() != Role.Admin)
-            {
-                if (!evt.OwnerUsername.Equals(CurrentUsername, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    if (!evt.Users.Any(u => u.User.Username.Equals(CurrentUsername, StringComparison.CurrentCultureIgnoreCase)))
-                    {
-                        return ValidationResponse<Workbook>.CreateFailure($"User '{CurrentUsername}' does not have permission to export the attendees of event {eventID}.");
-                    }
-                }
-            }
-
-            if (parameters == null)
-            {
-                parameters = new QueryParams();
-            }
-
-            // Take all
-            parameters.Skip = 0;
-            parameters.Size = 0;
-
-            if (parameters.Filters == null)
-            {
-                parameters.Filters = new List<FilterParams>();
-            }
-
-            // filter for event
-            parameters.Filters.Add(new FilterParams
-            {
-                Field = "TradeshowID",
-                Operator = "eq",
-                Value = eventID.ToString()
-            });
-
-            List<EventAttendee> attendees = new List<EventAttendee>();
-
             try
             {
-                // Get attendees
-                attendees = DataRepo.GetEventAttendeesList(parameters);
-            }
-            catch (Exception ex)
-            {
-                Logging.LogMessage(LogLevel.Error, $"Error querying event attendees. Ex: {ex}");
-                return ValidationResponse<Workbook>.CreateFailure("Error querying event attendees.");
-            }
+                // Get event
+                var evt = DataRepo.GetEvent(eventID);
 
-            Workbook wb = new Workbook();
-            wb.Name = evt.Name;
+                if (evt == null)
+                {
+                    return ValidationResponse<Workbook>.CreateFailure($"Event {eventID} was not found.");
+                }
 
-            Worksheet ws = wb.Worksheets.Add();
-            ws.Name = "Attendees";
+                // Validate user access to event.
+                if (GetCurrentUserRole() != Role.Admin)
+                {
+                    if (!evt.OwnerUsername.Equals(CurrentUsername, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        if (!evt.Users.Any(u => u.User.Username.Equals(CurrentUsername, StringComparison.CurrentCultureIgnoreCase)))
+                        {
+                            return ValidationResponse<Workbook>.CreateFailure($"User '{CurrentUsername}' does not have permission to export the attendees of event {eventID}.");
+                        }
+                    }
+                }
 
-            // Create column names
-            int rowIndex = 0, colIndex = 0;
+                if (parameters == null)
+                {
+                    parameters = new QueryParams();
+                }
 
-            ws.Cells[rowIndex, colIndex].SetValue("Picture");
-            ws.Cells[rowIndex, ++colIndex].SetValue("First Name");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Last Name");
-            ws.Cells[rowIndex, ++colIndex].SetValue("RSVP Request Sent");
-            ws.Cells[rowIndex, ++colIndex].SetValue("RSVP Response (Y/N)");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Job Title");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Segment");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Delegate");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Email");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Work Number");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Cell Number");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Name on Badge");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Passport Expiration Date");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Passport");
-            ws.Cells[rowIndex, ++colIndex].SetValue("VISA");
-            ws.Cells[rowIndex, ++colIndex].SetValue("Other");
+                // Take all
+                parameters.Skip = 0;
+                parameters.Size = 0;
+
+                if (parameters.Filters == null)
+                {
+                    parameters.Filters = new List<FilterParams>();
+                }
+
+                // filter for event
+                parameters.Filters.Add(new FilterParams
+                {
+                    Field = "TradeshowID",
+                    Operator = "eq",
+                    Value = eventID.ToString()
+                });
+
+                List<EventAttendee> attendees = new List<EventAttendee>();
+
+                try
+                {
+                    // Get attendees
+                    attendees = DataRepo.GetEventAttendeesList(parameters);
+                }
+                catch (Exception ex)
+                {
+                    Logging.LogMessage(LogLevel.Error, $"Error querying event attendees. Ex: {ex}");
+                    return ValidationResponse<Workbook>.CreateFailure("Error querying event attendees.");
+                }
+
+                Workbook wb = new Workbook();
+                wb.Name = evt.Name;
+
+                Worksheet ws = wb.Worksheets.Add();
+                ws.Name = "Attendees";
+
+                // Create column names
+                int rowIndex = 0, colIndex = 0;
+
+                ws.Cells[rowIndex, colIndex].SetValue("Picture");
+                ws.Cells[rowIndex, ++colIndex].SetValue("First Name");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Last Name");
+                ws.Cells[rowIndex, ++colIndex].SetValue("RSVP Request Sent");
+                ws.Cells[rowIndex, ++colIndex].SetValue("RSVP Response (Y/N)");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Job Title");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Segment");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Delegate");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Email");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Work Number");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Cell Number");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Name on Badge");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Passport Expiration Date");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Passport");
+                ws.Cells[rowIndex, ++colIndex].SetValue("VISA");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Other");
 
                 if (evt.Fields != null)
-            {
-                foreach (var field in evt.Fields)
                 {
-                    // skip these fields on the export
-                    if (field.Label == "Harris Credit Card Number" || field.Label == "Expiration Date" || field.Label == "CVV Number")
+                    foreach (var field in evt.Fields)
                     {
-                        continue;
+                        // skip these fields on the export
+                        if (field.Label == "Harris Credit Card Number" || field.Label == "Expiration Date" || field.Label == "CVV Number")
+                        {
+                            continue;
+                        }
+
+                        ws.Cells[rowIndex, ++colIndex].SetValue(field.Label);
                     }
-
-                    ws.Cells[rowIndex, ++colIndex].SetValue(field.Label);
                 }
-            }
 
-            ws.Rows[0].SetIsBold(true);
+                ws.Rows[0].SetIsBold(true);
 
-            int columns = colIndex;
-            
-            foreach (var attendee in attendees)
-            {
-                rowIndex++;
-                colIndex = 1;
+                int columns = colIndex;
+
+                foreach (var attendee in attendees)
+                {
+                    rowIndex++;
+                    colIndex = 1;
 
                     // download and add attendee image
                     var picRec = DataRepo.GetAvatar(attendee.Username.ToUpper());
@@ -1829,58 +1837,58 @@ namespace TradeshowTravel.Domain
 
                         using (var client = new WebClient())
                         {
-                        try
-                        {
-                            client.Credentials = CredentialCache.DefaultNetworkCredentials;
-                            client.UseDefaultCredentials = true;
-                            var content = client.DownloadData(url);
-                            var stream = new MemoryStream(content);
-                            var imageSource = new ImageSource(stream, "jpg");
-                            var floatingImage = new FloatingImage(ws, new CellIndex(rowIndex, colIndex - 1), 0, 0);
-                            floatingImage.ImageSource = imageSource;
-                            floatingImage.LockAspectRatio = true;
-                            floatingImage.SetHeight(true, 96, false);
-                            floatingImage.SetWidth(true, 96, false);  // some test pics were wide
-                            ws.Shapes.Add(floatingImage);
-                        }
-                        catch (Exception e)
-                        {
-                            Logging.LogMessage(LogLevel.DebugBasic, e.Message);
-                        }
+                            try
+                            {
+                                client.Credentials = CredentialCache.DefaultNetworkCredentials;
+                                client.UseDefaultCredentials = true;
+                                var content = client.DownloadData(url);
+                                var stream = new MemoryStream(content);
+                                var imageSource = new ImageSource(stream, "jpg");
+                                var floatingImage = new FloatingImage(ws, new CellIndex(rowIndex, colIndex - 1), 0, 0);
+                                floatingImage.ImageSource = imageSource;
+                                floatingImage.LockAspectRatio = true;
+                                floatingImage.SetHeight(true, 96, false);
+                                floatingImage.SetWidth(true, 96, false);  // some test pics were wide
+                                ws.Shapes.Add(floatingImage);
+                            }
+                            catch (Exception e)
+                            {
+                                Logging.LogMessage(LogLevel.DebugBasic, e.Message);
+                            }
                         }
                     }
-                    
 
-                ws.Cells[rowIndex, colIndex].SetValue(attendee.Profile.FirstName);
-                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.LastName);
 
-                if (attendee.DateRSVP.HasValue)
-                {
-                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.DateRSVP.Value);
-                }
-                else
-                {
-                    ++colIndex;
-                }
+                    ws.Cells[rowIndex, colIndex].SetValue(attendee.Profile.FirstName);
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.LastName);
 
-                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.GetRsvpResponse());
-                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Title);
-                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Segment);
+                    if (attendee.DateRSVP.HasValue)
+                    {
+                        ws.Cells[rowIndex, ++colIndex].SetValue(attendee.DateRSVP.Value);
+                    }
+                    else
+                    {
+                        ++colIndex;
+                    }
 
-                if (attendee.Profile.Delegate != null)
-                {
-                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Delegate.FirstName + " " + attendee.Profile.Delegate.LastName);
-                }
-                else
-                {
-                    ++colIndex;
-                }
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.GetRsvpResponse());
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Title);
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Segment);
 
-                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Email);
-                ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Telephone != null) ? attendee.Profile.Telephone.Replace("+", "") : "");
-                ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Mobile != null) ? attendee.Profile.Mobile.Replace("+", "") : "");
-                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.BadgeName);
-                ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.PassportExpirationDate?.ToString("MM dd, yyyy"));
+                    if (attendee.Profile.Delegate != null)
+                    {
+                        ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Delegate.FirstName + " " + attendee.Profile.Delegate.LastName);
+                    }
+                    else
+                    {
+                        ++colIndex;
+                    }
+
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.Email);
+                    ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Telephone != null) ? attendee.Profile.Telephone.Replace("+", "") : "");
+                    ws.Cells[rowIndex, ++colIndex].SetValue((attendee.Profile.Mobile != null) ? attendee.Profile.Mobile.Replace("+", "") : "");
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.BadgeName);
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.PassportExpirationDate?.ToString("MM dd, yyyy"));
 
                     //set the travel document booleans
                     var PassportDoc = "N";
@@ -1900,96 +1908,96 @@ namespace TradeshowTravel.Domain
 
 
                     if (evt.Fields != null)
-                {
-                    foreach (var field in evt.Fields)
                     {
-                        // skip these fields on the export
-                        if (field.Label == "Harris Credit Card Number" || field.Label == "Expiration Date" || field.Label == "CVV Number")
+                        foreach (var field in evt.Fields)
                         {
-                            continue;
-                        }
-
-                        if (string.IsNullOrWhiteSpace(field.Source))
-                        {
-                            if (!attendee.Properties.ContainsKey(field.ID))
+                            // skip these fields on the export
+                            if (field.Label == "Harris Credit Card Number" || field.Label == "Expiration Date" || field.Label == "CVV Number")
                             {
-                                colIndex++;
                                 continue;
                             }
 
-                            string value = attendee.Properties[field.ID];
-
-                            if (field.Input == InputType.Date)
+                            if (string.IsNullOrWhiteSpace(field.Source))
                             {
-                                colIndex++;
-
-                                DateTime? dateValue = value.ToDateTime();
-
-                                if (dateValue.HasValue)
+                                if (!attendee.Properties.ContainsKey(field.ID))
                                 {
-                                    ws.Cells[rowIndex, colIndex].SetValue(dateValue.Value);
+                                    colIndex++;
+                                    continue;
                                 }
-                            }
-                            else if (field.Input == InputType.MultiSelect)
-                            {
-                                value = value.Replace("|", ", ");
-                                ws.Cells[rowIndex, ++colIndex].SetValue(value);
-                            }
-                            else
-                            {
-                                ws.Cells[rowIndex, ++colIndex].SetValue(value);
-                            }
-                        }
-                        else
-                        {
-                            var property = attendee.GetType().GetProperty(field.Source);
 
-                            if (property == null)
-                            {
-                                colIndex++;
-                                continue;
-                            }
+                                string value = attendee.Properties[field.ID];
 
-                            if (property.PropertyType == typeof(DateTime?))
-                            {
-                                colIndex++;
-
-                                DateTime? dateValue = property.GetValue(attendee) as DateTime?;
-
-                                if (dateValue.HasValue)
+                                if (field.Input == InputType.Date)
                                 {
-                                    ws.Cells[rowIndex, colIndex].SetValue(dateValue.Value);
+                                    colIndex++;
+
+                                    DateTime? dateValue = value.ToDateTime();
+
+                                    if (dateValue.HasValue)
+                                    {
+                                        ws.Cells[rowIndex, colIndex].SetValue(dateValue.Value);
+                                    }
                                 }
-                            }
-                            else if (field.Input == InputType.MultiSelect)
-                            {
-                                string value = property.GetValue(attendee) as string;
-                                if (!string.IsNullOrWhiteSpace(value))
+                                else if (field.Input == InputType.MultiSelect)
                                 {
                                     value = value.Replace("|", ", ");
+                                    ws.Cells[rowIndex, ++colIndex].SetValue(value);
                                 }
-                                ws.Cells[rowIndex, ++colIndex].SetValue(value);
+                                else
+                                {
+                                    ws.Cells[rowIndex, ++colIndex].SetValue(value);
+                                }
                             }
                             else
                             {
-                                string value = property.GetValue(attendee) as string;
-                                ws.Cells[rowIndex, ++colIndex].SetValue(value);
+                                var property = attendee.GetType().GetProperty(field.Source);
+
+                                if (property == null)
+                                {
+                                    colIndex++;
+                                    continue;
+                                }
+
+                                if (property.PropertyType == typeof(DateTime?))
+                                {
+                                    colIndex++;
+
+                                    DateTime? dateValue = property.GetValue(attendee) as DateTime?;
+
+                                    if (dateValue.HasValue)
+                                    {
+                                        ws.Cells[rowIndex, colIndex].SetValue(dateValue.Value);
+                                    }
+                                }
+                                else if (field.Input == InputType.MultiSelect)
+                                {
+                                    string value = property.GetValue(attendee) as string;
+                                    if (!string.IsNullOrWhiteSpace(value))
+                                    {
+                                        value = value.Replace("|", ", ");
+                                    }
+                                    ws.Cells[rowIndex, ++colIndex].SetValue(value);
+                                }
+                                else
+                                {
+                                    string value = property.GetValue(attendee) as string;
+                                    ws.Cells[rowIndex, ++colIndex].SetValue(value);
+                                }
                             }
                         }
                     }
                 }
+
+                ws.Columns[0, columns].AutoFitWidth();
+                ws.Columns[0, 0].SetWidth(new ColumnWidth(96, false));
+                ws.Rows[1, rowIndex].SetHeight(new RowHeight(96, true));
+
+                ws.ViewState.FreezePanes(1, 0);
+
+                return ValidationResponse<Workbook>.CreateSuccess(wb);
+
             }
-
-            ws.Columns[0, columns].AutoFitWidth();
-            ws.Columns[0, 0].SetWidth(new ColumnWidth(96, false));
-            ws.Rows[1, rowIndex].SetHeight(new RowHeight(96, true));
-
-            ws.ViewState.FreezePanes(1, 0);
-
-            return ValidationResponse<Workbook>.CreateSuccess(wb);
-            
-                }
-            catch(Exception e) { Logging.LogMessage(LogLevel.DebugBasic, e.Message); }
+            catch (Exception e) { Logging.LogMessage(LogLevel.DebugBasic, e.Message); }
 
             return null;
         }
@@ -2043,7 +2051,7 @@ namespace TradeshowTravel.Domain
                 Logging.LogMessage(LogLevel.Error, $"Error deleting attendees: {String.Join(", ", attendeeIDs)}.  Ex: {ex}");
                 return ValidationResponse<bool>.CreateFailure($"Error deleting attendees: {String.Join(", ", attendeeIDs)}.");
             }
-            
+
             if (attendees != null)
             {
                 foreach (var attendee in attendees)
@@ -2056,7 +2064,7 @@ namespace TradeshowTravel.Domain
 
             return ValidationResponse<bool>.CreateSuccess(true);
         }
-                
+
         public ValidationResponse<AttendeeQueryResult> GetAttendees(QueryParams parameters = null)
         {
             if (parameters == null)
@@ -2088,7 +2096,7 @@ namespace TradeshowTravel.Domain
 
             return ValidationResponse<AttendeeQueryResult>.CreateSuccess(result);
         }
-                
+
         public ValidationResponse<List<AttendeeEvent>> GetAttendeeEvents(string username)
         {
             if (string.IsNullOrWhiteSpace(username))
