@@ -332,9 +332,9 @@ namespace TradeshowTravel.Data
             user.Mobile = profile.Mobile;
             user.BadgeName = profile.BadgeName;
             user.Privileges = profile.Privileges;
-
             user.PassportName = profile.PassportName;
             user.PassportNumber = profile.PassportNumber;
+            user.PassportExpirationDate = profile.PassportExpirationDate.ToDTOFormat();
             user.Nationality = profile.Nationality;
             user.DOB = profile.DOB.ToDTOFormat();
             user.COB = profile.COB;
@@ -484,6 +484,8 @@ namespace TradeshowTravel.Data
             evt.StartDate = eventInfo.StartDate;
             evt.Tier = eventInfo.Tier;
             evt.Venue = eventInfo.Venue;
+            evt.LastBcdUpdatedDateTime = eventInfo.LastBcdUpdatedDateTime;
+            evt.LastBcdUpdatedUsername = eventInfo.LastBcdUpdatedUsername;
 
             this.DB.SaveChanges();
 
@@ -1225,6 +1227,11 @@ namespace TradeshowTravel.Data
                 if (eventAttendee.Profile.PassportNumber != null)
                 {
                     attendee.User.PassportNumber = eventAttendee.Profile.PassportNumber.Trim();
+                }
+
+                if (eventAttendee.Profile.PassportExpirationDate != null)
+                {
+                    attendee.User.PassportExpirationDate = eventAttendee.Profile.PassportExpirationDate.ToDTOFormat();
                 }
 
                 if (eventAttendee.Profile.Nationality != null)

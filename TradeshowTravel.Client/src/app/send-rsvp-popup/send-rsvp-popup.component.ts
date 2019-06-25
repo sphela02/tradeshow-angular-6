@@ -7,6 +7,7 @@ import { DatePickerComponent } from '@progress/kendo-angular-dateinputs';
 import { TextAreaDirective } from '@progress/kendo-angular-inputs';
 import { RsvpRequest } from '../shared/RsvpRequest';
 import { AttendeeStatus } from '../shared/Enums';
+import { FileAttachmentComponent } from '../file-attachment/file-attachment.component'
 
 import { UserProfile } from '../shared/UserProfile';
 
@@ -26,7 +27,8 @@ Thank you,`;
 export class SendRsvpPopupComponent implements OnInit {
   @Output() sendClicked = new EventEmitter();
   @ViewChild("rsvpDueDate") private RsvpDueDate: DatePickerComponent;
-  @ViewChild(TextAreaDirective) private emailTextArea: TextAreaDirective
+  @ViewChild(TextAreaDirective) private emailTextArea: TextAreaDirective;
+  @ViewChild(FileAttachmentComponent) private fileAttachmentComponent: FileAttachmentComponent;
 
   private _loading: boolean;
   private _request: RsvpRequest = <RsvpRequest>{};
@@ -50,6 +52,17 @@ export class SendRsvpPopupComponent implements OnInit {
         + "\n" + profile.Email
         + "\n" + profile.Telephone
         + "\nEvent Management\nTeam Harris Corporation";
+    });
+
+      // set up attachment component
+    this.fileAttachmentComponent.selectedAttachmentsChange.subscribe(allAttachments => {
+      this.request.Attachments = allAttachments
+    });
+    this.fileAttachmentComponent.errorMsg.subscribe(error => {
+      this.errorMsg = error;
+    });
+    this.fileAttachmentComponent.isLoading.subscribe(isLoading => {
+      this.loading = isLoading;
     });
   }
 
@@ -124,10 +137,10 @@ export class SendRsvpPopupComponent implements OnInit {
       Object.keys(this.attendees).forEach(k => {
         let attendee: EventAttendee = this.attendees[Number(k)];
         if (attendee.Status == AttendeeStatus.Pending ||
-            attendee.Status == AttendeeStatus.Invited) {
+          attendee.Status == AttendeeStatus.Invited) {
           let name: string = attendee.Profile.FirstName + " " +
-                              attendee.Profile.LastName + " (" +
-                              attendee.Username + ")";
+            attendee.Profile.LastName + " (" +
+            attendee.Username + ")";
           this._names.push(name);
           this.request.AttendeeIDs.push(Number(k));
         }
@@ -140,7 +153,9 @@ export class SendRsvpPopupComponent implements OnInit {
     if (!this.isValid) {
       return;
     }
+
     this.loading = true;
+
     this.service.sendRsvpRequest(this.event.ID, this.request)
       .subscribe(resp => {
         this.loading = false;

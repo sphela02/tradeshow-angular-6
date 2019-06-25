@@ -121,6 +121,17 @@
                 .HasColumnOrder(18)
                 .IsRequired();
 
+            Property(p => p.PassportExpirationDate)
+                .HasColumnOrder(19)
+                .IsMaxLength()
+                .IsUnicode(false)
+                .IsOptional();
+
+            Property(p => p.Visa)
+                .HasColumnOrder(20)
+                .IsUnicode(false)
+                .IsOptional();
+
             HasKey(k => k.Username);
         }
     }

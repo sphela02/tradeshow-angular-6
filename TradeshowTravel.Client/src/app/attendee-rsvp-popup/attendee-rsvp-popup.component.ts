@@ -14,6 +14,7 @@ export class AttendeeRsvpPopupComponent implements OnInit {
   private _attendee: EventAttendee;
 
   isLoading: boolean = false;
+  isDisclaimerChecked: boolean;
   errorMsg: string;
 
   constructor(
@@ -22,6 +23,7 @@ export class AttendeeRsvpPopupComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isDisclaimerChecked = this.attendee.IsAttending === "Yes";
   }
 
   cancelPopup() {
@@ -34,6 +36,7 @@ export class AttendeeRsvpPopupComponent implements OnInit {
     //this.saveAttendee();
     this.activeModal.close(attendee);
   }
+
   onNoClicked() {
     this.attendee.IsAttending = "No";
     this.saveAttendee();

@@ -14,6 +14,7 @@ namespace TradeshowTravel.Data.Models
             Attendees = new HashSet<Attendee>();
             ShowTeams = new HashSet<TradeshowUser>();
             Tradeshows = new HashSet<Tradeshow>();
+            TradeshowsUpdated = new HashSet<Tradeshow>();
         }
         
         public User(UserInfo user) : this()
@@ -40,8 +41,10 @@ namespace TradeshowTravel.Data.Models
             BadgeName = profile.BadgeName;
             Privileges = profile.Privileges;
 
+            Visa = profile.Visa;
             PassportName = profile.PassportName;
             PassportNumber = profile.PassportNumber;
+            PassportExpirationDate = profile.PassportExpirationDate.ToDTOFormat();
             DOB = profile.DOB.ToDTOFormat();
             Nationality = profile.Nationality;
             COB = profile.COB;
@@ -60,11 +63,14 @@ namespace TradeshowTravel.Data.Models
         public string Mobile { get; set; }
         public string Telephone { get; set; }
         public string BadgeName { get; set; }
+        public string Visa { get; set; }
 
         [Encrypted]
         public string PassportNumber { get; set; }
         [Encrypted]
         public string PassportName { get; set; }
+        [Encrypted]
+        public string PassportExpirationDate { get;set; }
         [Encrypted]
         public string DOB { get; set; }
         [Encrypted]
@@ -83,5 +89,7 @@ namespace TradeshowTravel.Data.Models
         public virtual ICollection<Attendee> Attendees { get; set; }
         public virtual ICollection<TradeshowUser> ShowTeams { get; set; }
         public virtual ICollection<Tradeshow> Tradeshows { get; set; }
+
+        public virtual ICollection<Tradeshow> TradeshowsUpdated { get; set; }
     }
 }

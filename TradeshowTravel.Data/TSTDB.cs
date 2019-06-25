@@ -92,7 +92,14 @@ namespace TradeshowTravel.Data
                 .HasRequired(ts => ts.Owner)
                 .WithMany(f => f.Tradeshows)
                 .HasForeignKey(f => f.OwnerUsername);
-            
+
+            // Tradeshow has one Bcd that updated the tradeshow the last
+            // and that Bcd can update many tradeshows
+            modelBuilder.Entity<Tradeshow>()
+                .HasRequired(t => t.LastBcdUpdated)
+                .WithMany(u => u.TradeshowsUpdated)
+                .HasForeignKey(f => f.LastBcdUpdatedUsername);
+
             // Attendee has many field values
             // and field value has one attendee
             modelBuilder.Entity<Attendee>()

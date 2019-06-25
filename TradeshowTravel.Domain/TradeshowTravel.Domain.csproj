@@ -33,6 +33,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'MLBIISDEVL1R2|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\MLBIISDEVL1R2\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NetPasswordSDK, Version=9.60.0.0, Culture=neutral, PublicKeyToken=40be1dbc8718670f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -41,6 +50,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -67,6 +77,7 @@
     <Compile Include="DTOs\EventAttendeeQuery.cs" />
     <Compile Include="DTOs\EventInfo.cs" />
     <Compile Include="DTOs\EventQuery.cs" />
+    <Compile Include="DTOs\FieldComparisonResponse.cs" />
     <Compile Include="DTOs\QueryParams.cs" />
     <Compile Include="DTOs\ReminderRequest.cs" />
     <Compile Include="DTOs\RsvpRequest.cs" />
@@ -76,6 +87,7 @@
     <Compile Include="IDataRepository.cs" />
     <Compile Include="IUserProfileQuery.cs" />
     <Compile Include="DTOs\UserProfile.cs" />
+    <Compile Include="LdapSrv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DomainExtensions.cs" />
     <Compile Include="EmailSrv.cs" />

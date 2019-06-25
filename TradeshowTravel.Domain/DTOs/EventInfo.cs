@@ -21,7 +21,10 @@ namespace TradeshowTravel.Domain.DTOs
         public string Hotels { get; set; }
         public int EstAttendCount { get; set; }
         public string OwnerUsername { get; set; }
+        public string LastBcdUpdatedUsername { get; set; }
         public UserInfo Owner { get; set; }
+        public UserInfo LastBcdUpdated { get; set; }
+        public DateTime? LastBcdUpdatedDateTime { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool SendReminders { get; set; }
         public bool Archived { get; set; }
