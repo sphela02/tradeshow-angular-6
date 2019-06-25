@@ -134,6 +134,7 @@
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
     <Content Include="App_Data\EventTravelPortal_UserManual_Attendee.pptx" />
+    <Content Include="App_Data\EventTravelPortal_QuickStartGuide_Attendee.pdf" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS1R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS2R2.pubxml" />
