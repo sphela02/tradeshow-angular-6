@@ -15,6 +15,10 @@
          [class.active]="activeTab == EventDisplayTab.Settings"
          (click)="onTabClick($event)">Settings</a>
     </li>
+    <li class="nav-item ml-3" *ngIf="canEditOrganizerFields">
+      <a id="OrganizerFields" class="nav-link waves-light waves-effect"
+        [class.active]="activeTab == EventDisplayTab.OrganizerFields" (click)="onTabClick($event)">Organizer Fields</a>
+    </li>
     <li class="nav-item ml-3" *ngIf="selectedAttendee">
       <a id="Attendee" class="nav-link waves-light waves-effect"
          [class.active]="activeTab == EventDisplayTab.Attendee"
@@ -841,6 +845,40 @@
   </div>
 
 </div>
+
+<!-- Organizer Fields -->
+<div id="tabPanel4" class="mt-3 mx-3" [class.d-none]="activeTab != EventDisplayTab.OrganizerFields">
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="h4 card-title">Edit Organizer Fields
+        <button type="button" class="btn btn-info btm-sm waves-effect waves-light m-0 pull-right"
+          (click)="popupEditOrganizerFieldsEvent($event)">Edit Organizer Fields</button>
+      </div>
+      <p>Below are the organizer fields that event attendees are required to fill out. Select the fields you wish to
+        change. Once the organizer fields have been selected, scroll down to select the attendees to change their
+        information. When you are done click 'Edit Organizer Fields'.</p>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header pl-3">
+      <h5 class="mb-0">Organizer Fields</h5>
+    </div>
+    <div class="card-body p-0">
+      <app-organizer-fields [event]="event"></app-organizer-fields>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header pl-3">
+      <h5 class="mb-0">Attendees</h5>
+    </div>
+    <div class="card-body">
+    
+    </div>
+  </div>
+</div>
+
 <!-- Attendee Info -->
 <div id="tabAttendeePanel" class="mt-3 mx-3"
   [class.d-none]="activeTab != EventDisplayTab.Attendee"

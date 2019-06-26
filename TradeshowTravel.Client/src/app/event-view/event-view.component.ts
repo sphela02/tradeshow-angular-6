@@ -67,6 +67,7 @@ export class EventViewComponent implements OnInit {
   canDeleteAttendee: boolean = false;
   canEditProfiles: boolean = false;
   canViewPassportInfo: boolean = false;
+  canEditOrganizerFields: boolean = false;
   checkedAttendees: { [key: number]: EventAttendee; } = {};
 
   private _event: EventInfo;
@@ -144,6 +145,7 @@ export class EventViewComponent implements OnInit {
     this.canViewPassportInfo = CommonService.canViewPassportInfo(
       this.currentUser, null, this.event
     );
+    this.canEditOrganizerFields = true; // TODO: Implement permissions
   }
 
   @Input()
