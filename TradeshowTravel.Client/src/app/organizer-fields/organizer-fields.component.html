@@ -1,0 +1,29 @@
+<kendo-grid #selectOrganizerFields class="table table-striped" (dataStateChange)="dataStateChange($event)"
+    [data]="gridView" [height]="400" [pageable]="false" [sort]="state.sort" filterable="menu" [filter]="state.filter"
+    [sortable]="true" (sortChange)="sortChange($event)">
+    <kendo-grid-column width="50">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+            <input type="checkbox" id="organizer_fields_all" class="filled-in"
+                [disabled]="!hasRecords || selectOrganizerFields.loading" [checked]="areAllChecked"
+                (click)="onCheckAllOrganizerFields($event)">
+            <label for="organizer_fields_all" class="m-0 p-0 align-bottom"></label>
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <input type="checkbox" id="organizer_field_{{dataItem.ID}}" class="filled-in"
+                [checked]="checkedOrganizerFields[dataItem.ID]" (click)="onOrganizerFieldChecked(dataItem)">
+            <label for="organizer_field_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
+        </ng-template>
+    </kendo-grid-column>
+
+    <kendo-grid-column field="Label" title="Fields"></kendo-grid-column>
+    <kendo-grid-column field="Input" title="Type">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ HelperSvc.getInputTypeString(dataItem.Input) }}
+        </ng-template>
+        <ng-template kendoGridFilterMenuTemplate let-filter>
+            <grid-field-type-filter [filter]="filter" [data]="distinctFieldTypes" textField="InputType"
+                valueField="Input">
+            </grid-field-type-filter>
+        </ng-template>
+    </kendo-grid-column>
+</kendo-grid>
