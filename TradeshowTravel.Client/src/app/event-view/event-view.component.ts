@@ -10,7 +10,7 @@ import { UserInfo } from '../shared/UserInfo';
 import { EventDeletePopupComponent } from '../event-delete-popup/event-delete-popup.component';
 import { TradeshowService } from '../tradeshow.service';
 import { EventUsersPopupComponent } from '../event-users-popup/event-users-popup.component';
-import { GridComponent, DataStateChangeEvent, GridDataResult } from '@progress/kendo-angular-grid';
+import { GridComponent, DataStateChangeEvent, GridDataResult, count } from '@progress/kendo-angular-grid';
 import { EventFieldPopupComponent } from '../event-field-popup/event-field-popup.component';
 import { CommonService } from '../common.service';
 import { AttendeeFieldsFilterPipe } from '../shared/pipes/attendee-fields-filter.pipe';
@@ -28,6 +28,7 @@ import { AttendeeDeletePopupComponent } from '../attendee-delete-popup/attendee-
 import { SendRsvpPopupComponent } from '../send-rsvp-popup/send-rsvp-popup.component';
 import { SendReminderPopupComponent } from '../send-reminder-popup/send-reminder-popup.component';
 import { AttendeeStatus } from '../shared/Enums';
+import { OrganizerFieldsComponent } from '../organizer-fields/organizer-fields.component'
 
 declare var $: any;
 
@@ -48,6 +49,8 @@ export class EventViewComponent implements OnInit {
   @ViewChild("attendeeGrid") grid: GridComponent;
   @ViewChild("attendeeFields") attendeeFields: GridComponent;
   @ViewChild("organizerFields") organizerFields: GridComponent;
+  @ViewChild(OrganizerFieldsComponent) private organizerFieldsComponent: OrganizerFieldsComponent;
+
   currentUser: UserProfile;
   results: EventAttendeeQueryResult;
   view: GridDataResult;
@@ -69,6 +72,7 @@ export class EventViewComponent implements OnInit {
   canViewPassportInfo: boolean = false;
   canEditOrganizerFields: boolean = false;
   checkedAttendees: { [key: number]: EventAttendee; } = {};
+  checkedOrganizerFields: { [key: number]: EventField; } = {};
 
   private _event: EventInfo;
   private _attendee: EventAttendee;
@@ -90,7 +94,7 @@ export class EventViewComponent implements OnInit {
     };
     // init query results
     this.results = <EventAttendeeQueryResult> { Total: 0, Hotel: 0, RSVPD: 0, Completed: 0, Attendees: [] };
-   }
+  }
 
    ngOnInit() {
     if (!this.event) {
@@ -118,7 +122,13 @@ export class EventViewComponent implements OnInit {
 
     this.dataStateChange(this.state);
 
-    this.rebindFieldTables(null);
+     this.rebindFieldTables(null);
+
+     // get checkbox change from child component
+     this.organizerFieldsComponent.checkboxChange.subscribe(i => {
+       this.checkedOrganizerFields = i
+     });
+
   }
 
   private onInputsChanged() {
@@ -201,6 +211,18 @@ export class EventViewComponent implements OnInit {
     let dom = event.target.nextSibling.nextSibling;
     dom.className = dom.className.replace('d-none', '');
   }
+
+  canEditFields() {
+    return !this.isEmpty(this.checkedOrganizerFields);// TODO: uncomment when Guan is finished // && !this.isEmpty(this.checkedAttendees);
+  }
+
+  private isEmpty(obj) {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key))
+      return false;
+  }
+  return true;
+}
 
   private getAttendeeQueryParams(): QueryParams {
     // convert to service params
@@ -371,6 +393,51 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.removedClicked.subscribe(() => {
       this.onClearAttendeeChecked();
       this.dataStateChange(this.state);
+    });
+  }
+
+  popupEditOrganizerFieldsEvent(event) {
+    const modalOptions: NgbModalOptions = {
+      size: "lg",
+      backdrop: "static"
+    };
+
+    const popupModalRef = this.modal.open(AttendeeFieldsPopupComponent, modalOptions);
+    popupModalRef.componentInstance.title = "Change Organizer Fields";
+    popupModalRef.componentInstance.filter = 30;
+
+    // save all fields for later use
+    var allFields = this.event.Fields;
+    // clear all fields before repopulating with needed fields
+    this.event.Fields = [];
+
+    for (var i = 0; i < allFields.length; i++) {
+      var id = allFields[i].ID;
+
+      if (this.checkedOrganizerFields[id]) {
+        this.event.Fields.push(allFields[i]);
+      }
+    }
+
+    // use modified this.event
+    popupModalRef.componentInstance.event = this.event;
+
+    // set all fields back on the event for next time
+    this.event.Fields = allFields;
+
+    alert(this.checkedAttendeeCount);
+
+   // popupModalRef.componentInstance.attendees = this.checkedAttendees;
+    var counter = 0;
+    popupModalRef.componentInstance.saveClicked.subscribe(attendee => {
+      alert("hi:" + counter);
+      counter++;
+
+     // this.attendeeChange.emit(attendee);
+
+      if (counter == this.checkedAttendeeCount) {
+        popupModalRef.close();
+      }
     });
   }
 

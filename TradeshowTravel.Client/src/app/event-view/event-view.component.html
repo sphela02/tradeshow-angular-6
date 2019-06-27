@@ -851,7 +851,7 @@
   <div class="card mb-3">
     <div class="card-body">
       <div class="h4 card-title">Edit Organizer Fields
-        <button type="button" class="btn btn-info btm-sm waves-effect waves-light m-0 pull-right"
+        <button type="button" class="btn btn-info btm-sm waves-effect waves-light m-0 pull-right" [disabled]="!canEditFields()"
           (click)="popupEditOrganizerFieldsEvent($event)">Edit Organizer Fields</button>
       </div>
       <p>Below are the organizer fields that event attendees are required to fill out. Select the fields you wish to

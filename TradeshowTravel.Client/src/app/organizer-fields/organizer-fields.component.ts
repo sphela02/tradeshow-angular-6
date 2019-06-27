@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { GridComponent, GridDataResult, DataStateChangeEvent, PagerSettings } from '@progress/kendo-angular-grid';
 import { EventInfo, EventField } from '../shared/EventInfo';
 import { OrganizerFieldsFilterPipe } from '../shared/pipes/organizer-fields-filter.pipe';
@@ -33,7 +33,9 @@ export class OrganizerFieldsComponent {
             filter: { logic: 'and', filters: [] },
             sort: []
         };
-    }
+  }
+
+  @Output() checkboxChange: EventEmitter<any> = new EventEmitter();
 
     @Input()
     public set event(event: EventInfo) {
@@ -43,7 +45,7 @@ export class OrganizerFieldsComponent {
 
     public get event(): EventInfo {
         return this._event;
-    }
+   }
 
     public get hasRecords(): boolean {
         return this.event && this.event.Fields && this.event.Fields.length > 0;
@@ -60,7 +62,9 @@ export class OrganizerFieldsComponent {
             } else {
                 this.checkedOrganizerFields[eventField.ID] = eventField;
             }
-        }
+      }
+
+      this.checkboxChange.emit(this.checkedOrganizerFields);
     }
 
     public onCheckAllOrganizerFields(event) {
@@ -76,7 +80,9 @@ export class OrganizerFieldsComponent {
                     delete this.checkedOrganizerFields[a.ID];
                 }
             });
-        }
+      }
+
+      this.checkboxChange.emit(this.checkedOrganizerFields);
     }
 
     public dataStateChange(state: DataStateChangeEvent) {
