@@ -1,0 +1,37 @@
+<kendo-grid #selectAttendees class="table table-striped" (dataStateChange)="dataStateChange($event)" [data]="gridView"
+    [height]="400" [pageSize]="pageSize" [skip]="skip" [sort]="state.sort" filterable="menu" [filter]="state.filter"
+    (filterChange)="filterChange($event)" [sortable]="true" (pageChange)="pageChange($event)" [pageable]="{
+        buttonCount: pageSettings.buttonCount,
+        info: pageSettings.info,
+        type: pageSettings.type,
+        pageSizes: pageSettings.pageSizes,
+        previousNext: pageSettings.previousNext
+      }">
+    <kendo-grid-column width="50">
+        <ng-template kendoGridHeaderTemplate let-column let-columnIndex="columnIndex">
+            <input type="checkbox" id="attendee_fields_all" class="filled-in"
+                [disabled]="!hasRecords || selectAttendees.loading" [checked]="areAllChecked"
+                (click)="onCheckAllAttendeeFields($event)">
+            <label for="attendee_fields_all" class="m-0 p-0 align-bottom"></label>
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem>
+            <input type="checkbox" id="attendee_field_{{dataItem.ID}}" class="filled-in"
+                [checked]="checkedAttendeeFields[dataItem.ID]" (click)="onAttendeeFieldChecked(dataItem)">
+            <label for="attendee_field_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="Profile.BadgeName" title="Name"></kendo-grid-column>
+    <kendo-grid-column field="Status" title="RSVP Response (Y/N)">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ HelperSvc.getResponseText(dataItem.Status) }}
+        </ng-template>
+        <ng-template kendoGridFilterMenuTemplate let-column="column" let-filter="filter"
+            let-filterService="filterService">
+            <grid-rsvp-filter [field]="column.field" [filterService]="filterService" [currentFilter]="filter">
+            </grid-rsvp-filter>
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="Profile.Title" title="Job Title"></kendo-grid-column>
+    <kendo-grid-column field="Profile.Segment" title="Segment"></kendo-grid-column>
+    <kendo-grid-column field="Profile.Email" title="Email"></kendo-grid-column>
+</kendo-grid>
