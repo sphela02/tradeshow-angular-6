@@ -14,6 +14,7 @@ const distinct = (data: EventField[]) => data
 })
 export class OrganizerFieldsComponent {
     private _event: EventInfo;
+    private _organizerFields: EventField[];
 
     private organizerFilter: OrganizerFieldsFilterPipe = new OrganizerFieldsFilterPipe();
 
@@ -40,18 +41,19 @@ export class OrganizerFieldsComponent {
     @Input()
     public set event(event: EventInfo) {
         this._event = event;
+        this._organizerFields = this.organizerFilter.transform(this.event.Fields);
         this.onInputsChanged();
     }
 
-    public get event(): EventInfo {
+    public get event() {
         return this._event;
    }
 
     public get hasRecords(): boolean {
-        return this.event && this.event.Fields && this.event.Fields.length > 0;
+        return this._organizerFields && this._organizerFields.length > 0;
     }
 
-    onClearOrganizerFieldChecked() {
+    public onClearOrganizerFieldChecked() {
         this.checkedOrganizerFields = {};
     }
 
@@ -69,13 +71,13 @@ export class OrganizerFieldsComponent {
 
     public onCheckAllOrganizerFields(event) {
         if (event.target.checked) {
-            this.gridView.data.forEach(a => {
+            this._organizerFields.forEach(a => {
                 if (!this.checkedOrganizerFields[a.ID]) {
                     this.checkedOrganizerFields[a.ID] = a;
                 }
             });
         } else {
-            this.gridView.data.forEach(a => {
+            this._organizerFields.forEach(a => {
                 if (this.checkedOrganizerFields[a.ID]) {
                     delete this.checkedOrganizerFields[a.ID];
                 }
@@ -87,7 +89,7 @@ export class OrganizerFieldsComponent {
 
     public dataStateChange(state: DataStateChangeEvent) {
         this.state = state;
-        this.gridView = process(this.event.Fields, this.state);
+        this.gridView = process(this._organizerFields, this.state);
         this.onClearOrganizerFieldChecked();
     }
 
@@ -119,11 +121,11 @@ export class OrganizerFieldsComponent {
 
     private onInputsChanged() {
         this.gridView = {
-            data: this.organizerFilter.transform(this.event.Fields),
-            total: this.event.Fields.length
+            data: this._organizerFields,
+            total: this._organizerFields.length
         };
 
-        distinct(this.event.Fields).forEach((value) => {
+        distinct(this._organizerFields).forEach((value) => {
             this.distinctFieldTypes.push({ Input: value.Input, InputType: this.HelperSvc.getInputTypeString(value.Input) });
         });
     }

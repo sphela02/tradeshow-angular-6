@@ -56,6 +56,7 @@ import { PrivilegedUsersPopupComponent } from './privileged-users-popup/privileg
 import { ProfileImageUploadPopupComponent } from './profile-image-upload-popup/profile-image-upload-popup.component';
 import { OrganizerFieldsComponent } from './organizer-fields/organizer-fields.component';
 import { UploadModule } from '@progress/kendo-angular-upload';
+import { AttendeeSelectComponent } from './attendee-select/attendee-select.component';
 
 @NgModule({
   imports: [
@@ -115,7 +116,8 @@ import { UploadModule } from '@progress/kendo-angular-upload';
     ProfileImageUploadPopupComponent,
     GridYesNoFilterComponent,
     FileAttachmentComponent,
-    OrganizerFieldsComponent
+    OrganizerFieldsComponent,
+    AttendeeSelectComponent
   ],
   entryComponents: [
     ProfileEditPopupComponent,
