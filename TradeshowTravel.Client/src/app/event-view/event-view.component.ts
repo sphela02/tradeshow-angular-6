@@ -29,6 +29,7 @@ import { SendRsvpPopupComponent } from '../send-rsvp-popup/send-rsvp-popup.compo
 import { SendReminderPopupComponent } from '../send-reminder-popup/send-reminder-popup.component';
 import { AttendeeStatus } from '../shared/Enums';
 import { OrganizerFieldsComponent } from '../organizer-fields/organizer-fields.component'
+import { AttendeeSelectComponent } from '../attendee-select/attendee-select.component';
 
 declare var $: any;
 
@@ -50,6 +51,7 @@ export class EventViewComponent implements OnInit {
   @ViewChild("attendeeFields") attendeeFields: GridComponent;
   @ViewChild("organizerFields") organizerFields: GridComponent;
   @ViewChild(OrganizerFieldsComponent) private organizerFieldsComponent: OrganizerFieldsComponent;
+  @ViewChild(AttendeeSelectComponent) private attendeeSelectComponent: AttendeeSelectComponent;
 
   currentUser: UserProfile;
   results: EventAttendeeQueryResult;
@@ -129,6 +131,9 @@ export class EventViewComponent implements OnInit {
        this.checkedOrganizerFields = i
      });
 
+     this.attendeeSelectComponent.attendeeChecked.subscribe(i => {
+       this.checkedAttendees = i;
+     });
   }
 
   private onInputsChanged() {
@@ -213,7 +218,7 @@ export class EventViewComponent implements OnInit {
   }
 
   canEditFields() {
-    return !this.isEmpty(this.checkedOrganizerFields);// TODO: uncomment when Guan is finished // && !this.isEmpty(this.checkedAttendees);
+    return !this.isEmpty(this.checkedOrganizerFields) && !this.isEmpty(this.checkedAttendees);
   }
 
   private isEmpty(obj) {
@@ -405,6 +410,7 @@ export class EventViewComponent implements OnInit {
     const popupModalRef = this.modal.open(AttendeeFieldsPopupComponent, modalOptions);
     popupModalRef.componentInstance.title = "Change Organizer Fields";
     popupModalRef.componentInstance.filter = 30;
+    popupModalRef.componentInstance.attendees = this.checkedAttendees;
 
     // save all fields for later use
     var allFields = this.event.Fields;
@@ -425,15 +431,9 @@ export class EventViewComponent implements OnInit {
     // set all fields back on the event for next time
     this.event.Fields = allFields;
 
-    alert(this.checkedAttendeeCount);
-
-   // popupModalRef.componentInstance.attendees = this.checkedAttendees;
     var counter = 0;
     popupModalRef.componentInstance.saveClicked.subscribe(attendee => {
-      alert("hi:" + counter);
       counter++;
-
-     // this.attendeeChange.emit(attendee);
 
       if (counter == this.checkedAttendeeCount) {
         popupModalRef.close();

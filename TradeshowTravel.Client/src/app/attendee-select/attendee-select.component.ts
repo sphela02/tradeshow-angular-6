@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { EventAttendee } from "../shared/EventAttendee";
 import { GridDataResult, DataStateChangeEvent, PagerSettings, PageChangeEvent } from "@progress/kendo-angular-grid";
 import { CommonService } from "../common.service";
@@ -36,6 +36,8 @@ export class AttendeeSelectComponent {
         };
     }
 
+    @Output() attendeeChecked: EventEmitter<any> = new EventEmitter<any>();
+
     @Input()
     public set attendees(eventAttendees: EventAttendee[]) {
         this._attendees = eventAttendees;
@@ -62,7 +64,9 @@ export class AttendeeSelectComponent {
             } else {
                 this.checkedAttendeeFields[eventField.ID] = eventField;
             }
-        }
+      }
+
+      this.attendeeChecked.emit(this.checkedAttendeeFields);
     }
 
     public onCheckAllAttendeeFields(event) {
@@ -78,7 +82,9 @@ export class AttendeeSelectComponent {
                     delete this.checkedAttendeeFields[a.ID];
                 }
             });
-        }
+      }
+
+      this.attendeeChecked.emit(this.checkedAttendeeFields);
     }
 
     public dataStateChange(state: DataStateChangeEvent) {

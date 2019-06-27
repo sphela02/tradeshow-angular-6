@@ -5,6 +5,7 @@ import { Role, InputType } from '../shared/Enums';
 import { TradeshowService } from '../tradeshow.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from '../common.service';
+import { isEmpty } from 'rxjs/operators';
 
 @Component({
   selector: 'app-attendee-fields-popup',
@@ -19,7 +20,7 @@ export class AttendeeFieldsPopupComponent implements OnInit {
 
   private _filter: Role = Role.None;
   private _event: EventInfo;
-  private _attendees: EventAttendee[];
+  private _attendees: { [key: number]: EventAttendee; };
   private _fields: Array<EventField>;
   
   maxvalues: { [key: number]: any } = {};
@@ -47,10 +48,11 @@ export class AttendeeFieldsPopupComponent implements OnInit {
         f => f.Included
       ) : null;
     }
-
-    // Load initial values
-    if (this.fields && this.attendees && this.attendees.length > 0) {
-      var firstAttendee = this.attendees[0];
+   
+    // Load initial values when editing 1 attendee
+    if (this.fields && this.attendees && Object.keys(this.attendees).length === 1) {
+      for (var firstKey in this.attendees) break;
+      var firstAttendee = this.attendees[firstKey];
 
       this.fields.forEach(f => {
         this.showRequired = f.Required ? true : this.showRequired;
@@ -103,11 +105,11 @@ export class AttendeeFieldsPopupComponent implements OnInit {
   }
 
   @Input()
-  set attendees(attendee: EventAttendee[]) {
+  set attendees(attendee: { [key: number]: EventAttendee; }) {
     this._attendees = attendee;
     this.onInputsChanged();
   }
-  get attendees(): EventAttendee[] {
+  get attendees(): { [key: number]: EventAttendee; } {
     return this._attendees;
   }
 
@@ -137,13 +139,13 @@ export class AttendeeFieldsPopupComponent implements OnInit {
     this.activeModal.close();
   }
 
-  onSubmit() {
-    alert(this.attendees.length);
+  onSubmit() {   
     if (!this.attendees || !this.fields) {
       return;
     }
-    for (var i = 0; i < this.attendees.length; i++) {
-      let attendee: EventAttendee = Object.assign({}, this.attendees[i]);
+    for (var key in this.attendees) {
+      var attendee = this.attendees[key];
+
       this.fields.forEach(f => {
         let value: any = null;
         if (f.Input == InputType.MultiSelect) {
@@ -153,9 +155,11 @@ export class AttendeeFieldsPopupComponent implements OnInit {
         } else {
           value = this.values[f.ID];
         }
+
         if (f.Source) {
           attendee[f.Source] = value;
-        } else {
+        }
+        else {
           attendee.Properties[f.ID] = (value) ? value : "";
         }
       });
