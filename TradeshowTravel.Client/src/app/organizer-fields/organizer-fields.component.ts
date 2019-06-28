@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild, Output } from '@angular/core';
 import { GridComponent, GridDataResult, DataStateChangeEvent, PagerSettings } from '@progress/kendo-angular-grid';
 import { EventInfo, EventField } from '../shared/EventInfo';
 import { OrganizerFieldsFilterPipe } from '../shared/pipes/organizer-fields-filter.pipe';
@@ -13,7 +13,6 @@ const distinct = (data: EventField[]) => data
     templateUrl: './organizer-fields.component.html',
 })
 export class OrganizerFieldsComponent {
-    private _event: EventInfo;
     private _organizerFields: EventField[];
 
     private organizerFilter: OrganizerFieldsFilterPipe = new OrganizerFieldsFilterPipe();
@@ -25,8 +24,10 @@ export class OrganizerFieldsComponent {
     public gridView: GridDataResult;
 
     public distinctFieldTypes: any[] = [];
+
+    @Output()
     public checkedOrganizerFields: { [key: number]: EventField; } = {};
-    public areAllChecked: boolean;
+
     public HelperSvc: typeof CommonService = CommonService;
 
     public constructor() {
@@ -37,14 +38,21 @@ export class OrganizerFieldsComponent {
     }
 
     @Input()
-    public set event(event: EventInfo) {
-        this._event = event;
-        this._organizerFields = this.organizerFilter.transform(this.event.Fields);
+    public set eventFields(eventFields: EventField[]) {
+        this._organizerFields = this.organizerFilter.transform(eventFields);
         this.onInputsChanged();
     }
 
-    public get event() {
-        return this._event;
+    public get eventFields() {
+        return this._organizerFields;
+    }
+
+    public get areAllChecked(): boolean {
+        if (!this.checkedOrganizerFields || !this._organizerFields) {
+            return false;
+        }
+
+        return this._organizerFields.every((organizerField) => organizerField.ID in this.checkedOrganizerFields);
     }
 
     public get hasRecords(): boolean {

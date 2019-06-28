@@ -1,6 +1,7 @@
 <kendo-grid #selectAttendees class="table table-striped" (dataStateChange)="dataStateChange($event)" [data]="gridView"
-    [height]="400" [pageSize]="pageSize" [skip]="skip" [sort]="state.sort" filterable="menu" [filter]="state.filter"
-    (filterChange)="filterChange($event)" [sortable]="true" (pageChange)="pageChange($event)" [pageable]="{
+    [height]="400" [pageSize]="state.take" [skip]="state.skip" [sort]="state.sort" filterable="menu"
+    [filter]="state.filter" (filterChange)="filterChange($event)" [sortable]="true" (pageChange)="pageChange($event)"
+    [pageable]="{
         buttonCount: pageSettings.buttonCount,
         info: pageSettings.info,
         type: pageSettings.type,
@@ -20,7 +21,11 @@
             <label for="attendee_field_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="Profile.BadgeName" title="Name"></kendo-grid-column>
+    <kendo-grid-column field="User.BadgeName" title="Name" [filterable]="false">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Profile.BadgeName }}
+        </ng-template>
+    </kendo-grid-column>
     <kendo-grid-column field="Status" title="RSVP Response (Y/N)">
         <ng-template kendoGridCellTemplate let-dataItem>
             {{ HelperSvc.getResponseText(dataItem.Status) }}
@@ -31,7 +36,19 @@
             </grid-rsvp-filter>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="Profile.Title" title="Job Title"></kendo-grid-column>
-    <kendo-grid-column field="Profile.Segment" title="Segment"></kendo-grid-column>
-    <kendo-grid-column field="Profile.Email" title="Email"></kendo-grid-column>
+    <kendo-grid-column field="User.Title" title="Job Title">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Profile.Title }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="User.Segment" title="Segment">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Profile.Segment }}
+        </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="User.Email" title="Email">
+        <ng-template kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Profile.Email }}
+        </ng-template>
+    </kendo-grid-column>
 </kendo-grid>

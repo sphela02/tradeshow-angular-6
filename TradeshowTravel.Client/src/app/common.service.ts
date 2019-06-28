@@ -1,14 +1,50 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Query } from '@angular/core';
 import { InputType, Role, ShowType, Permissions, AttendeeStatus } from './shared/Enums';
 import { EventField, EventInfo } from './shared/EventInfo';
 import { UserProfile } from './shared/UserProfile';
-import { EventAttendee } from './shared/EventAttendee';
 import { isBoolean } from 'util';
+import { FilterParams, QueryParams, SortParams } from './shared/QueryParams';
+import { FilterDescriptor, CompositeFilterDescriptor } from '@progress/kendo-data-query';
+import { DataStateChangeEvent } from '@progress/kendo-angular-grid';
+
 
 @Injectable()
 export class CommonService {
 
   constructor() { }
+
+  static convertToServiceQueryParams(state:DataStateChangeEvent):QueryParams{
+    return <QueryParams> {
+        Skip: state.skip,
+        Size: state.take,
+        Sort: state.sort.map(s => {
+          return <SortParams> {
+            Field: s.field,
+            Desc: s.dir == "desc"
+          }
+        }),
+        Filters: CommonService.getFilterParams(state.filter)
+      };
+  }
+
+  static getFilterParams(filter:CompositeFilterDescriptor):FilterParams[]{       
+    const flatten = (filter) => {
+        const filters = (filter || {}).filters;
+        if (filters) {
+            return filters.reduce((acc, curr) => acc.concat(curr.filters ? flatten(curr) : [curr]), []);
+        }
+        return [];
+    };
+
+    return flatten(filter).map(filter => {
+        var fd = filter as FilterDescriptor;
+        return <FilterParams>{
+            Field: fd.field,
+            Operator: fd.operator,
+            Value: fd.value
+        }
+    });
+  }
 
   static getDisplayName(profile: UserProfile): string {
       let name: string;
@@ -117,6 +153,15 @@ export class CommonService {
         default:
             return "No Response";
       }
+  }
+
+  static canEditOrganizerFields(
+      currentUser: UserProfile
+    ):boolean{
+        if(!currentUser){
+            return false;
+        }
+        return currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows;
   }
 
   // Permission Checks
