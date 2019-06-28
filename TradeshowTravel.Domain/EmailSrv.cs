@@ -458,7 +458,7 @@ namespace TradeshowTravel.Domain
 
         private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null, bool isBodyHtml = false)
         {
-            Send(to, subject, body, new string[] { cc }, aAttachment, isBodyHtml);
+            Send(to, subject, body, cc == null ? null : new string[] { cc }, aAttachment, isBodyHtml);
         }
 
         private void Send(string to, string subject, string body, ICollection<string> cc, Attachment[] aAttachment = null, bool isBodyHtml = false)
@@ -467,9 +467,12 @@ namespace TradeshowTravel.Domain
 
             var message = new MailMessage(this.sender, to, subject, body);
 
-            foreach (var address in cc)
+            if (cc != null && cc.Any())
             {
-                message.CC.Add(address);
+                foreach (var address in cc)
+                {
+                    message.CC.Add(address);
+                }
             }
 
             if (aAttachment != null)
