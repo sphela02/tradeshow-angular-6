@@ -202,7 +202,7 @@ export class EventViewComponent implements OnInit {
      Object.keys(this.organizerFieldsComponent.checkedOrganizerFields).length > 0;
 
     let attendeeSelected = this.attendeeSelectComponent && this.attendeeSelectComponent.checkedAttendeeFields &&
-     Object.keys(this.attendeeSelectComponent.checkedAttendeeFields).length >0;
+     Object.keys(this.attendeeSelectComponent.checkedAttendeeFields).length > 0;
 
     return organizerFieldSelected && attendeeSelected;
   }
@@ -359,6 +359,8 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.removedClicked.subscribe(() => {
       this.onClearAttendeeChecked();
       this.dataStateChange(this.state);
+      // Refresh the attendee list in the "Organizer Field" tab
+      this.attendeeSelectComponent.loadAttendees();
     });
   }
 
@@ -412,6 +414,8 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.eventID = this.event.ID;
     popupModalRef.componentInstance.saveClicked.subscribe(() => {
       this.dataStateChange(this.state);
+      // Refresh the attendee list in the "Organizer Field" tab
+      this.attendeeSelectComponent.loadAttendees();
     });
   }
 
@@ -550,6 +554,8 @@ export class EventViewComponent implements OnInit {
         field.ID
       ).subscribe(fields => {
         this.rebindFieldTables(fields);
+        //Update organizer fields table in the "Organizer Field" tab
+        this.organizerFieldsComponent.eventFields = this.event.Fields;
         this.pagetitle.setLoading(false);
       }, error => {
         this.pagetitle.setLoading(false);
@@ -578,6 +584,8 @@ export class EventViewComponent implements OnInit {
         this.event.Fields[index] = field;
       }
       this.rebindFieldTables(null);
+      //Update organizer fields table in the "Organizer Field" tab
+      this.organizerFieldsComponent.eventFields = this.event.Fields;
     });
   }
 

@@ -19,7 +19,7 @@ export class AttendeeSelectComponent {
     public state: DataStateChangeEvent;
     public pageSettings: PagerSettings;
     public gridView: GridDataResult;
-    
+
     @Output()
     public checkedAttendeeFields: { [key: number]: EventAttendee; } = {};
 
@@ -42,7 +42,7 @@ export class AttendeeSelectComponent {
         };
     }
 
-    private loadAttendees() {
+    public loadAttendees() {
         this.grid.loading = true;
         const params: QueryParams = CommonService.convertToServiceQueryParams(this.state);
         this.service.getEventAttendees(this._eventID, params)

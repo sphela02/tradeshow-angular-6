@@ -13,7 +13,6 @@ const distinct = (data: EventField[]) => data
     templateUrl: './organizer-fields.component.html',
 })
 export class OrganizerFieldsComponent {
-    private _event: EventInfo;
     private _organizerFields: EventField[];
 
     private organizerFilter: OrganizerFieldsFilterPipe = new OrganizerFieldsFilterPipe();
@@ -28,6 +27,7 @@ export class OrganizerFieldsComponent {
 
     @Output()
     public checkedOrganizerFields: { [key: number]: EventField; } = {};
+
     public HelperSvc: typeof CommonService = CommonService;
 
     public constructor() {
@@ -38,14 +38,13 @@ export class OrganizerFieldsComponent {
     }
 
     @Input()
-    public set event(event: EventInfo) {
-        this._event = event;
-        this._organizerFields = this.organizerFilter.transform(this.event.Fields);
+    public set eventFields(eventFields: EventField[]) {
+        this._organizerFields = this.organizerFilter.transform(eventFields);
         this.onInputsChanged();
     }
 
-    public get event() {
-        return this._event;
+    public get eventFields() {
+        return this._organizerFields;
     }
 
     public get areAllChecked(): boolean {
