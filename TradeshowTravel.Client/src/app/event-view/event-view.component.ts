@@ -28,18 +28,10 @@ import { AttendeeDeletePopupComponent } from '../attendee-delete-popup/attendee-
 import { SendRsvpPopupComponent } from '../send-rsvp-popup/send-rsvp-popup.component';
 import { SendReminderPopupComponent } from '../send-reminder-popup/send-reminder-popup.component';
 import { AttendeeStatus } from '../shared/Enums';
-import { OrganizerFieldsComponent } from '../organizer-fields/organizer-fields.component'
+import { OrganizerFieldsComponent } from '../organizer-fields/organizer-fields.component';
 import { AttendeeSelectComponent } from '../attendee-select/attendee-select.component';
 
 declare var $: any;
-
-const flatten = filter => {
-  const filters = (filter || {}).filters;
-  if (filters) {
-      return filters.reduce((acc, curr) => acc.concat(curr.filters ? flatten(curr) : [curr]), []);
-  }
-  return [];
-};
 
 @Component({
   selector: 'app-event-view',
@@ -50,14 +42,16 @@ export class EventViewComponent implements OnInit {
   @ViewChild("attendeeGrid") grid: GridComponent;
   @ViewChild("attendeeFields") attendeeFields: GridComponent;
   @ViewChild("organizerFields") organizerFields: GridComponent;
-  @ViewChild(OrganizerFieldsComponent) private organizerFieldsComponent: OrganizerFieldsComponent;
-  @ViewChild(AttendeeSelectComponent) private attendeeSelectComponent: AttendeeSelectComponent;
+
+  @ViewChild(OrganizerFieldsComponent) organizerFieldsComponent:OrganizerFieldsComponent;
+  @ViewChild(AttendeeSelectComponent) attendeeSelectComponent:AttendeeSelectComponent;
 
   currentUser: UserProfile;
   results: EventAttendeeQueryResult;
   view: GridDataResult;
   state: DataStateChangeEvent;
   segments: any[] = [];
+
   EventDisplayTab: typeof EventDisplayTab = EventDisplayTab;
   activeTab: EventDisplayTab = EventDisplayTab.Details;
   ShowType: typeof ShowType = ShowType;
@@ -160,7 +154,9 @@ export class EventViewComponent implements OnInit {
     this.canViewPassportInfo = CommonService.canViewPassportInfo(
       this.currentUser, null, this.event
     );
-    this.canEditOrganizerFields = true; // TODO: Implement permissions
+    this.canEditOrganizerFields = CommonService.canEditOrganizerFields(
+      this.currentUser
+    ); 
   }
 
   @Input()
@@ -211,6 +207,16 @@ export class EventViewComponent implements OnInit {
     );
   }
 
+  get isOrganizerFieldsPopupEnabled(): boolean{
+    let organizerFieldSelected = this.organizerFieldsComponent && this.organizerFieldsComponent.checkedOrganizerFields &&
+     Object.keys(this.organizerFieldsComponent.checkedOrganizerFields).length > 0;
+
+    let attendeeSelected = this.attendeeSelectComponent && this.attendeeSelectComponent.checkedAttendeeFields &&
+     Object.keys(this.attendeeSelectComponent.checkedAttendeeFields).length > 0;
+
+    return organizerFieldSelected && attendeeSelected;
+  }
+
   imgErrHandler(event) {
     event.target.className += " d-none";
     let dom = event.target.nextSibling.nextSibling;
@@ -254,7 +260,7 @@ export class EventViewComponent implements OnInit {
 
   private loadAttendees() {
     this.grid.loading = true;
-    const params: QueryParams = this.getAttendeeQueryParams();
+    const params: QueryParams = CommonService.convertToServiceQueryParams(this.state);
     this.service.getEventAttendees(this.event.ID, params)
       .subscribe(results => {
         this.results = results;
@@ -398,6 +404,8 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.removedClicked.subscribe(() => {
       this.onClearAttendeeChecked();
       this.dataStateChange(this.state);
+      // Refresh the attendee list in the "Organizer Field" tab
+      this.attendeeSelectComponent.loadAttendees();
     });
   }
 
@@ -442,7 +450,7 @@ export class EventViewComponent implements OnInit {
   }
 
   onAttendeeExport() {
-    const params: QueryParams = this.getAttendeeQueryParams();
+    const params: QueryParams =  CommonService.convertToServiceQueryParams(this.state);
 
     this.pagetitle.setLoading(true);
     this.service.getEventAttendeeExport(
@@ -491,6 +499,8 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.eventID = this.event.ID;
     popupModalRef.componentInstance.saveClicked.subscribe(() => {
       this.dataStateChange(this.state);
+      // Refresh the attendee list in the "Organizer Field" tab
+      this.attendeeSelectComponent.loadAttendees();
     });
   }
 
@@ -629,6 +639,8 @@ export class EventViewComponent implements OnInit {
         field.ID
       ).subscribe(fields => {
         this.rebindFieldTables(fields);
+        //Update organizer fields table in the "Organizer Field" tab
+        this.organizerFieldsComponent.eventFields = this.event.Fields;
         this.pagetitle.setLoading(false);
       }, error => {
         this.pagetitle.setLoading(false);
@@ -657,6 +669,8 @@ export class EventViewComponent implements OnInit {
         this.event.Fields[index] = field;
       }
       this.rebindFieldTables(null);
+      //Update organizer fields table in the "Organizer Field" tab
+      this.organizerFieldsComponent.eventFields = this.event.Fields;
     });
   }
 
