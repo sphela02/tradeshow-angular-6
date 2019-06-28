@@ -179,7 +179,7 @@
         </ng-template>
         <ng-template kendoGridCellTemplate let-dataItem>
           <input type="checkbox" id="att_{{dataItem.ID}}" class="filled-in"
-            [checked]="checkedAttendees[dataItem.ID]"
+            [checked]="checkedEventAttendees[dataItem.ID]"
             (click)="onAttendeeChecked(dataItem)">
           <label for="att_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
         </ng-template>

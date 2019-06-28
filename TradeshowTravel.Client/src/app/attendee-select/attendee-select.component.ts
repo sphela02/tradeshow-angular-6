@@ -93,7 +93,7 @@ export class AttendeeSelectComponent {
             } else {
                 this.checkedAttendeeFields[eventField.ID] = eventField;
             }
-        }
+      }
     }
 
     public onCheckAllAttendeeFields(event) {
@@ -109,7 +109,7 @@ export class AttendeeSelectComponent {
                     delete this.checkedAttendeeFields[a.ID];
                 }
             });
-        }
+      }
     }
 
     public dataStateChange(state: DataStateChangeEvent) {

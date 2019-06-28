@@ -1,6 +1,6 @@
-import { Component, Input, ViewChild, Output } from '@angular/core';
-import { GridComponent, GridDataResult, DataStateChangeEvent, PagerSettings } from '@progress/kendo-angular-grid';
-import { EventInfo, EventField } from '../shared/EventInfo';
+import { Component, Input, Output, ViewChild } from '@angular/core';
+import { GridComponent, GridDataResult, DataStateChangeEvent } from '@progress/kendo-angular-grid';
+import { EventField } from '../shared/EventInfo';
 import { OrganizerFieldsFilterPipe } from '../shared/pipes/organizer-fields-filter.pipe';
 import { CommonService } from '../common.service';
 import { process, CompositeFilterDescriptor, SortDescriptor } from '@progress/kendo-data-query';
@@ -35,7 +35,8 @@ export class OrganizerFieldsComponent {
             filter: { logic: 'and', filters: [] },
             sort: []
         };
-    }
+  }
+
 
     @Input()
     public set eventFields(eventFields: EventField[]) {
@@ -70,7 +71,7 @@ export class OrganizerFieldsComponent {
             } else {
                 this.checkedOrganizerFields[eventField.ID] = eventField;
             }
-        }
+      }
     }
 
     public onCheckAllOrganizerFields(event) {
@@ -86,7 +87,7 @@ export class OrganizerFieldsComponent {
                     delete this.checkedOrganizerFields[a.ID];
                 }
             });
-        }
+      }
     }
 
     public dataStateChange(state: DataStateChangeEvent) {
