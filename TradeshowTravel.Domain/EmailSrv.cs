@@ -467,7 +467,7 @@ namespace TradeshowTravel.Domain
 
             var message = new MailMessage(this.sender, to, subject, body);
 
-            foreach (var address in cc)
+            foreach (var address in cc.Where(a => !string.IsNullOrWhiteSpace(a)))
             {
                 message.CC.Add(address);
             }
