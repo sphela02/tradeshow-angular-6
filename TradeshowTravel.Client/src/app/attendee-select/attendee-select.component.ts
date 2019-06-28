@@ -77,7 +77,7 @@ export class AttendeeSelectComponent {
         return this._eventID;
     }
 
-    protected pageChange({ skip, take }: PageChangeEvent): void {
+    public pageChange({ skip, take }: PageChangeEvent): void {
         this.state.skip = skip;
         this.state.take = take;
     }
