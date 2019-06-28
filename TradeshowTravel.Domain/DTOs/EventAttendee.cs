@@ -58,7 +58,7 @@ namespace TradeshowTravel.Domain.DTOs
                 if (!string.Equals(originalPropertyValues, property.Value))
                 {
                     EventField eventField = Event.Fields.FirstOrDefault(f => f.ID == property.Key);
-                    if (eventField != null && eventField.Access.HasFlag(Role.Attendee)) //It should never be null but just in case.
+                    if ((eventField?.Access.HasFlag(Role.Attendee)) ?? false) //It should never be null but just in case.
                     {
                         response.Values.Add(new FieldComparisionInfo(eventField.Label, originalPropertyValues, property.Value));
                     }
