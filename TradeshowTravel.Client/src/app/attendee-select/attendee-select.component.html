@@ -21,9 +21,11 @@
             <label for="attendee_field_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
         </ng-template>
     </kendo-grid-column>
-    <kendo-grid-column field="User.BadgeName" title="Name" [filterable]="false">
+    <kendo-grid-column field="Name" width="200" [filterable]="false" title="Name">
         <ng-template kendoGridCellTemplate let-dataItem>
-            {{ dataItem.Profile.BadgeName }}
+          <a (click)="onAttendeeInfoClicked(dataItem)" class="text-info">
+            {{dataItem.Profile.FirstName}} {{dataItem.Profile.LastName}}
+          </a>
         </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="Status" title="RSVP Response (Y/N)">

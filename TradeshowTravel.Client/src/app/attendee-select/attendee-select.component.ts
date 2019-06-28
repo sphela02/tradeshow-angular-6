@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, Output } from "@angular/core";
+import { Component, Input, ViewChild, Output, EventEmitter } from "@angular/core";
 import { EventAttendee } from "../shared/EventAttendee";
 import { GridDataResult, DataStateChangeEvent, PagerSettings, PageChangeEvent, GridComponent } from "@progress/kendo-angular-grid";
 import { CommonService } from "../common.service";
@@ -23,6 +23,8 @@ export class AttendeeSelectComponent {
     @Output()
     public checkedAttendeeFields: { [key: number]: EventAttendee; } = {};
 
+    @Output() attendeeInfoClicked: EventEmitter<any> = new EventEmitter();
+    
     public HelperSvc: typeof CommonService = CommonService;
 
     public constructor(private service: TradeshowService) {
@@ -40,6 +42,10 @@ export class AttendeeSelectComponent {
             pageSizes: false,
             previousNext: true
         };
+    }
+
+    public onAttendeeInfoClicked(attendee: EventAttendee){
+        this.attendeeInfoClicked.emit(attendee);
     }
 
     public loadAttendees() {
@@ -93,7 +99,7 @@ export class AttendeeSelectComponent {
             } else {
                 this.checkedAttendeeFields[eventField.ID] = eventField;
             }
-      }
+        }
     }
 
     public onCheckAllAttendeeFields(event) {
@@ -109,7 +115,7 @@ export class AttendeeSelectComponent {
                     delete this.checkedAttendeeFields[a.ID];
                 }
             });
-      }
+        }
     }
 
     public dataStateChange(state: DataStateChangeEvent) {
