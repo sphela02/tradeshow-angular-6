@@ -421,6 +421,8 @@ export class EventViewComponent implements OnInit {
         // clear out all check boxes
         this.attendeeSelectComponent.checkedAttendeeFields = {};
         this.organizerFieldsComponent.checkedOrganizerFields = {};
+
+        this.activeTab = EventDisplayTab.Details;
       }
     });
   }
