@@ -1,6 +1,6 @@
 import { Component, Input, Output, ViewChild } from '@angular/core';
 import { GridComponent, GridDataResult, DataStateChangeEvent } from '@progress/kendo-angular-grid';
-import { EventInfo, EventField } from '../shared/EventInfo';
+import { EventField } from '../shared/EventInfo';
 import { OrganizerFieldsFilterPipe } from '../shared/pipes/organizer-fields-filter.pipe';
 import { CommonService } from '../common.service';
 import { process, CompositeFilterDescriptor, SortDescriptor } from '@progress/kendo-data-query';
