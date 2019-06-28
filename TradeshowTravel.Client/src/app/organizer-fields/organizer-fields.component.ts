@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, ViewChild } from '@angular/core';
 import { GridComponent, GridDataResult, DataStateChangeEvent, PagerSettings } from '@progress/kendo-angular-grid';
 import { EventInfo, EventField } from '../shared/EventInfo';
 import { OrganizerFieldsFilterPipe } from '../shared/pipes/organizer-fields-filter.pipe';
@@ -14,6 +14,7 @@ const distinct = (data: EventField[]) => data
 })
 export class OrganizerFieldsComponent {
     private _organizerFields: EventField[];
+    private _event: EventInfo;
 
     private organizerFilter: OrganizerFieldsFilterPipe = new OrganizerFieldsFilterPipe();
 
@@ -37,7 +38,6 @@ export class OrganizerFieldsComponent {
         };
   }
 
-  @Output() checkboxChange: EventEmitter<any> = new EventEmitter();
 
     @Input()
     public set eventFields(eventFields: EventField[]) {
@@ -76,8 +76,6 @@ export class OrganizerFieldsComponent {
                 this.checkedOrganizerFields[eventField.ID] = eventField;
             }
       }
-
-      this.checkboxChange.emit(this.checkedOrganizerFields);
     }
 
     public onCheckAllOrganizerFields(event) {
@@ -94,8 +92,6 @@ export class OrganizerFieldsComponent {
                 }
             });
       }
-
-      this.checkboxChange.emit(this.checkedOrganizerFields);
     }
 
     public dataStateChange(state: DataStateChangeEvent) {

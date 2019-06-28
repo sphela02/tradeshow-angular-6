@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, Output, EventEmitter } from "@angular/core";
+import { Component, Input, ViewChild, Output } from "@angular/core";
 import { EventAttendee } from "../shared/EventAttendee";
 import { GridDataResult, DataStateChangeEvent, PagerSettings, PageChangeEvent, GridComponent } from "@progress/kendo-angular-grid";
 import { CommonService } from "../common.service";
@@ -67,8 +67,6 @@ export class AttendeeSelectComponent {
         return this._attendees.every((attendee) => attendee.ID in this.checkedAttendeeFields);
     }
 
-    @Output() attendeeChecked: EventEmitter<any> = new EventEmitter<any>();
-
     @Input()
     public set eventID(eventID: number) {
         this._eventID = eventID;
@@ -96,8 +94,6 @@ export class AttendeeSelectComponent {
                 this.checkedAttendeeFields[eventField.ID] = eventField;
             }
       }
-
-      this.attendeeChecked.emit(this.checkedAttendeeFields);
     }
 
     public onCheckAllAttendeeFields(event) {
@@ -114,8 +110,6 @@ export class AttendeeSelectComponent {
                 }
             });
       }
-
-      this.attendeeChecked.emit(this.checkedAttendeeFields);
     }
 
     public dataStateChange(state: DataStateChangeEvent) {
@@ -129,15 +123,5 @@ export class AttendeeSelectComponent {
 
     private onClearAttendeeChecked() {
         this.checkedAttendeeFields = {};
-    }
-}
-
-    private onInputsChanged() {
-        if (this._attendees) {
-            this.gridView = {
-                data: this._attendees,
-                total: this._attendees.length
-            };
-        }
     }
 }
