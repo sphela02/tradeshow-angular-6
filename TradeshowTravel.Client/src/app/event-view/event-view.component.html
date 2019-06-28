@@ -247,7 +247,7 @@
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ HelperSvc.getResponseText(dataItem.Status) }}
         </ng-template>
-        <ng-template kendoGridFilterMenuTemplate
+      <ng-template kendoGridFilterMenuTemplate
           let-column="column"
           let-filter="filter"
           let-filterService="filterService"
@@ -257,7 +257,7 @@
             [filterService]="filterService"
             [currentFilter]="filter">
           </grid-rsvp-filter>
-        </ng-template>
+        </ng-template> 
       </kendo-grid-column>
 
       <kendo-grid-column field="User.Title" title="Job Title" width="200">
@@ -852,7 +852,7 @@
     <div class="card-body">
       <div class="h4 card-title">Edit Organizer Fields
         <button type="button" class="btn btn-info btm-sm waves-effect waves-light m-0 pull-right"
-          (click)="popupEditOrganizerFieldsEvent($event)">Edit Organizer Fields</button>
+          (click)="popupEditOrganizerFieldsEvent($event)" [disabled]="!isOrganizerFieldsPopupEnabled">Edit Organizer Fields</button>
       </div>
       <p>Below are the organizer fields that event attendees are required to fill out. Select the fields you wish to
         change. Once the organizer fields have been selected, scroll down to select the attendees to change their
@@ -874,7 +874,7 @@
       <h5 class="mb-0">Attendees</h5>
     </div>
     <div class="card-body p-0">
-      <app-attendee-select [attendees]="view?.data"></app-attendee-select>
+      <app-attendee-select [eventID]="event.ID"></app-attendee-select>
     </div>
   </div>
 </div>
