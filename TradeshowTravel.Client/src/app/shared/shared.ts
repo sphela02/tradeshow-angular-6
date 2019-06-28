@@ -21,7 +21,8 @@ export enum EventDisplayTab {
     Details = 0,
     Fields = 1,
     Settings = 2,
-    Attendee = 3
+    Attendee = 3,
+    OrganizerFields = 4
 }
 
 export enum AttendeeViewMode {
