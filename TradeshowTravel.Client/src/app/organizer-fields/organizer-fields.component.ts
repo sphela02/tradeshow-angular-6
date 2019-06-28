@@ -14,7 +14,6 @@ const distinct = (data: EventField[]) => data
 })
 export class OrganizerFieldsComponent {
     private _organizerFields: EventField[];
-    private _event: EventInfo;
 
     private organizerFilter: OrganizerFieldsFilterPipe = new OrganizerFieldsFilterPipe();
 
@@ -56,9 +55,6 @@ export class OrganizerFieldsComponent {
 
         return this._organizerFields.every((organizerField) => organizerField.ID in this.checkedOrganizerFields);
     }
-    public get event() {
-        return this._event;
-   }
 
     public get hasRecords(): boolean {
         return this._organizerFields && this._organizerFields.length > 0;
