@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { PageTitleService } from '../pagetitle.service';
 import { SideMenuMode, EventDisplayTab } from '../shared/shared';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { Role, InputType, ShowType, Permissions } from '../shared/Enums';
+import { Role, InputType, ShowType } from '../shared/Enums';
 import { EventDeletePopupComponent } from '../event-delete-popup/event-delete-popup.component';
 import { TradeshowService } from '../tradeshow.service';
 import { EventUsersPopupComponent } from '../event-users-popup/event-users-popup.component';

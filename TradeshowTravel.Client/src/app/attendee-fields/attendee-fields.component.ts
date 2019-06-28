@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { InputType, Role, Permissions } from '../shared/Enums';
+import { InputType, Role } from '../shared/Enums';
 import { EventInfo, EventField } from '../shared/EventInfo';
 import { EventAttendee } from '../shared/EventAttendee';
 import { TradeshowService } from '../tradeshow.service';
