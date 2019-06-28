@@ -117,7 +117,7 @@ export class AttendeeSelectComponent {
         this.loadAttendees();
     }
 
-    public filterChange() {
+    public filterChange($event) {
         this.onClearAttendeeChecked();
     }
 
