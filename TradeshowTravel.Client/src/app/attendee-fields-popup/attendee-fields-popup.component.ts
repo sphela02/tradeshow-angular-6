@@ -5,7 +5,6 @@ import { Role, InputType } from '../shared/Enums';
 import { TradeshowService } from '../tradeshow.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from '../common.service';
-import { isEmpty } from 'rxjs/operators';
 
 @Component({
   selector: 'app-attendee-fields-popup',

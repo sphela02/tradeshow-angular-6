@@ -1,16 +1,14 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { EventInfo, EventField } from '../shared/EventInfo';
 import { Router } from '@angular/router';
 import { PageTitleService } from '../pagetitle.service';
 import { SideMenuMode, EventDisplayTab } from '../shared/shared';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { EventEditPopupComponent } from '../event-edit-popup/event-edit-popup.component';
 import { Role, InputType, ShowType, Permissions } from '../shared/Enums';
-import { UserInfo } from '../shared/UserInfo';
 import { EventDeletePopupComponent } from '../event-delete-popup/event-delete-popup.component';
 import { TradeshowService } from '../tradeshow.service';
 import { EventUsersPopupComponent } from '../event-users-popup/event-users-popup.component';
-import { GridComponent, DataStateChangeEvent, GridDataResult, count } from '@progress/kendo-angular-grid';
+import { GridComponent, DataStateChangeEvent, GridDataResult } from '@progress/kendo-angular-grid';
 import { EventFieldPopupComponent } from '../event-field-popup/event-field-popup.component';
 import { CommonService } from '../common.service';
 import { AttendeeFieldsFilterPipe } from '../shared/pipes/attendee-fields-filter.pipe';
@@ -18,7 +16,7 @@ import { OrganizerFieldsFilterPipe } from '../shared/pipes/organizer-fields-filt
 import { AlertPopupComponent } from '../alert-popup/alert-popup.component';
 import { AddAttendeePopupComponent } from '../add-attendee-popup/add-attendee-popup.component';
 import { EventAttendeeQueryResult } from '../shared/EventAttendeeQuery';
-import { QueryParams, SortParams, FilterParams } from '../shared/QueryParams';
+import { QueryParams, } from '../shared/QueryParams';
 import { FilterDescriptor, SortDescriptor } from '@progress/kendo-data-query';
 import { UserProfile } from '../shared/UserProfile';
 import { EventAttendee } from '../shared/EventAttendee';
