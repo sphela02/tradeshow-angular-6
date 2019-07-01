@@ -29,7 +29,6 @@ import { SendRsvpPopupComponent } from '../send-rsvp-popup/send-rsvp-popup.compo
 import { SendReminderPopupComponent } from '../send-reminder-popup/send-reminder-popup.component';
 import { AttendeeStatus } from '../shared/Enums';
 import { BcdUpdatesPopupComponent } from '../bcd-updates-popup/bcd-updates-popup.component';
-import { debug } from 'util';
 
 declare var $: any;
 
