@@ -85,6 +85,7 @@
     <Compile Include="DTOs\UserInfo.cs" />
     <Compile Include="DTOs\ValidationResponse.cs" />
     <Compile Include="IDataRepository.cs" />
+    <Compile Include="IReminderSrv.cs" />
     <Compile Include="IUserProfileQuery.cs" />
     <Compile Include="DTOs\UserProfile.cs" />
     <Compile Include="LdapSrv.cs" />
