@@ -30,13 +30,15 @@ namespace TradeshowTravel.Data.Models
         public string Hotels { get; set; }
         public int EstAttendeeCount { get; set; }
         public string OwnerUsername { get; set; }
+        public string LastBcdUpdatedUsername { get; set; }
+        public DateTime? LastBcdUpdatedDateTime { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool SendReminders { get; set; }
         public bool Archived { get; set; }
         public string LastBcdUpdatedUsername { get; set; }
         public string LastBcdUpdatedDateTime { get; set; }
         public virtual User Owner { get; set; }
-
+        public virtual User LastBcdUpdated { get; set; }
         public virtual ICollection<Attendee> Attendees { get; set; }
         public virtual ICollection<TradeshowField> Fields { get; set; }
         public virtual ICollection<TradeshowUser> Users { get; set; }

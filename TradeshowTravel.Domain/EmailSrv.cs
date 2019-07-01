@@ -4,28 +4,34 @@ using System.Net.Mail;
 
 namespace TradeshowTravel.Domain
 {
+    using Common.Logging;
     using Domain.DTOs;
+    using System;
+    using System.Configuration;
     using System.IO;
+    using System.Text;
     using System.Web;
 
     public class EmailSrv
     {
-        private readonly string smtpServer = "mail.harris.com";
-        private readonly string sender = "noreply-eventtravelportal@harris.com";
-        private readonly string baseUrl = "https://tradeshowtravel.harris.com/";
+        private readonly string smtpServer;
+        private readonly string sender;
+        private readonly string baseUrl;
+
+        private readonly string EMAIL_TEMPLATE_PATH = ConfigurationManager.AppSettings["EmailTemplatesPath"];
+
         private IDataRepository repo = null;
 
-        public EmailSrv(IDataRepository repo)
-        {
-            this.repo = repo;
-        }
+        public readonly string TempFolderRoot;
 
-        public EmailSrv(IDataRepository repo, string smtpServer, string sender, string baseUrl)
+        public EmailSrv(IDataRepository repo, string smtpServer, string sender, string baseUrl, string aTempFolderRoot)
         {
             this.repo = repo;
             this.smtpServer = smtpServer;
             this.sender = sender;
             this.baseUrl = baseUrl;
+
+            TempFolderRoot = aTempFolderRoot;
         }
 
         // User creates new event.
@@ -51,6 +57,8 @@ namespace TradeshowTravel.Domain
         // send RSVP using custom text from user.
         public void SendRSVP(EventInfo evt, EventAttendee attendee, RsvpRequest req)
         {
+            string folder = Path.Combine(TempFolderRoot, evt.ID.ToString());
+
             var subject = $"[Action Requested] Event Travel Portal | RSVP: You have been invited to attend {evt.Name}";
 
             var body = req.EmailText.Replace("<EventAttendee.Name>", attendee.Profile.FirstName)
@@ -58,17 +66,62 @@ namespace TradeshowTravel.Domain
                 .Replace("<Page: EventInfo.Name>", getRSVPUrl(attendee.ID))
                 .Replace("<EventInfo.Name>", evt.Name);
 
+            List<Attachment> attachments = new List<Attachment>();
+            if (req.Attachments != null)
+            {
+                foreach (string attachment in req.Attachments)
+                {
+                    attachments.Add(new Attachment(attachment));
+                }
+            }
+
             if (attendee.Profile.Delegate != null)
             {
                 var cc = new List<string>();
                 cc.Add(attendee.Profile.Email);
                 cc.Add(evt.Owner.Email);
 
-                this.Send(attendee.Profile.Delegate.Email, subject, body, cc);
+                this.Send(attendee.Profile.Delegate.Email, subject, body, cc, attachments.ToArray());
             }
             else
             {
-                this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email);
+                this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email, attachments.ToArray());
+            }
+
+            RemoveTempFiles(folder, attachments);
+        }
+
+        private static void RemoveTempFiles(string folder, List<Attachment> attachments)
+        {
+            foreach (object o in attachments)
+            {
+                System.IDisposable disposableObject = o as System.IDisposable;
+                if (disposableObject != null)
+                {
+                    disposableObject.Dispose();
+                }
+            }
+
+            foreach (var item in Directory.GetFiles(folder))
+            {
+                try
+                {
+                    File.Delete(item);
+                }
+                catch (Exception ex)
+                {
+                    Logging.LogMessage(LogLevel.DebugDetailed, $"Unable to delete file {item}. Exception: {ex} Message {ex.Message}");
+                }
+            }
+
+            try
+            {
+                Directory.Delete(folder);
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage(LogLevel.DebugDetailed, $"Unable to delete folder {folder}. Exception: {ex} Message {ex.Message}");
+
             }
         }
 
@@ -163,17 +216,26 @@ namespace TradeshowTravel.Domain
                     .Replace("<Page: EventInfo.Name>", getRSVPUrl(attendee.ID))
                     .Replace("<EventInfo.Name>", evt.Name);
 
+                List<Attachment> attachments = new List<Attachment>();
+                if (req.Attachments != null)
+                {
+                    foreach (string attachment in req.Attachments)
+                    {
+                        attachments.Add(new Attachment(attachment));
+                    }
+                }
+
                 if (attendee.Profile.Delegate != null)
                 {
                     var cc = new List<string>();
                     cc.Add(attendee.Profile.Email);
                     cc.Add(evt.Owner.Email);
 
-                    this.Send(attendee.Profile.Delegate.Email, subject, body, cc);
+                    this.Send(attendee.Profile.Delegate.Email, subject, body, cc, attachments.ToArray());
                 }
                 else
                 {
-                    this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email);
+                    this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email, attachments.ToArray());
                 }
 
                 //this.Send(attendee.Profile.Email, subject, body, evt.Owner.Email);
@@ -212,7 +274,7 @@ namespace TradeshowTravel.Domain
         // Attendee declines event invite.
         public void SendDeclinedConfirmationNotification(EventInfo evt, EventAttendee attendee)
         {
-            var subject = $"Event Travel Portal | {{attendee.Event.Name}}: Attendance Declined";
+            var subject = $"Event Travel Portal | {evt.Name}: Attendance Declined";
             var body = $"Hello {attendee.Profile.FirstName}\n\nYou are receiving this email to confirm that you decline attendance to {evt.Name}.\n\nIf this is an error or you have changed your mind, please resubmit your RSVP information by {evt.RsvpDueDate.GetValueOrDefault().ToShortDateString()}: {getRSVPUrl(attendee.ID)}\n\n{getSignature(evt)}";
 
             if (attendee.Profile.Delegate != null)
@@ -228,14 +290,26 @@ namespace TradeshowTravel.Domain
             //this.Send(attendee.Profile.Email, subject, body);
         }
 
-        // attendee updated their info.
-        public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee)
+        // attendee cancels their reservation. It used to the same email as "Attendee information has been updated". Since TSTRAV-1, we splited it into two separate emails.
+        public void SendUserCancelledReservationNotification(EventInfo evt, EventAttendee attendee)
         {
-            var subject = $"Event Travel Portal | {evt.Name}: Attendee information has been updated";
-            var body = $"Hello {evt.Owner.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details or has canceled.\n\nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
+            const string EMAIL_NOTIFICATION_NAME = "UserCancelledReservationNotification";
+
+            string subject = $"Event Travel Portal | {evt.Name}: Attendee has cancelled the reservation";
+            string eventUrl = getEventUrl(attendee.EventID);
+            string signature = getSignature(evt).Replace("\n", "</br>");
+
+            string emailTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, EMAIL_NOTIFICATION_NAME)));
+
+            string body = emailTemplate.Replace("{FirstName}", attendee.Profile.FirstName)
+                  .Replace("{LastName}", attendee.Profile.LastName)
+                  .Replace("{EventUrl}", eventUrl)
+                  .Replace("{Signature}", signature);
+
+            body = body.Replace("{Receipient}", evt.Owner.FirstName);
 
             // send to lead
-            this.Send(evt.Owner.Email, subject, body);
+            this.Send(evt.Owner.Email, subject, body, isBodyHtml: true);
 
             // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)
@@ -243,11 +317,56 @@ namespace TradeshowTravel.Domain
                 foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
                   || x.IsBusinessLeadForSegment(evt.Segments)))
                 {
-                    body = $"Hello {eventUser.User.FirstName},\n\n{attendee.Profile.FirstName} {attendee.Profile.LastName} has updated their Attendee Details or has canceled.\n\nView Event: {getEventUrl(attendee.EventID)}\n\n{getSignature(evt)}";
-                    this.Send(eventUser.User.Email, subject, body);
+                    body = body.Replace("{Receipient}", eventUser.User.FirstName);
+                    this.Send(eventUser.User.Email, subject, body, isBodyHtml: true);
                 }
             }
         }
+
+        // attendee updated their info.
+        public void SendUserDetailsUpdatedNotification(EventInfo evt, EventAttendee attendee, FieldComparisonResponse fieldComparisonResponse)
+        {
+            const string EMAIL_NOTIFICATION_NAME = "UserDetailsUpdatedNotification";
+            const string TABLE_ROW_TEMPLATE_FILE_NAME = "TableRowTemplate";
+
+            string subject = $"Event Travel Portal | {evt.Name}: Attendee information has been updated";
+            string eventUrl = getEventUrl(attendee.EventID);
+            string signature = getSignature(evt).Replace("\n", "</br>");
+
+            string emailTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, EMAIL_NOTIFICATION_NAME)));
+            string tableRowTemplate = File.ReadAllText(HttpContext.Current.Server.MapPath(string.Format(EMAIL_TEMPLATE_PATH, TABLE_ROW_TEMPLATE_FILE_NAME)));
+
+            StringBuilder tableRows = new StringBuilder();
+            foreach (var fieldChangeSet in fieldComparisonResponse.Values)
+            {
+                tableRows.Append(tableRowTemplate.Replace("{Field}", fieldChangeSet.FieldName)
+                    .Replace("{From}", fieldChangeSet.OriginalValue)
+                    .Replace("{To}", fieldChangeSet.NewValue));
+            }
+
+            string body = emailTemplate.Replace("{FirstName}", attendee.Profile.FirstName)
+                  .Replace("{LastName}", attendee.Profile.LastName)
+                  .Replace("{EventUrl}", eventUrl)
+                  .Replace("{Signature}", signature)
+                  .Replace("{TableRows}", tableRows.ToString());
+
+            body = body.Replace("{Receipient}", evt.Owner.FirstName);
+
+            // send to lead
+            this.Send(evt.Owner.Email, subject, body, isBodyHtml: true);
+
+            // send to travel, support, leads, business leads (only receive emails for their segments)
+            if (evt.Users != null)
+            {
+                foreach (var eventUser in evt.Users.Where(x => x.Role.HasFlag(Role.Travel) || x.Role.HasFlag(Role.Support) || x.Role.HasFlag(Role.Lead)
+                  || x.IsBusinessLeadForSegment(evt.Segments)))
+                {
+                    body = body.Replace("{Receipient}", eventUser.User.FirstName);
+                    this.Send(eventUser.User.Email, subject, body, isBodyHtml: true);
+                }
+            }
+        }
+
 
         // A new attendee has been added. RSVP request sent.
         public void SendAttendeeAddedNotifications(EventInfo evt, string username)
@@ -337,14 +456,43 @@ namespace TradeshowTravel.Domain
             this.Send(evt.Owner.Email, subject, body);
         }
 
-        private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null)
+        // Passport Expiration Reminder
+        public void SendPassportExpiringReminder(UserProfile user)
+        {
+            if (!user.PassportExpirationDateNear) return;
+
+            bool isExpired = user.PassportExpirationDate < DateTime.Now;
+            string subject = $"Event Travel Portal | {(isExpired ? "Passport has Expired" : "Passport Expiring Soon")}";
+            string body =
+                $"{user.FirstName},\n\nOur system has identified your passport {(isExpired ? "has expired" : "will expiring in six months or less")}: " +
+                $"{user.PassportExpirationDate.ToShortDateFormat()}. In order attend any international events, please be sure to begin the process of applying for a passport renewal." +
+                $"{(isExpired ? string.Empty : "\n\n\nAs a general rule, passports should have at least six months of validity when traveling internationally.")}" +
+                $"\n\n\n{getUserProfileUrl(user.Username)}";
+
+            if (user.Delegate != null)
+            {
+                Send(user.Delegate.Email, subject, body, user.Email);
+            }
+            else
+            {
+                Send(user.Email, subject, body);
+            }
+        }
+       
+        private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null, bool isBodyHtml = false)
+        {
+            Send(to, subject, body, new string[] { cc }, aAttachment, isBodyHtml);
+        }
+
+        private void Send(string to, string subject, string body, ICollection<string> cc, Attachment[] aAttachment = null, bool isBodyHtml = false)
         {
             SmtpClient client = new SmtpClient(this.smtpServer);
+
             var message = new MailMessage(this.sender, to, subject, body);
 
-            if (!string.IsNullOrWhiteSpace(cc))
+            foreach (var address in cc.Where(a => !string.IsNullOrWhiteSpace(a)))
             {
-                message.CC.Add(cc);
+                message.CC.Add(address);
             }
 
             if (aAttachment != null)
@@ -355,21 +503,7 @@ namespace TradeshowTravel.Domain
                 }
             }
 
-            client.Send(message);
-        }
-
-        private void Send(string to, string subject, string body, ICollection<string> cc, Attachment[] aAttachment = null)
-        {
-            SmtpClient client = new SmtpClient(this.smtpServer);
-
-            var message = new MailMessage(this.sender, to);
-            message.Subject = subject;
-            message.Body = body;
-
-            foreach (var address in cc)
-            {
-                message.CC.Add(address);
-            }
+            message.IsBodyHtml = isBodyHtml;
 
             client.Send(message);
         }
@@ -399,13 +533,5 @@ namespace TradeshowTravel.Domain
         {
             return repo.GetProfile(username);
         }
-
-        //public void test(string body = null)
-        //{
-        //    if(body == null)
-        //        this.Send("rcrum@harris.com", "test", "test");
-        //    else
-        //        this.Send("rcrum@harris.com", "test", body);
-        //}
     }
 }

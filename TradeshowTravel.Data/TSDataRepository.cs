@@ -4,11 +4,9 @@ using System.Linq;
 
 namespace TradeshowTravel.Data
 {
-    using Common.Logging;
     using Domain;
     using Domain.DTOs;
     using Models;
-    using System.Linq.Expressions;
 
     public class TSDataRepository : IDataRepository
     {
@@ -215,6 +213,19 @@ namespace TradeshowTravel.Data
 
         #region User Profiles
 
+        public List<UserProfile> GetActiveUsersWithExpiringPassport()
+        {
+            return DB.Attendees
+                .Include("Tradeshow")
+                .Include("User")
+                .Include("User.Delegate")
+                .Where(x => x.Tradeshow.StartDate > DateTime.Now && x.SendRSVP)
+                .Select(x => x.User.ToUserProfile(true))
+                .Where(x => x.PassportExpirationDateNear)
+                .Distinct()
+                .ToList();
+        }
+
         public UserProfile GetProfile(string username, string identityUser = null)
         {
             if (string.IsNullOrWhiteSpace(username))
@@ -344,6 +355,11 @@ namespace TradeshowTravel.Data
             this.DB.SaveChanges();
 
             return GetProfile(profile.Username);
+        }
+
+        public bool IsUserNew(string username)
+        {
+            return !DB.Attendees.Any(x => x.Username == username && x.SendRSVP);
         }
 
         #endregion

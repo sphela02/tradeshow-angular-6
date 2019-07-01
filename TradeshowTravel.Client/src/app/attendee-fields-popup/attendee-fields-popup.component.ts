@@ -19,7 +19,7 @@ export class AttendeeFieldsPopupComponent implements OnInit {
 
   private _filter: Role = Role.None;
   private _event: EventInfo;
-  private _attendee: EventAttendee;
+  private _attendees: { [key: number]: EventAttendee; };
   private _fields: Array<EventField>;
   
   maxvalues: { [key: number]: any } = {};
@@ -47,9 +47,12 @@ export class AttendeeFieldsPopupComponent implements OnInit {
         f => f.Included
       ) : null;
     }
+   
+    // Load initial values when editing 1 attendee
+    if (this.fields && this.attendees && Object.keys(this.attendees).length === 1) {
+      for (var firstKey in this.attendees) break;
+      var firstAttendee = this.attendees[firstKey];
 
-    // Load initial values
-    if (this.fields && this.attendee) {
       this.fields.forEach(f => {
         this.showRequired = f.Required ? true : this.showRequired;
         switch (f.Input) {
@@ -57,18 +60,18 @@ export class AttendeeFieldsPopupComponent implements OnInit {
           case InputType.ShortText:
           case InputType.Select:
             if (f.Source) {
-              this.values[f.ID] = this.attendee[f.Source];
+              this.values[f.ID] = firstAttendee[f.Source];
             } else {
-              this.values[f.ID] = this.attendee.Properties[f.ID];
+              this.values[f.ID] = firstAttendee.Properties[f.ID];
             }
             break;
           case InputType.Date:
             var dt = null;
-            if (f.Source && this.attendee[f.Source]) {
-              dt = new Date(this.attendee[f.Source]);
+            if (f.Source && firstAttendee[f.Source]) {
+              dt = new Date(firstAttendee[f.Source]);
             }
-            else if (!f.Source && this.attendee.Properties[f.ID]) {
-              dt = new Date(this.attendee.Properties[f.ID])
+            else if (!f.Source && firstAttendee.Properties[f.ID]) {
+              dt = new Date(firstAttendee.Properties[f.ID])
             }
             if (f.Source == "Arrival") {
               this.maxvalues[f.ID] = new Date(this.event.EndDate);
@@ -80,18 +83,18 @@ export class AttendeeFieldsPopupComponent implements OnInit {
             break;
           case InputType.YesOrNo:
             if (f.Source) {
-              this.values[f.ID] = CommonService.getYesOrNoText(this.attendee[f.Source]);
+              this.values[f.ID] = CommonService.getYesOrNoText(firstAttendee[f.Source]);
             } else {
-              this.values[f.ID] = CommonService.getYesOrNoText(this.attendee.Properties[f.ID]);
+              this.values[f.ID] = CommonService.getYesOrNoText(firstAttendee.Properties[f.ID]);
             }
             break;
           case InputType.MultiSelect:
             var list = [];
-            if (f.Source && this.attendee[f.Source]) {
-              list = this.attendee[f.Source].split('|');
+            if (f.Source && firstAttendee[f.Source]) {
+              list = firstAttendee[f.Source].split('|');
             }
-            else if (!f.Source && this.attendee.Properties[f.ID]) {
-              list = this.attendee.Properties[f.ID].split('|');
+            else if (!f.Source && firstAttendee.Properties[f.ID]) {
+              list = firstAttendee.Properties[f.ID].split('|');
             }
             this.values[f.ID] = list;
             break;
@@ -101,12 +104,12 @@ export class AttendeeFieldsPopupComponent implements OnInit {
   }
 
   @Input()
-  set attendee(attendee: EventAttendee) {
-    this._attendee = attendee;
+  set attendees(attendee: { [key: number]: EventAttendee; }) {
+    this._attendees = attendee;
     this.onInputsChanged();
   }
-  get attendee(): EventAttendee {
-    return this._attendee;
+  get attendees(): { [key: number]: EventAttendee; } {
+    return this._attendees;
   }
 
   @Input()
@@ -135,53 +138,58 @@ export class AttendeeFieldsPopupComponent implements OnInit {
     this.activeModal.close();
   }
 
-  onSubmit() {
-    if (!this.attendee || !this.fields) {
+  onSubmit() {   
+    if (!this.attendees || !this.fields) {
       return;
     }
-    let attendee: EventAttendee = Object.assign({}, this.attendee);
-    this.fields.forEach(f => {
-      let value: any = null;
-      if (f.Input == InputType.MultiSelect) {
-        if (this.values[f.ID]) {
-          value = this.values[f.ID].join('|');
-        }
-      } else {
-        value = this.values[f.ID];
-      }
-      if (f.Source) {
-        attendee[f.Source] = value;
-      } else {
-        attendee.Properties[f.ID] = (value) ? value : "";
-      }
-    });
-    
-    // Check if the user is attending and ensure
-    // all required fields are entered if so
-    if (CommonService.getYesOrNoText(attendee.IsAttending) == "Yes") {
-      let hasError: boolean = false;
-      this.fields.forEach(f => {
-        if (f.Included && f.Required && !this.values[f.ID]) {
-          hasError = true;
-          this.errorMsg = "The field '" + f.Label + "' is required.";
-          return false;
-        }
-      });
-      if (hasError) {
-        return;
-      }
-    }
+    for (var key in this.attendees) {
+      var attendee = this.attendees[key];
 
-    this.errorMsg = null;
-    this.isLoading = true;
-    this.service.saveAttendee(this.event.ID, attendee)
-      .subscribe(attendee => {
-        this.isLoading = false;
-        this.saveClicked.emit(attendee);
-      }, error => {
-        this.isLoading = false;
-        this.errorMsg = error;
+      this.fields.forEach(f => {
+        let value: any = null;
+        if (f.Input == InputType.MultiSelect) {
+          if (this.values[f.ID]) {
+            value = this.values[f.ID].join('|');
+          }
+        } else {
+          value = this.values[f.ID];
+        }
+
+        if (f.Source) {
+          attendee[f.Source] = value;
+        }
+        else {
+          attendee.Properties[f.ID] = (value) ? value : "";
+        }
       });
+
+      // Check if the user is attending and ensure
+      // all required fields are entered if so
+      if (CommonService.getYesOrNoText(attendee.IsAttending) == "Yes") {
+        let hasError: boolean = false;
+        this.fields.forEach(f => {
+          if (f.Included && f.Required && !this.values[f.ID]) {
+            hasError = true;
+            this.errorMsg = "The field '" + f.Label + "' is required.";
+            return false;
+          }
+        });
+        if (hasError) {
+          return;
+        }
+      }
+
+      this.errorMsg = null;
+      this.isLoading = true;
+      this.service.saveAttendee(this.event.ID, attendee)
+        .subscribe(attendee => {
+          this.isLoading = false;
+          this.saveClicked.emit(attendee);
+        }, error => {
+          this.isLoading = false;
+          this.errorMsg = error;
+        });
+    }
   }
 
 }

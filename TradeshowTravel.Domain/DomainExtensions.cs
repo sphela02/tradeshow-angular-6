@@ -6,6 +6,7 @@ namespace TradeshowTravel.Domain
 {
     using DTOs;
     using Common.Logging;
+    using System.Text.RegularExpressions;
 
     public class Encrypted : Attribute
     { }
@@ -20,6 +21,30 @@ namespace TradeshowTravel.Domain
             }
 
             return null;
+        }
+
+        public static string ToShortDateFormat(this DateTime? datetime)
+        {
+            if (datetime.HasValue)
+            {
+                return datetime.Value.ToShortDateString();
+            }
+
+            return null;
+        }
+
+        public static bool DatePartEquals(this DateTime? sourceDateTime, DateTime? targetDateTime)
+        {
+            //Both of them don't have value so they're equal
+            if(!sourceDateTime.HasValue && !targetDateTime.HasValue)
+            {
+                return true;
+            }
+
+            DateTime sourceDate = sourceDateTime.HasValue ? sourceDateTime.Value.Date : DateTime.MinValue.Date;
+            DateTime targetDate = targetDateTime.HasValue ? targetDateTime.Value.Date : DateTime.MinValue.Date;
+
+            return sourceDate == targetDate;
         }
 
         public static string ToYesNoString(this bool? str)
@@ -342,6 +367,16 @@ namespace TradeshowTravel.Domain
 
             string[] segments = eventSegments.Split(',');
             return eventUser.Role.HasFlag(Role.Business) && segments.Contains(eventUser.User.Segment);
+        }
+
+        public static string GetLabel(this List<EventField> eventFields, string source)
+        {
+            return eventFields.FirstOrDefault(f => f.Source == source)?.Label ?? source;
+        }
+
+        public static string GetUserName(this string userIdentity)
+        {
+            return string.IsNullOrWhiteSpace(userIdentity) ? string.Empty : Regex.Replace(userIdentity, ".*\\\\|@.*", string.Empty);
         }
     }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { InputType, Role, Permissions } from '../shared/Enums';
+import { InputType, Role } from '../shared/Enums';
 import { EventInfo, EventField } from '../shared/EventInfo';
 import { EventAttendee } from '../shared/EventAttendee';
 import { TradeshowService } from '../tradeshow.service';
@@ -134,7 +134,11 @@ export class AttendeeFieldsComponent implements OnInit {
     popupModalRef.componentInstance.title = "Edit " + (this.title ? this.title : "");
     popupModalRef.componentInstance.filter = this.filter;
     popupModalRef.componentInstance.event = this.event;
-    popupModalRef.componentInstance.attendee = this.attendee;
+
+    var attendee: { [key: number]: EventAttendee; } = {}
+    attendee[this.attendee.ID] = this.attendee;
+    popupModalRef.componentInstance.attendees = attendee;
+
     popupModalRef.componentInstance.saveClicked.subscribe(attendee => {
       this.attendeeChange.emit(attendee);
       this.attendee = attendee;

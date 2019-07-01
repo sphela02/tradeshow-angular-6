@@ -109,6 +109,11 @@ namespace TradeshowTravel.Data
                 evt.Owner = show.Owner.ToUserInfo();
             }
 
+            if (show.LastBcdUpdated != null)
+            {
+                evt.LastBcdUpdated = show.LastBcdUpdated.ToUserInfo();
+            }
+
             if (show.Users != null && show.Users.Count > 0)
             {
                 evt.Users = show.Users.Select(u => new EventUser
