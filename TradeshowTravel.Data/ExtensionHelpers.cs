@@ -8,7 +8,6 @@ namespace TradeshowTravel.Data
     using Domain;
     using Domain.DTOs;
     using Models;
-    using Common.Logging;
 
     public static class ExtensionHelpers
     {
@@ -44,7 +43,7 @@ namespace TradeshowTravel.Data
                 Privileges = user.Privileges,
                 Role = Role.Attendee,
                 ShowPicture = !string.IsNullOrWhiteSpace(user.EmplID),
-                Visa = user.Visa
+                Visa = user.Visa.ToYesNoString()
             };
 
             if (user.Delegate != null)
@@ -596,6 +595,11 @@ namespace TradeshowTravel.Data
             if (member.Type == typeof(DateTime?))
             {
                 valexpr = Expression.Constant(filter.Value.ToDateTime(), member.Type);
+            }
+
+            if (member.Type == typeof(bool))
+            {
+                valexpr = Expression.Constant(filter.Value.ToBool(), member.Type);
             }
 
             if (member.Type == typeof(int))

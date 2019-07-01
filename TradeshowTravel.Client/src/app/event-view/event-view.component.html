@@ -327,18 +327,18 @@
       </kendo-grid-column>
 
       <kendo-grid-column field="User.Visa" title="Visa" [filterable]="true" width="200">
-        <ng-template kendoGridCellTemplate let-dataItem>
-          {{dataItem.Profile.Visa}}
-          {{ HelperSvc.getResponseText(dataItem.Profile.Visa) }}
-        </ng-template>
         <ng-template kendoGridFilterMenuTemplate
                      let-column="column"
                      let-filter="filter"
                      let-filterService="filterService">
-          <grid-rsvp-filter [field]="column.field"
-                            [filterService]="filterService"
-                            [currentFilter]="filter">
-          </grid-rsvp-filter>
+          <grid-yesno-filter [field]="column.field"
+                             [isBooleanField]="true"
+                             [filterService]="filterService"
+                             [currentFilter]="filter">
+          </grid-yesno-filter>
+        </ng-template>
+        <ng-template kendoGridCellTemplate let-dataItem>
+          {{ dataItem.Profile.Visa }}
         </ng-template>
       </kendo-grid-column>
 
@@ -424,7 +424,6 @@
                                [currentFilter]="filter">
             </grid-yesno-filter>
           </ng-template>
-
 
           <ng-template *ngIf="field.Input == InputType.YesOrNo"
                        kendoGridCellTemplate let-dataItem>

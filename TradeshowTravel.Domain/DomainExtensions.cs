@@ -47,21 +47,26 @@ namespace TradeshowTravel.Domain
             return sourceDate == targetDate;
         }
 
-        public static string ToYesNoString(this bool? str)
+        public static string ToYesNoString(this bool? aItem)
         {
-            if (str == null)
+            if (aItem == null)
             {
                 return null;
             }
 
-            return str.Value ? "Yes" : "No";
+            return aItem.Value ? "Yes" : "No";
         }
 
-        public static bool? ToBoolean(this string str)
+        public static string ToYesNoString(this bool aItem)
         {
-            if (!string.IsNullOrWhiteSpace(str))
+            return aItem ? "Yes" : "No";
+        }
+
+        public static bool? ToBoolean(this string aString)
+        {
+            if (!string.IsNullOrWhiteSpace(aString))
             {
-                switch (str.Trim().ToUpper())
+                switch (aString.Trim().ToUpper())
                 {
                     case "1":
                     case "TRUE":
@@ -73,6 +78,24 @@ namespace TradeshowTravel.Domain
             }
 
             return null;
+        }
+
+        public static bool ToBool(this string aString)
+        {
+            if (!string.IsNullOrWhiteSpace(aString))
+            {
+                switch (aString.Trim().ToUpper())
+                {
+                    case "1":
+                    case "TRUE":
+                    case "YES":
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            return false;
         }
 
         public static DateTime? ToDateTime(this string str)
