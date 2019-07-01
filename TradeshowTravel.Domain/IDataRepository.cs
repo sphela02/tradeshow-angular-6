@@ -8,8 +8,6 @@ namespace TradeshowTravel.Domain
     {
         void SaveImage(string username, byte[] imageByte, string filetype, string category, string description = null);
 
-        //void SaveImages(List<UserImages> doc);
-
         void DeleteImages(string username, List<string> categories);
 
         UserImages GetAvatar(string username);
@@ -69,5 +67,7 @@ namespace TradeshowTravel.Domain
         List<AttendeeEvent> GetAttendeeEvents(string username, string identityUser = null);
 
         bool IsUserNew(string username);
+
+        List<UserProfile> GetActiveUsersWithExpiringPassport();
     }
 }
