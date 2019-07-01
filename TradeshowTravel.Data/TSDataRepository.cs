@@ -188,7 +188,7 @@ namespace TradeshowTravel.Data
                     role |= Role.Lead;
                 }
 
-                foreach (var user in evt.Users.Where(u => u.Username == username))
+                foreach (var user in evt.Users.Where(u => u.Username.Equals(username, StringComparison.CurrentCultureIgnoreCase)))
                 {
                     role |= user.Role;
                 }
