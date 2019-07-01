@@ -28,6 +28,7 @@ namespace TradeshowTravel.Data.Models
         public string CVVNumber { get; set; }
 
         public bool? IsHotelNeeded { get; set; }
+        public bool? IsAttending { get; set; }
         public bool SendRSVP { get; set; }
 
         public DateTime DateCreated { get; set; }

@@ -13,6 +13,10 @@ import { CompositeFilterDescriptor, FilterDescriptor } from '@progress/kendo-dat
       <input type="checkbox" id="cbNo" class="filled-in" [checked]="isNoChecked" (click)="onNoClicked($event)" />
       <label for="cbNo">No</label>
     </div>
+    <div *ngIf="isNoResponseAllowed">
+      <input type="checkbox" id="cbNone" class="filled-in" [checked]="isNoneChecked" (click)="onNoneClicked($event)" />
+      <label for="cbNone">No Response</label>
+    </div>
   `,
   styles: []
 })
@@ -21,6 +25,7 @@ export class GridYesNoFilterComponent implements AfterViewInit {
   @Input() public filterService: FilterService;
   @Input() public field: string;
   @Input() public isBooleanField: boolean;
+  @Input() public isNoResponseAllowed: boolean;
 
   @Output() public valueChange = new EventEmitter<number[]>();
   
@@ -45,6 +50,14 @@ export class GridYesNoFilterComponent implements AfterViewInit {
       this.values.push(this.getFormatedResponse(false));
     } else if (!event.target.checked && this.isNoChecked) {
       this.values = this.values.filter(x => x !== this.getFormatedResponse(false));
+    }
+    this.onInputsChanged();
+  }
+  onNoneClicked(event) {
+    if (event.target.checked && !this.isNoneChecked) {
+      this.values.push("null");
+    } else if (!event.target.checed && this.isNoneChecked) {
+      this.values = this.values.filter(x => x !== "null");
     }
     this.onInputsChanged();
   }
@@ -89,5 +102,8 @@ export class GridYesNoFilterComponent implements AfterViewInit {
   }
   get isNoChecked() {
     return this.values.some(i => i == this.getFormatedResponse(false));
+  }
+  get isNoneChecked() {
+    return this.values.some(i => i == "null");
   }
 }

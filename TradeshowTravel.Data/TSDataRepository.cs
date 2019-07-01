@@ -1145,6 +1145,7 @@ namespace TradeshowTravel.Data
             attendee.Arrival = eventAttendee.Arrival;
             attendee.Departure = eventAttendee.Departure;
             attendee.IsHotelNeeded = eventAttendee.IsHotelNeeded.ToBoolean();
+            attendee.IsAttending = eventAttendee.IsAttending.ToBoolean();
             attendee.CCNumber = eventAttendee.CCNumber;
             attendee.CCExpiration = eventAttendee.CCExpiration;
             attendee.CVVNumber = eventAttendee.CVVNumber;

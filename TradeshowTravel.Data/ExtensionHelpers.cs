@@ -181,24 +181,12 @@ namespace TradeshowTravel.Data
                 return null;
             }
 
-            string isAttendingText = null;
-            AttendeeStatus status = attendee.Status.ToAttendeeStatus();
-            switch (status)
-            {
-                case AttendeeStatus.Accepted:
-                    isAttendingText = "Yes";
-                    break;
-                case AttendeeStatus.Declined:
-                    isAttendingText = "No";
-                    break;
-            }
-
             EventAttendee ea = new EventAttendee
             {
                 ID = attendee.ID,
                 EventID = attendee.TradeshowID,
                 Username = attendee.Username,
-                Status = status,
+                Status = attendee.Status.ToAttendeeStatus(),
                 SendRSVP = attendee.SendRSVP,
                 DateCreated = attendee.DateCreated,
                 DateRSVP = attendee.DateRSVP,
@@ -210,7 +198,7 @@ namespace TradeshowTravel.Data
                 CCNumber = attendee.CCNumber,
                 CCExpiration = attendee.CCExpiration,
                 CVVNumber = attendee.CVVNumber,
-                IsAttending = isAttendingText,
+                IsAttending = attendee.IsAttending.ToYesNoString(),
                 IsHotelNeeded = attendee.IsHotelNeeded.ToYesNoString(),
                 Properties = attendee.FieldValues
                     .Where(v => v.TradeshowField.Included)
@@ -602,6 +590,18 @@ namespace TradeshowTravel.Data
                 valexpr = Expression.Constant(filter.Value.ToBool(), member.Type);
             }
 
+            if (member.Type == typeof(bool?))
+            {
+                if(filter.Value == null || filter.Value == "null")
+                {
+                    valexpr = Expression.Constant(null, member.Type);
+                }
+                else
+                {
+                    valexpr = Expression.Constant(filter.Value.ToBool(), member.Type);
+                }
+            }
+
             if (member.Type == typeof(int))
             {
                 valexpr = Expression.Constant(int.Parse(filter.Value), member.Type);
@@ -696,8 +696,12 @@ namespace TradeshowTravel.Data
 
                 filter.Operator = filter.Operator.ToLower();
 
+                // set key before changeing operator, this will ensure filters with the same key are OR together regarles if it is 'eq' or 'isnull'
+                // other wise it will use an AND operator between them
+                string key = filter.Field + filter.Operator;
+
                 // check for null or notnull synonyms
-                if (filter.Value == null)
+                if (filter.Value == null || filter.Value == "null")
                 {
                     switch (filter.Operator)
                     {
@@ -709,8 +713,6 @@ namespace TradeshowTravel.Data
                             break;
                     }
                 }
-
-                string key = filter.Field + filter.Operator;
 
                 if (uniquefilters.ContainsKey(key))
                 {
