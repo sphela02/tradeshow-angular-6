@@ -177,7 +177,7 @@ export class CommonService {
         if(!currentUser){
             return false;
         }
-        return currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows;
+        return currentUser.Role == Role.Support || currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows;
   }
 
   // Permission Checks
