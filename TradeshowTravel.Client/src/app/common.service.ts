@@ -6,6 +6,7 @@ import { isBoolean } from 'util';
 import { FilterParams, QueryParams, SortParams } from './shared/QueryParams';
 import { FilterDescriptor, CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { DataStateChangeEvent } from '@progress/kendo-angular-grid';
+import { Parser } from '@angular/compiler';
 
 
 @Injectable()
@@ -144,6 +145,21 @@ export class CommonService {
     return isNoResponseAllowed ? "No Resonse" : null;
   }
 
+  static getAttendeeStatusText(status: AttendeeStatus):String{
+    switch (status) {
+        case AttendeeStatus.Accepted:
+            return "Accepted";
+        case AttendeeStatus.Declined:
+            return "Declined";
+        case AttendeeStatus.Invited:
+            return "Invited";
+        case AttendeeStatus.Pending:
+            return "Pending";
+        default:
+            return "Unknown";
+      }
+  }
+
   static getResponseText(status: AttendeeStatus): string {
       switch (status) {
         case AttendeeStatus.Accepted:
@@ -156,12 +172,29 @@ export class CommonService {
   }
 
   static canEditOrganizerFields(
-      currentUser: UserProfile
+      currentUser: UserProfile,
+      event: EventInfo = null,
+      maxRole: Role = Role.Support | Role.Lead
     ):boolean{
         if(!currentUser){
             return false;
         }
-        return currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows;
+      
+        if(currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows){
+            return true;
+        }
+
+        if (event) {
+            if (event.Users.some(u => {
+                if (u.User.Username == currentUser.Username &&
+                    Role.None != (u.Role & maxRole)) {
+                    return true;
+                }
+            })) {
+                return true;
+            }
+        }
+        return false;
   }
 
   // Permission Checks

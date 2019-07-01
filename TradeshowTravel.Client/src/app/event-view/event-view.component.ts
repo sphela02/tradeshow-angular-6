@@ -143,7 +143,7 @@ export class EventViewComponent implements OnInit {
       this.currentUser, null, this.event
     );
     this.canEditOrganizerFields = CommonService.canEditOrganizerFields(
-      this.currentUser
+      this.currentUser, this.event, Role.Support | Role.Lead
     ); 
   }
 
@@ -421,6 +421,8 @@ export class EventViewComponent implements OnInit {
         // clear out all check boxes
         this.attendeeSelectComponent.checkedAttendeeFields = {};
         this.organizerFieldsComponent.checkedOrganizerFields = {};
+
+        this.onAttendeeChanged();
 
         this.activeTab = EventDisplayTab.Details;
       }

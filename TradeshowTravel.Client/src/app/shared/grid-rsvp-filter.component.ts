@@ -24,7 +24,7 @@ export class GridRsvpFilterComponent implements AfterViewInit {
   @Input() public currentFilter: CompositeFilterDescriptor;
   @Input() public filterService: FilterService;
   @Input() public field: string;
-
+  @Input() public isClientSide: boolean = false;
   @Output() public valueChange = new EventEmitter<number[]>();
   
   private values: Array<string> = [];
@@ -81,5 +81,5 @@ export class GridRsvpFilterComponent implements AfterViewInit {
   get isNoneChecked() {
     return this.values.some(i => i == "Pending") && 
            this.values.some(i => i == "Invited");
-  }
+ }
 }

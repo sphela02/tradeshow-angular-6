@@ -7,6 +7,7 @@ export interface EventAttendee {
     EventID: number;
     Username: string;
     Status: AttendeeStatus;
+    StatusText: String;
     SendRSVP: boolean;
     DateCreated: Date;
     DateRSVP: Date;

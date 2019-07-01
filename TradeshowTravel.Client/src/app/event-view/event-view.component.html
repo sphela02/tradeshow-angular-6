@@ -875,7 +875,7 @@
       <h5 class="mb-0">Attendees</h5>
     </div>
     <div class="card-body p-0">
-      <app-attendee-select [eventID]="event.ID"></app-attendee-select>
+      <app-attendee-select [eventID]="event.ID" (attendeeInfoClicked)="onAttendeeInfoClicked($event)"></app-attendee-select>
     </div>
   </div>
 </div>

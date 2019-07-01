@@ -5,14 +5,14 @@ using System.Net.Mail;
 namespace TradeshowTravel.Domain
 {
     using Common.Logging;
-    using Domain.DTOs;
+    using DTOs;
     using System;
     using System.Configuration;
     using System.IO;
     using System.Text;
     using System.Web;
 
-    public class EmailSrv
+    public class EmailSrv : IReminderSrv
     {
         private readonly string smtpServer;
         private readonly string sender;
@@ -456,6 +456,29 @@ namespace TradeshowTravel.Domain
             this.Send(evt.Owner.Email, subject, body);
         }
 
+        // Passport Expiration Reminder
+        public void SendPassportExpiringReminder(UserProfile user)
+        {
+            if (!user.PassportExpirationDateNear) return;
+
+            bool isExpired = user.PassportExpirationDate < DateTime.Now;
+            string subject = $"Event Travel Portal | {(isExpired ? "Passport has Expired" : "Passport Expiring Soon")}";
+            string body =
+                $"{user.FirstName},\n\nOur system has identified your passport {(isExpired ? "has expired" : "will expiring in six months or less")}: " +
+                $"{user.PassportExpirationDate.ToShortDateFormat()}. In order attend any international events, please be sure to begin the process of applying for a passport renewal." +
+                $"{(isExpired ? string.Empty : "\n\n\nAs a general rule, passports should have at least six months of validity when traveling internationally.")}" +
+                $"\n\n\n{getUserProfileUrl(user.Username)}";
+
+            if (user.Delegate != null)
+            {
+                Send(user.Delegate.Email, subject, body, user.Email);
+            }
+            else
+            {
+                Send(user.Email, subject, body);
+            }
+        }
+       
         private void Send(string to, string subject, string body, string cc = null, Attachment[] aAttachment = null, bool isBodyHtml = false)
         {
             Send(to, subject, body, new string[] { cc }, aAttachment, isBodyHtml);

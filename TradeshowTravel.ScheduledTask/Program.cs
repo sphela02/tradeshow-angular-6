@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using TradeshowTravel.ScheduledTask.Reminders;
 
 namespace TradeshowTravel.ScheduledTask
 {
@@ -11,6 +12,9 @@ namespace TradeshowTravel.ScheduledTask
 
     class Program
     {
+        private static IDataRepository _repo;
+        private static IReminderSrv _emailSrv;
+
         static void Main(string[] args)
         {
             Console.WriteLine("Starting...");
@@ -22,27 +26,44 @@ namespace TradeshowTravel.ScheduledTask
                 tempFolderRoot = Path.Combine(Path.GetTempPath(), "TradeShowTravel");
             }
 
-            IDataRepository repo = new TSDataRepository();
-
-            EmailSrv EmailSrv = new EmailSrv(
-                repo,
+            _repo = new TSDataRepository();
+            _emailSrv = new EmailSrv(_repo,
                 ConfigurationManager.AppSettings["SmtpServer"],
                 ConfigurationManager.AppSettings["SenderEmailAddress"],
                 ConfigurationManager.AppSettings["BaseUrl"],
-                tempFolderRoot
-            );
+                tempFolderRoot);
 
+            try
+            {
+                SendRsvpReminders();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Unable to send RSVP reminders. Message: {ex.Message}");
+            }
+            
+            try
+            {
+                SendPassportReminders();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Unable to send passport expiration reminders. Message: {ex.Message}");
+            }
+        }
+
+        static void SendRsvpReminders()
+        {
             Console.WriteLine("Getting events...");
 
-            var events = repo.GetEvents(new QueryParams() { Skip = 0, Size = 0 }, null);
+            var events = _repo.GetEvents(new QueryParams() { Skip = 0, Size = 0 }, null);
 
             Console.WriteLine("Iterating through events...");
 
             foreach (var eventItem in events.Events)
             {
                 if (eventItem.StartDate <= DateTime.Now) continue;
-                //if (eventItem.ID != 26) continue;
-
+                
                 Console.WriteLine($"Processing event {eventItem.ID}.");
                 
                 var parameters = new QueryParams();
@@ -56,19 +77,19 @@ namespace TradeshowTravel.ScheduledTask
                     Value = eventItem.ID.ToString()
                 });
 
-                var evt = repo.GetEvent(eventItem.ID);
+                var evt = _repo.GetEvent(eventItem.ID);
 
                 // see if we should send reminders, skip if not
                 if (!evt.SendReminders) continue;
 
-                var attendees = repo.GetEventAttendeesList(parameters);
+                var attendees = _repo.GetEventAttendeesList(parameters);
 
                 // send RSVP summaries on RSVP deadline date and 5 days before the show.
                 if (DateTime.Now.ToShortDateString() == evt.RsvpDueDate.GetValueOrDefault().ToShortDateString() || DateTime.Now.ToShortDateString() == evt.StartDate.AddDays(-5).ToShortDateString())
                 {
                     // send RSVP summaries to travel, support, and leads
                     Console.WriteLine($"Sending RSVP summaries for event {eventItem.ID}...");
-                    EmailSrv.SendRSVPSummary(evt, attendees);
+                    _emailSrv.SendRSVPSummary(evt, attendees);
                 }
 
                 // send RSVP reminders once a week, until a week before the RSVP deadline (then send every day)                
@@ -79,7 +100,7 @@ namespace TradeshowTravel.ScheduledTask
                 {
                     // yes, so send reminder RSVPs emails
                     Console.WriteLine($"Sending reminder RSVP's for event {eventItem.ID}...");
-                    EmailSrv.SendReminderRSVPs(evt, attendees);
+                    _emailSrv.SendReminderRSVPs(evt, attendees);
                 }
                 else
                 {
@@ -87,10 +108,21 @@ namespace TradeshowTravel.ScheduledTask
                     if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday)
                     {
                         Console.WriteLine($"Sending reminder RSVP's for event {eventItem.ID}...");
-                        EmailSrv.SendReminderRSVPs(evt, attendees);
+                        _emailSrv.SendReminderRSVPs(evt, attendees);
                     }
                 }
             }
+        }
+
+        static void SendPassportReminders()
+        {
+            Console.WriteLine("Sending expiring passport reminder to users ...");
+
+            var reminder = new PassportReminder(_repo, _emailSrv);
+
+            var emailsSent = reminder.SendReminders();
+
+            Console.WriteLine($"{emailsSent} reminders emails were sent to users ...");
         }
     }
 }
