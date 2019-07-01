@@ -183,12 +183,12 @@ namespace TradeshowTravel.Data
 
             if (evt != null)
             {
-                if (evt.OwnerUsername.Equals(username, StringComparison.CurrentCultureIgnoreCase))
+                if (evt.OwnerUsername.Equals(username, StringComparison.OrdinalIgnoreCase))
                 {
                     role |= Role.Lead;
                 }
 
-                foreach (var user in evt.Users.Where(u => u.Username.Equals(username, StringComparison.CurrentCultureIgnoreCase)))
+                foreach (var user in evt.Users.Where(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase)))
                 {
                     role |= user.Role;
                 }
