@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using TradeshowTravel.ScheduledTask.Reminders;
 
 namespace TradeshowTravel.ScheduledTask
 {
@@ -8,12 +9,11 @@ namespace TradeshowTravel.ScheduledTask
     using Domain;
     using Domain.DTOs;
     using System.IO;
-    using System.Linq;
 
     class Program
     {
         private static IDataRepository _repo;
-        private static EmailSrv _emailSrv;
+        private static IReminderSrv _emailSrv;
 
         static void Main(string[] args)
         {
@@ -116,14 +116,13 @@ namespace TradeshowTravel.ScheduledTask
 
         static void SendPassportReminders()
         {
-            var passportReminderInterval = int.Parse(ConfigurationManager.AppSettings["PassportReminderInterval"]);
-
             Console.WriteLine("Sending expiring passport reminder to users ...");
 
-            _repo.GetActiveUsersWithExpiringPassport()
-                .Where(x => (x.PassportExpirationDate - DateTime.Now).Value.TotalDays % passportReminderInterval == 0)
-                .ToList()
-                .ForEach(_emailSrv.SendPassportExpiringReminder);
+            var reminder = new PassportReminder(_repo, _emailSrv);
+
+            var emailsSent = reminder.SendReminders();
+
+            Console.WriteLine($"{emailsSent} reminders emails were sent to users ...");
         }
     }
 }
