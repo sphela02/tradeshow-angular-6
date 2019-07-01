@@ -2,8 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter } from "@angular/core
 import { EventAttendee } from "../shared/EventAttendee";
 import { GridDataResult, DataStateChangeEvent, PagerSettings, PageChangeEvent, GridComponent } from "@progress/kendo-angular-grid";
 import { CommonService } from "../common.service";
-import { CompositeFilterDescriptor } from '@progress/kendo-data-query';
-import { QueryParams } from "../shared/QueryParams";
+import { CompositeFilterDescriptor, process } from '@progress/kendo-data-query';
 import { TradeshowService } from "../tradeshow.service";
 
 @Component({
@@ -30,7 +29,7 @@ export class AttendeeSelectComponent {
     public constructor(private service: TradeshowService) {
         this.state = <DataStateChangeEvent>{
             skip: 0,
-            take: 25,
+            take: 10,
             filter: { logic: 'and', filters: [] },
             sort: []
         };
@@ -50,14 +49,15 @@ export class AttendeeSelectComponent {
 
     public loadAttendees() {
         this.grid.loading = true;
-        const params: QueryParams = CommonService.convertToServiceQueryParams(this.state);
-        this.service.getEventAttendees(this._eventID, params)
+        this.service.getEventAttendees(this._eventID, null)
             .subscribe(results => {
-                this.gridView = {
-                    data: results.Attendees,
-                    total: results.Total
-                };
                 this._attendees = results.Attendees;
+
+                this._attendees.forEach((attendee)=>{
+                    attendee.StatusText = this.HelperSvc.getAttendeeStatusText(attendee.Status);
+                });
+
+                this.gridView = process(this._attendees, this.state);
                 this.grid.loading = false;
             }, () => {
                 // show error message.
@@ -120,7 +120,7 @@ export class AttendeeSelectComponent {
 
     public dataStateChange(state: DataStateChangeEvent) {
         this.state = state;
-        this.loadAttendees();
+        this.gridView = process(this._attendees, this.state);
     }
 
     public filterChange($event) {

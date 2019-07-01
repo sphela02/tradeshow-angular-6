@@ -6,6 +6,7 @@ import { isBoolean } from 'util';
 import { FilterParams, QueryParams, SortParams } from './shared/QueryParams';
 import { FilterDescriptor, CompositeFilterDescriptor } from '@progress/kendo-data-query';
 import { DataStateChangeEvent } from '@progress/kendo-angular-grid';
+import { Parser } from '@angular/compiler';
 
 
 @Injectable()
@@ -142,6 +143,21 @@ export class CommonService {
           }
       }
       return null;
+  }
+
+  static getAttendeeStatusText(status: AttendeeStatus):String{
+    switch (status) {
+        case AttendeeStatus.Accepted:
+            return "Accepted";
+        case AttendeeStatus.Declined:
+            return "Declined";
+        case AttendeeStatus.Invited:
+            return "Invited";
+        case AttendeeStatus.Pending:
+            return "Pending";
+        default:
+            return "Unknown";
+      }
   }
 
   static getResponseText(status: AttendeeStatus): string {
