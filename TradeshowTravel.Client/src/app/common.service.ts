@@ -174,7 +174,7 @@ export class CommonService {
   static canEditOrganizerFields(
       currentUser: UserProfile,
       event: EventInfo = null,
-      maxRole: Role = Role.Support
+      maxRole: Role = Role.Support | Role.Lead
     ):boolean{
         if(!currentUser){
             return false;
