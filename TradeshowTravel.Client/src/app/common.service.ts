@@ -172,12 +172,29 @@ export class CommonService {
   }
 
   static canEditOrganizerFields(
-      currentUser: UserProfile
+      currentUser: UserProfile,
+      event: EventInfo = null,
+      maxRole: Role = Role.Support | Role.Lead
     ):boolean{
         if(!currentUser){
             return false;
         }
-        return currentUser.Role == Role.Support || currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows;
+      
+        if(currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows){
+            return true;
+        }
+
+        if (event) {
+            if (event.Users.some(u => {
+                if (u.User.Username == currentUser.Username &&
+                    Role.None != (u.Role & maxRole)) {
+                    return true;
+                }
+            })) {
+                return true;
+            }
+        }
+        return false;
   }
 
   // Permission Checks
