@@ -679,4 +679,32 @@ export class TradeshowService {
       })
     });
   }
+
+  getBcdEventUpdates(eventID: number): Observable<object> {
+    let url: string = this._serviceUrl + "/events/" + eventID.toString();
+    return new Observable(observer => {
+      this.http.get(url, { withCredentials: true })
+        .pipe(catchError(this.handleError))
+        .subscribe(result => {
+          observer.next(result);
+          observer.complete();
+        }, error => {
+          observer.error(error);
+        });
+    });
+  }
+
+  saveBcdUpdateAcknowledgement(eventInfo: EventInfo): Observable<EventInfo> {
+    let url: string = this._serviceUrl + "/events/save";
+    return new Observable(observer => {
+      this.http.post(url, eventInfo, { withCredentials: true })
+        .pipe(catchError(this.handleError))
+        .subscribe(attendee => {
+          observer.next(attendee);
+          observer.complete();
+        }, error => {
+          observer.error(error);
+        })
+    });
+  }
 }

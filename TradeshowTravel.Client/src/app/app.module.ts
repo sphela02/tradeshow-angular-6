@@ -53,6 +53,8 @@ import { PrivilegedUsersListComponent } from './privileged-users-list/privileged
 import { PrivilegedUsersPopupComponent } from './privileged-users-popup/privileged-users-popup.component';
 import { ProfileImageUploadPopupComponent } from './profile-image-upload-popup/profile-image-upload-popup.component';
 import { UploadModule } from '@progress/kendo-angular-upload';
+import { BcdUpdatesPopupComponent } from './bcd-updates-popup/bcd-updates-popup.component';
+
 
 @NgModule({
   imports: [
@@ -109,7 +111,8 @@ import { UploadModule } from '@progress/kendo-angular-upload';
     PrivilegedUsersListComponent,
     PrivilegedUsersPopupComponent,
     ProfileImageUploadPopupComponent,
-    GridYesNoFilterComponent
+    GridYesNoFilterComponent,
+    BcdUpdatesPopupComponent,
   ],
   entryComponents: [
     ProfileEditPopupComponent,
@@ -125,7 +128,8 @@ import { UploadModule } from '@progress/kendo-angular-upload';
     AttendeeRsvpPopupComponent,
     PrivilegedUsersPopupComponent,
     AlertPopupComponent,
-    ProfileImageUploadPopupComponent
+    ProfileImageUploadPopupComponent,
+    BcdUpdatesPopupComponent,
   ],
   bootstrap: [AppComponent]
 })

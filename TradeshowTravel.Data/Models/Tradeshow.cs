@@ -33,7 +33,8 @@ namespace TradeshowTravel.Data.Models
         public DateTime CreatedDate { get; set; }
         public bool SendReminders { get; set; }
         public bool Archived { get; set; }
-
+        public string LastBcdUpdatedUsername { get; set; }
+        public string LastBcdUpdatedDateTime { get; set; }
         public virtual User Owner { get; set; }
 
         public virtual ICollection<Attendee> Attendees { get; set; }

@@ -1,4 +1,4 @@
-﻿import { Role, ShowType, InputType } from './Enums';
+import { Role, ShowType, InputType } from './Enums';
 import { UserInfo } from './UserInfo';
 
 export interface EventInfo { 
@@ -25,6 +25,10 @@ export interface EventInfo {
     Users: EventUser[];
     Fields: EventField[];
     RoomBlocks: EventRoomBlock[];
+    LastBcdUpdatedUsername: string;
+    LastBcdUpdatedDateTime: string;
+    LastBcdUpdatedEmail: string;
+    showBcdUpdatesSection: boolean;
 }
 
 export interface EventUser { 

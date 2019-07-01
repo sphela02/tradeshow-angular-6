@@ -99,7 +99,9 @@ namespace TradeshowTravel.Data
                 OwnerUsername = show.OwnerUsername,
                 CreatedDate = show.CreatedDate,
                 SendReminders = show.SendReminders,
-                Archived = show.Archived
+                Archived = show.Archived,
+                LastBcdUpdatedUsername = show.LastBcdUpdatedUsername,
+                LastBcdUpdatedDateTime = show.LastBcdUpdatedDateTime
             };
 
             if (show.Owner != null)
