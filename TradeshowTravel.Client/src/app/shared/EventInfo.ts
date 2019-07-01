@@ -26,7 +26,7 @@ export interface EventInfo {
     Fields: EventField[];
     RoomBlocks: EventRoomBlock[];
     LastBcdUpdatedUsername: string;
-    LastBcdUpdatedDateTime: string;
+    LastBcdUpdatedDateTime: Date;
     LastBcdUpdatedEmail: string;
     showBcdUpdatesSection: boolean;
 }

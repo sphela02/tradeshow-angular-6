@@ -72,7 +72,7 @@ export class EventViewComponent implements OnInit {
   bcdPopupTitle: string;
   checkForUpdates: any;
   bcdUpdateResults: any;
-  lastBcdUpdatedDateTime: string;
+  lastBcdUpdatedDateTime: Date;
   lastBcdUpdatedUserName: string;
   lastBcdUpdatedEmail: string;
   checkBoxState: string;
@@ -533,7 +533,7 @@ export class EventViewComponent implements OnInit {
   acknowledgeBcdUpdates() {
     this.event.LastBcdUpdatedUsername = this.currentUser.Username;
     this.event.LastBcdUpdatedEmail = this.currentUser.Email;
-    this.event.LastBcdUpdatedDateTime = new Date().toUTCString();
+    this.event.LastBcdUpdatedDateTime = new Date();
 
     this.service.saveEventInfo(this.event)
       .subscribe(result => {
@@ -767,6 +767,6 @@ export class EventViewComponent implements OnInit {
 }
 
 interface bcdUpdateResults {
-   LastBcdUpdatedDateTime: string;
+   LastBcdUpdatedDateTime: Date;
    LastBcdUpdatedUsername: string;
 }

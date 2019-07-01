@@ -28,9 +28,6 @@ namespace TradeshowTravel.Domain.DTOs
         public DateTime CreatedDate { get; set; }
         public bool SendReminders { get; set; }
         public bool Archived { get; set; }
-        public string LastBcdUpdatedUsername { get; set; }
-        public string LastBcdUpdatedDateTime { get; set; }
-
         public List<EventUser> Users { get; set; }
         public List<EventField> Fields { get; set; }
         public List<EventRoomBlock> RoomBlocks { get; set; }
