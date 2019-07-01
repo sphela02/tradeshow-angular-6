@@ -20,6 +20,7 @@ export class GridYesNoFilterComponent implements AfterViewInit {
   @Input() public currentFilter: CompositeFilterDescriptor;
   @Input() public filterService: FilterService;
   @Input() public field: string;
+  @Input() public isBooleanField: boolean;
 
   @Output() public valueChange = new EventEmitter<number[]>();
   
@@ -32,18 +33,18 @@ export class GridYesNoFilterComponent implements AfterViewInit {
   }
 
   onYesClicked(event) {
-    if (event.target.checked && !this.isYesChecked) {
-      this.values.push("Yes");
+    if (event.target.checked && !this.isYesChecked) {     
+      this.values.push(this.getFormatedResponse(true));
     } else if (!event.target.checed && this.isYesChecked) {
-      this.values = this.values.filter(x => x !== "Yes");
+      this.values = this.values.filter(x => x !== this.getFormatedResponse(true));
     }
     this.onInputsChanged();
   }
   onNoClicked(event) {
     if (event.target.checked && !this.isNoChecked) {
-      this.values.push("No");
+      this.values.push(this.getFormatedResponse(false));
     } else if (!event.target.checked && this.isNoChecked) {
-      this.values = this.values.filter(x => x !== "No");
+      this.values = this.values.filter(x => x !== this.getFormatedResponse(false));
     }
     this.onInputsChanged();
   }
@@ -56,13 +57,37 @@ export class GridYesNoFilterComponent implements AfterViewInit {
           value
       })),
       logic: 'or'
-  });
+    });
+  }
+
+  private getFormatedResponse(aResponse: boolean) {
+    return this.isBooleanField
+      ? this.getBooleanResponse(aResponse)
+    : this.getStringResponse(aResponse);
+  }
+
+  private getBooleanResponse(aResponse: boolean) {
+    if (aResponse) {
+      return '1';
+    }
+    else {
+      return '0';
+    }
+  }
+
+  private getStringResponse(aResponse: boolean) {
+    if (aResponse) {
+      return 'Yes';
+    }
+    else {
+      return 'No';
+    }
   }
 
   get isYesChecked() {
-    return this.values.some(i => i == "Yes");
+    return this.values.some(i => i == this.getFormatedResponse(true));
   }
   get isNoChecked() {
-    return this.values.some(i => i == "No");
+    return this.values.some(i => i == this.getFormatedResponse(false));
   }
 }
