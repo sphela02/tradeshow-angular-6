@@ -422,6 +422,8 @@ export class EventViewComponent implements OnInit {
         this.attendeeSelectComponent.checkedAttendeeFields = {};
         this.organizerFieldsComponent.checkedOrganizerFields = {};
 
+        this.onAttendeeChanged();
+
         this.activeTab = EventDisplayTab.Details;
       }
     });
