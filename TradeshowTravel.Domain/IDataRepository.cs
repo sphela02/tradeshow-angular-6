@@ -55,6 +55,9 @@ namespace TradeshowTravel.Domain
         List<EventAttendee> GetEventAttendeesList(QueryParams parameters);
 
         EventAttendee GetAttendee(int attendeeID);
+        bool IsVisaOnProfile(string aUserName);
+        bool IsPassportOnProfile(string aUserName);
+        bool IsOtherOnProfile(string aUserName);
 
         EventAttendee GetAttendee(int eventID, string username);
 

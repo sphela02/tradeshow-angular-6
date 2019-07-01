@@ -805,7 +805,12 @@ namespace TradeshowTravel.Data
 
             foreach (var a in query.Skip(parameters.Skip).Take(parameters.Size))
             {
-                result.Attendees.Add(a.ToEventAttendee(includePassportInfo));
+                result.Attendees.Add(a.ToEventAttendee(includePassportInfo));              
+            }
+
+            foreach(var user in result.Attendees)
+            {
+                user.Profile.Visa = IsVisaOnProfile(user.Username).ToString();
             }
 
             result.Segments = DB.Segments
@@ -833,6 +838,48 @@ namespace TradeshowTravel.Data
             }
 
             return result;
+        }
+
+        public bool IsVisaOnProfile(string aUserName)
+        {
+            List<UserImages> UI = new List<UserImages>();
+            UI = GetTravelDocs(aUserName.ToUpper());
+            foreach (var image in UI)
+            {
+                if (image.Category.ToUpper() == "VISA")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsPassportOnProfile(string aUserName)
+        {
+            List<UserImages> UI = new List<UserImages>();
+            UI = GetTravelDocs(aUserName.ToUpper());
+            foreach (var image in UI)
+            {
+                if (image.Category.ToUpper() == "PASSPORT")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsOtherOnProfile(string aUserName)
+        {
+            List<UserImages> UI = new List<UserImages>();
+            UI = GetTravelDocs(aUserName.ToUpper());
+            foreach (var image in UI)
+            {
+                if (image.Category.ToUpper() == "OTHER")
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public List<EventAttendee> GetEventAttendeesList(QueryParams parameters)
