@@ -77,9 +77,9 @@ export class AttendeeFieldsComponent implements OnInit {
             break;
           case InputType.YesOrNo:
             if (f.Source) {
-              this.values[f.ID] = CommonService.getYesOrNoText(this.attendee[f.Source]);
+              this.values[f.ID] = CommonService.getYesOrNoText(this.attendee[f.Source], false);
             } else {
-              this.values[f.ID] = CommonService.getYesOrNoText(this.attendee.Properties[f.ID]);
+              this.values[f.ID] = CommonService.getYesOrNoText(this.attendee.Properties[f.ID], false);
             }
             break;
           case InputType.MultiSelect:

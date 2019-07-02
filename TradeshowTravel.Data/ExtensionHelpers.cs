@@ -722,7 +722,26 @@ namespace TradeshowTravel.Data
                 }
                 else
                 {
-                    uniquefilters[key] = new List<FilterParams>() { filter };
+                    if(filter.Field == "User.Name")
+                    {
+                        var filter1 = new FilterParams()
+                        {
+                            Field = "User.FirstName",
+                            Operator = filter.Operator,
+                            Value = filter.Value
+                        };
+                        var filter2 = new FilterParams()
+                        {
+                            Field = "User.LastName",
+                            Operator = filter.Operator,
+                            Value = filter.Value
+                        };
+                        uniquefilters[key] = new List<FilterParams>() { filter1, filter2 };
+                    }
+                    else
+                    {
+                        uniquefilters[key] = new List<FilterParams>() { filter };
+                    }
                 }
             }
 
