@@ -35,4 +35,4 @@ BEGIN
 END
 
 -- reset email addresses so site will grab them from ldap
-UPDATE Users SET Email = NULL WHERE Email LIKE '%harris.com'
+UPDATE Users SET Email = '' WHERE Email LIKE '%harris.com'
