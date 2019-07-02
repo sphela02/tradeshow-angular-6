@@ -127,13 +127,13 @@ export class EventViewComponent implements OnInit {
             this.setStateBdcUpdateSection();
          }
          
-         this.currentUserIsBcd = this.currentUser.Role == Role.Travel;
+         this.currentUserIsBcd = this.currentUser.Role != Role.Travel;
          if (this.updatesHaveOccured && this.currentUserIsBcd) {
            this.popupBcdCheckUpdates();
          } else if (this.currentUserIsBcd) {
             this.event.showBcdUpdatesSection = true;
             // show pretty date
-            this.event.LastBcdUpdatedDateTime = new Date(Date.now());
+            this.event.LastBcdUpdatedDateTime = new Date(this.event.LastBcdUpdatedDateTime);
          }
      })
 
