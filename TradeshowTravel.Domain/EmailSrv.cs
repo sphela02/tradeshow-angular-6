@@ -464,8 +464,8 @@ namespace TradeshowTravel.Domain
             bool isExpired = user.PassportExpirationDate < DateTime.Now;
             string subject = $"Event Travel Portal | {(isExpired ? "Passport has Expired" : "Passport Expiring Soon")}";
             string body =
-                $"{user.FirstName},\n\nOur system has identified your passport {(isExpired ? "has expired" : "will expiring in six months or less")}: " +
-                $"{user.PassportExpirationDate.ToShortDateFormat()}. In order attend any international events, please be sure to begin the process of applying for a passport renewal." +
+                $"{user.FirstName},\n\nOur system has identified your passport {(isExpired ? "has expired" : "will expire in six months or less")}: " +
+                $"{user.PassportExpirationDate.ToShortDateFormat()}. In order to attend any international events, please be sure to begin the process of applying for a passport renewal." +
                 $"{(isExpired ? string.Empty : "\n\n\nAs a general rule, passports should have at least six months of validity when traveling internationally.")}" +
                 $"\n\n\n{getUserProfileUrl(user.Username)}";
 

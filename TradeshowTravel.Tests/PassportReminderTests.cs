@@ -5,6 +5,7 @@ using System.Linq;
 using FizzWare.NBuilder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using TradeshowTravel.Data;
 using TradeshowTravel.Domain;
 using TradeshowTravel.Domain.DTOs;
 using TradeshowTravel.ScheduledTask.Reminders;
@@ -23,7 +24,7 @@ namespace TradeshowTravel.Tests
         {
             _passportReminderInterval = int.Parse(ConfigurationManager.AppSettings["PassportReminderInterval"]);
             _repo = new Mock<IDataRepository>();
-            _emailSrv = new Moq.Mock<IReminderSrv>();
+            _emailSrv = new Mock<IReminderSrv>();
         }
 
         [TestMethod]
@@ -127,6 +128,21 @@ namespace TradeshowTravel.Tests
 
             // Assert
             Assert.AreEqual(result, 0);
+        }
+
+        [TestMethod]
+        public void SendPassportReminder_Integration_Test()
+        {
+            var repo = new TSDataRepository();
+            var email = new EmailSrv(repo,
+                ConfigurationManager.AppSettings["SmtpServer"],
+                ConfigurationManager.AppSettings["SenderEmailAddress"],
+                ConfigurationManager.AppSettings["BaseUrl"],
+                ConfigurationManager.AppSettings["TempFolderRoot"]);
+
+            var reminder = new PassportReminder(repo, email);
+
+            var result = reminder.SendReminders();
         }
     }
 }

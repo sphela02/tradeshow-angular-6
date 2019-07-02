@@ -220,6 +220,7 @@ namespace TradeshowTravel.Data
                 .Include("User")
                 .Include("User.Delegate")
                 .Where(x => x.Tradeshow.StartDate > DateTime.Now && x.SendRSVP)
+                .ToList()
                 .Select(x => x.User.ToUserProfile(true))
                 .Where(x => x.PassportExpirationDateNear)
                 .Distinct()
