@@ -699,7 +699,7 @@ namespace TradeshowTravel.Data
                 filter.Operator = filter.Operator.ToLower();
 
                 // set key before changeing operator, this will ensure filters with the same key are OR together regarles if it is 'eq' or 'isnull'
-                // other wise it will use an AND operator between them
+                // otherwise it will use an AND operator between them
                 string key = filter.Field + filter.Operator;
 
                 // check for null or notnull synonyms
