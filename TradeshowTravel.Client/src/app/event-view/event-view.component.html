@@ -304,25 +304,25 @@
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.Email" title="Email" [filterable]="false" width="200">
+      <kendo-grid-column field="User.Email" title="Email" [filterable]="true" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Email }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.Telephone" title="Work Number" [filterable]="false" width="200">
+      <kendo-grid-column field="User.Telephone" title="Work Number" [filterable]="true" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Telephone }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.Mobile" title="Cell Number" [filterable]="false" width="200">
+      <kendo-grid-column field="User.Mobile" title="Cell Number" [filterable]="true" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Mobile }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.BadgeName" title="Name on Badge" [filterable]="false" width="200">
+      <kendo-grid-column field="User.BadgeName" title="Name on Badge" [filterable]="true" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.BadgeName }}
         </ng-template>
@@ -423,13 +423,14 @@
                        let-filterService="filterService">
             <grid-yesno-filter [field]="column.field"
                                [filterService]="filterService"
-                               [currentFilter]="filter">
+                               [currentFilter]="filter"
+                               [isNoResponseAllowed]="true">
             </grid-yesno-filter>
           </ng-template>
 
           <ng-template *ngIf="field.Input == InputType.YesOrNo"
                        kendoGridCellTemplate let-dataItem>
-            {{ HelperSvc.getYesOrNoText(dataItem[field.Source]) }}
+            {{ HelperSvc.getYesOrNoText(dataItem[field.Source], true) }}
           </ng-template>
           <ng-template *ngIf="field.Input == InputType.MultiSelect"
                        kendoGridCellTemplate let-dataItem>

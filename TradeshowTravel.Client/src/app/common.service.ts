@@ -129,7 +129,7 @@ export class CommonService {
       };
   }
 
-  static getYesOrNoText(value: any): string {
+  static getYesOrNoText(value: any, isNoResponseAllowed: boolean): string {
       if (value) {
           if (isBoolean(value)) {
               return Boolean(value) ? "Yes" : "No";
@@ -142,7 +142,7 @@ export class CommonService {
                 return "No";
           }
       }
-      return null;
+    return isNoResponseAllowed ? "No Response" : null;
   }
 
   static getAttendeeStatusText(status: AttendeeStatus):String{
