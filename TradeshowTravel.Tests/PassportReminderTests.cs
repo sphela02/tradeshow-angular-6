@@ -142,16 +142,7 @@ namespace TradeshowTravel.Tests
 
             var reminder = new PassportReminder(repo, email);
 
-            var result = reminder.SendReminders();
-        }
-
-        [TestMethod]
-        public void DateTime_Test()
-        {
-            var date = DateTime.Now;
-            var sixMonths = DateTime.Now.AddMonths(6);
-
-            var x = 0;
+            reminder.SendReminders();
         }
     }
 }
