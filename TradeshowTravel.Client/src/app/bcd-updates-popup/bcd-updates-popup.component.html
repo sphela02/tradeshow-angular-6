@@ -1,0 +1,28 @@
+<div [class.loading]="loading">
+  <div class="modal-header">
+    <h5 class="modal-title w-100 ml-3">There are new changes to Tradeshow </h5>
+    <!--<button type="button" class="close" aria-label="Close" (click)="cancelPopup()">
+      <span aria-hidden="true">&times;</span>
+    </button>-->
+  </div>
+  <div class="modal-body">
+    <div class="row" style="max-height: 350px;">
+      <div class="col-md-auto">
+      </div>
+      <div id="mainBody" class="p-3 m-4">
+        <h2 class="bg-secondary py-2 text-dark">
+          {{bcdPopupTitle}}
+        </h2>
+        <p>
+          New changes have been made to the <u>{{bcdPopupTitle}}</u>!
+        </p>
+        <p>
+          Review all changes made to {{bcdPopupTitle}} and when done, confirm at the top right corner of the page that you have viewed all updated information and click 'Save'
+        </p>
+      </div>
+      <div class="modal-footer pull-right col-sm-12">
+        <button id="bt_viewUpdates" type="button" class="btn btn-primary btn-sm px-5" (click)="cancelPopup()">VIEW UPDATES</button>
+      </div>
+    </div>
+  </div>
+</div>

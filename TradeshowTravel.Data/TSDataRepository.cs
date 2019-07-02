@@ -1331,7 +1331,6 @@ namespace TradeshowTravel.Data
                 DB.Attendees.Remove(attendee);
             }
         }
-
         #endregion
     }
 }
