@@ -205,7 +205,7 @@
         </ng-template>
       </kendo-grid-column>
 -->
-      <kendo-grid-column field="User.Name" width="200" [locked]="true" [filterable]="true" title="Name">
+      <kendo-grid-column field="User.BadgeName" width="200" [locked]="true" [filterable]="true" title="Name">
         <ng-template kendoGridCellTemplate let-dataItem>
           <a (click)="onAttendeeInfoClicked(dataItem)" class="text-info">
             {{dataItem.Profile.FirstName}} {{dataItem.Profile.LastName}}
@@ -438,23 +438,30 @@
           </ng-template>
         </kendo-grid-column>
 
-          <kendo-grid-column *ngIf="!field.Source" [filterable]="true"
-                             title="{{field.Label}}"
-                             width="200">
-            <ng-template *ngIf="field.Input == InputType.Date"
-                         kendoGridCellTemplate let-dataItem>
-              {{ dataItem.Properties[field.ID] | date: 'MM/dd/yyyy' }}
-            </ng-template>
-            <ng-template *ngIf="field.Input == InputType.MultiSelect"
-                         kendoGridCellTemplate let-dataItem>
-              {{ dataItem.Properties[field.ID] | replace : '|' : ', '}}
-            </ng-template>
-            <ng-template *ngIf="field.Input != InputType.Date && field.Input != InputType.MultiSelect"
-                         kendoGridCellTemplate let-dataItem>
-              {{ dataItem.Properties[field.ID] }}
-            </ng-template>
-          </kendo-grid-column>
-</ng-template>
+        <kendo-grid-column *ngIf="!field.Source" [filterable]="true"
+                           title="{{field.Label}}"
+                           field="{{field.Label}}"
+                           width="200">
+          <ng-template kendoGridFilterMenuTemplate let-filter let-column="column">
+            <kendo-grid-string-filter-cell [showOperators]="false"
+                                           [column]="column"
+                                           [filter]="filter">
+            </kendo-grid-string-filter-cell>
+          </ng-template>
+          <ng-template *ngIf="field.Input == InputType.Date"
+                       kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] | date: 'MM/dd/yyyy' }}
+          </ng-template>
+          <ng-template *ngIf="field.Input == InputType.MultiSelect"
+                       kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] | replace : '|' : ', '}}
+          </ng-template>
+          <ng-template *ngIf="field.Input != InputType.Date && field.Input != InputType.MultiSelect"
+                       kendoGridCellTemplate let-dataItem>
+            {{ dataItem.Properties[field.ID] }}
+          </ng-template>
+        </kendo-grid-column>
+      </ng-template>
 
     </kendo-grid>
   </div>

@@ -1261,7 +1261,7 @@ namespace TradeshowTravel.Domain
                 });
             }
 
-            List<EventAttendee> attendees = DataRepo.GetEventAttendeesList(parameters);
+            List<EventAttendee> attendees = DataRepo.GetEventAttendeesList(eventID, parameters);
 
             DateTime timestamp = DateTime.Now;
 
@@ -1351,7 +1351,7 @@ namespace TradeshowTravel.Domain
                 });
             }
 
-            List<EventAttendee> attendees = DataRepo.GetEventAttendeesList(parameters);
+            List<EventAttendee> attendees = DataRepo.GetEventAttendeesList(eventID, parameters);
 
             // TODO: Replace email text placeholders with object property values
             // TODO: Add everyone to one email? doesn't seem to be attendee specific.
@@ -1395,7 +1395,7 @@ namespace TradeshowTravel.Domain
 
             try
             {
-                result = DataRepo.GetEventAttendees(parameters, role != Role.Travel);
+                result = DataRepo.GetEventAttendees(eventID, parameters, role != Role.Travel);
             }
             catch (Exception ex)
             {
@@ -1758,7 +1758,7 @@ namespace TradeshowTravel.Domain
                 try
                 {
                     // Get attendees
-                    attendees = DataRepo.GetEventAttendeesList(parameters);
+                    attendees = DataRepo.GetEventAttendeesList(eventID, parameters);
                 }
                 catch (Exception ex)
                 {
@@ -2170,7 +2170,7 @@ namespace TradeshowTravel.Domain
                 Value = eventID.ToString()
             });
 
-            return DataRepo.GetEventAttendeesList(parameters);
+            return DataRepo.GetEventAttendeesList(eventID, parameters);
         }
 
         private List<EventAttendee> GetAcceptedAttendees(int eventID)
@@ -2194,7 +2194,7 @@ namespace TradeshowTravel.Domain
                 Value = AttendeeStatus.Accepted.ToString()
             });
 
-            return DataRepo.GetEventAttendeesList(parameters);
+            return DataRepo.GetEventAttendeesList(eventID, parameters);
         }
 
         #endregion
