@@ -43,56 +43,18 @@ namespace TradeshowTravel.Data
                 picRec.Description = description;
             }
 
-                this.DB.SaveChanges();
+            this.DB.SaveChanges();
+
+            UpdateProfileVisa(username);
         }
 
-        //public void SaveImages(List<UserImages> docs)
-        //{
-        //    if (docs == null)
-        //    {
-        //        return;
-        //    }
+        private void UpdateProfileVisa(string username)
+        {
+            User user = DB.Users.FirstOrDefault(u => u.Username == username);
+            user.Visa = IsVisaOnProfile(username);
 
-        //    List<string> keepers = new List<string>();
-
-        //    // Add or Delete (control of unique key (username + catalog) is done via angular code)
-        //    // No updating
-        //    foreach (var d in docs)
-        //    {
-        //        if (d.Image == null)
-        //        {
-        //            continue;
-        //        }
-  
-        //        var picRec = this.DB.UserImages.Find(d.Username.ToUpper(), d.Category.ToUpper());
-
-        //        if (picRec == null)
-        //        {
-        //            picRec = new UserImages();
-        //            picRec.Username = d.Username.ToUpper();
-
-                    
-        //            picRec.Image = d.Image;
-        //            picRec.ImageType = d.ImageType;
-        //            picRec.Category = d.Category.ToUpper();
-        //            picRec.Description = d.Description;
-
-        //            this.DB.UserImages.Add(picRec);
-        //        }
-        //        keepers.Add(d.Category.ToUpper());
-        //    }
-
-        //    //Remove docs 
-        //    foreach (var doc in this.DB.UserImages
-        //             .Where (ui => ui.Username == docs[0].Username.ToUpper())
-        //             .Where (ui => !keepers.Contains(ui.Category))
-        //             .Where (ui => ui.Category != "AVATAR"))
-        //    {
-        //        this.DB.UserImages.Remove(doc);
-        //    }
-
-        //    this.DB.SaveChanges();
-        //}
+            this.DB.SaveChanges();
+        }
 
         public void DeleteImages(string username, List<string> categories)
         {
@@ -115,6 +77,8 @@ namespace TradeshowTravel.Data
             }
 
             this.DB.SaveChanges();
+
+            UpdateProfileVisa(username);
         }
 
 
@@ -816,7 +780,7 @@ namespace TradeshowTravel.Data
 
             foreach (var a in query.Skip(parameters.Skip).Take(parameters.Size))
             {
-                result.Attendees.Add(a.ToEventAttendee(includePassportInfo));
+                result.Attendees.Add(a.ToEventAttendee(includePassportInfo));              
             }
 
             result.Segments = DB.Segments
@@ -844,6 +808,48 @@ namespace TradeshowTravel.Data
             }
 
             return result;
+        }
+
+        public bool IsVisaOnProfile(string aUserName)
+        {
+            List<UserImages> UI = new List<UserImages>();
+            UI = GetTravelDocs(aUserName.ToUpper());
+            foreach (var image in UI)
+            {
+                if (image.Category.ToUpper() == "VISA")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsPassportOnProfile(string aUserName)
+        {
+            List<UserImages> UI = new List<UserImages>();
+            UI = GetTravelDocs(aUserName.ToUpper());
+            foreach (var image in UI)
+            {
+                if (image.Category.ToUpper() == "PASSPORT")
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsOtherOnProfile(string aUserName)
+        {
+            List<UserImages> UI = new List<UserImages>();
+            UI = GetTravelDocs(aUserName.ToUpper());
+            foreach (var image in UI)
+            {
+                if (image.Category.ToUpper() == "OTHER")
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public List<EventAttendee> GetEventAttendeesList(QueryParams parameters)
