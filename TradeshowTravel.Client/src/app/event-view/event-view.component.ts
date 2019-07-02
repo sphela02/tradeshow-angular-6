@@ -75,7 +75,7 @@ export class EventViewComponent implements OnInit {
   lastBcdUpdatedDateTime: Date;
   lastBcdUpdatedUserName: string;
   lastBcdUpdatedEmail: string;
-  checkBoxState: string;
+  isDisabled: boolean = false;
   currentUserIsBcd: boolean;
   updatedEvent: any;
   updatesHaveOccured: boolean = false;
@@ -122,7 +122,7 @@ export class EventViewComponent implements OnInit {
         this.updatesHaveOccured = (this.bcdUpdateResults.LastBcdUpdatedUsername == null && this.bcdUpdateResults.LastBcdUpdatedDateTime == null);
          if (this.updatesHaveOccured)
          {
-            this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+            this.event.LastBcdUpdatedUsername = `${this.currentUser.FirstName} ${this.currentUser.LastName}`
             this.event.LastBcdUpdatedEmail = this.currentUser.Email;
             this.setStateBdcUpdateSection();
          }
@@ -132,6 +132,8 @@ export class EventViewComponent implements OnInit {
            this.popupBcdCheckUpdates();
          } else if (this.currentUserIsBcd) {
             this.event.showBcdUpdatesSection = true;
+            // show pretty date
+            this.event.LastBcdUpdatedDateTime = new Date(Date.now());
          }
      })
 
@@ -213,6 +215,10 @@ export class EventViewComponent implements OnInit {
 
   toggleShowAll() {
     this.showAllInfo = !this.showAllInfo;
+  }
+
+  toggleState() {
+    this.isDisabled = !this.isDisabled;
   }
 
   get daysUntilEvent(): number {
@@ -534,6 +540,7 @@ export class EventViewComponent implements OnInit {
     this.event.LastBcdUpdatedUsername = this.currentUser.Username;
     this.event.LastBcdUpdatedEmail = this.currentUser.Email;
     this.event.LastBcdUpdatedDateTime = new Date();
+    this.isDisabled = true;
 
     this.service.saveEventInfo(this.event)
       .subscribe(result => {
@@ -541,6 +548,8 @@ export class EventViewComponent implements OnInit {
         this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
         this.event.LastBcdUpdatedEmail = this.currentUser.Email;
         this.event.showBcdUpdatesSection = true;
+        // show pretty date
+        this.event.LastBcdUpdatedDateTime = new Date(Date.now());
       }, error => {
         console.log("Error: " + error);
       });

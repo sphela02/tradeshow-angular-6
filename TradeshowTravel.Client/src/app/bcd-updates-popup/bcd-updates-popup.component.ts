@@ -39,7 +39,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './bcd-updates-popup.component.html',
   styleUrls: ['./bcd-updates-popup.component.scss']
 })
-export class BcdUpdatesPopupComponent implements OnInit {
+export class BcdUpdatesPopupComponent {
   _eventID: number;
   _event: EventInfo;
   attendee: UserInfo;
@@ -59,10 +59,6 @@ export class BcdUpdatesPopupComponent implements OnInit {
     private modalService: NgbModal
   ) { }
 
-  ngOnInit() {
-    
-  }
-
   @Input()
   set eventID(eventID: number) {
     this._eventID = eventID;
@@ -79,14 +75,8 @@ export class BcdUpdatesPopupComponent implements OnInit {
   get event(): EventInfo {
     return this._event;
   }
-
-  closeResult: string;
-
+  
   cancelPopup() {
-
     this.activeModal.close();
-  }
-
-  onSubmit() {
   }
 }
