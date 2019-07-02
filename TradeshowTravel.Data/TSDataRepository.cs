@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 
 namespace TradeshowTravel.Data
@@ -179,15 +180,30 @@ namespace TradeshowTravel.Data
 
         public List<UserProfile> GetActiveUsersWithExpiringPassport()
         {
-            return DB.Attendees
+            var users = DB.Attendees
                 .Include("Tradeshow")
                 .Include("User")
                 .Include("User.Delegate")
                 .Where(x => x.Tradeshow.StartDate > DateTime.Now && x.SendRSVP)
-                .Select(x => x.User.ToUserProfile(true))
-                .Where(x => x.PassportExpirationDateNear)
+                .Select(x => x.User)
                 .Distinct()
                 .ToList();
+
+            var userProfiles = new List<UserProfile>();
+
+            foreach (var user in users)
+            {
+                user.PassportExpirationDate = Encrypt.DecryptString(user.PassportExpirationDate, CredentialProvider.DBEncryptionPassword);
+
+                var profile = user.ToUserProfile();
+
+                if (profile.PassportExpirationDateNear)
+                {
+                    userProfiles.Add(profile);
+                }
+            }
+
+            return userProfiles;
         }
 
         public UserProfile GetProfile(string username, string identityUser = null)
@@ -309,7 +325,7 @@ namespace TradeshowTravel.Data
             user.Privileges = profile.Privileges;
             user.PassportName = profile.PassportName;
             user.PassportNumber = profile.PassportNumber;
-            user.PassportExpirationDate = profile.PassportExpirationDate.ToDTOFormat();
+            user.PassportExpirationDate = profile.PassportExpirationDate.ToDateTime().ToDTOFormat();
             user.Nationality = profile.Nationality;
             user.DOB = profile.DOB.ToDTOFormat();
             user.COB = profile.COB;
@@ -1258,7 +1274,7 @@ namespace TradeshowTravel.Data
 
                 if (eventAttendee.Profile.PassportExpirationDate != null)
                 {
-                    attendee.User.PassportExpirationDate = eventAttendee.Profile.PassportExpirationDate.ToDTOFormat();
+                    attendee.User.PassportExpirationDate = eventAttendee.Profile.PassportExpirationDate.ToDateTime().ToDTOFormat();
                 }
 
                 if (eventAttendee.Profile.Nationality != null)

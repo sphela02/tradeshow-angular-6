@@ -44,7 +44,7 @@ namespace TradeshowTravel.Data.Models
             Visa = profile.Visa.ToBool();
             PassportName = profile.PassportName;
             PassportNumber = profile.PassportNumber;
-            PassportExpirationDate = profile.PassportExpirationDate.ToDTOFormat();
+            PassportExpirationDate = profile.PassportExpirationDate.ToDateTime().ToDTOFormat();
             DOB = profile.DOB.ToDTOFormat();
             Nationality = profile.Nationality;
             COB = profile.COB;
@@ -70,7 +70,7 @@ namespace TradeshowTravel.Data.Models
         [Encrypted]
         public string PassportName { get; set; }
         [Encrypted]
-        public string PassportExpirationDate { get;set; }
+        public string PassportExpirationDate { get; set; }
         [Encrypted]
         public string DOB { get; set; }
         [Encrypted]

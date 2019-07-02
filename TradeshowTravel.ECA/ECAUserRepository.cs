@@ -127,13 +127,6 @@ namespace TradeshowTravel.ECA
 
     public static class Extensions
     {
-        public static string EmailDomain
-        {
-            get
-            {
-                return System.Configuration.ConfigurationManager.AppSettings["EmailDomain"];
-            }
-        }
 
         public static string MakePropperCase(this string str)
         {

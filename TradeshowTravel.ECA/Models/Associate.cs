@@ -1,4 +1,6 @@
 ﻿
+using TradeshowTravel.Domain;
+
 namespace TradeshowTravel.ECA.Models
 {
     public class Associate
@@ -38,12 +40,7 @@ namespace TradeshowTravel.ECA.Models
         {
             get
             {
-                string email = string.IsNullOrWhiteSpace(PreferredEmail) ? Username : PreferredEmail;
-
-                if (!email.Contains("@"))
-                {
-                    email += "@" + Extensions.EmailDomain;
-                }
+                string email = string.IsNullOrWhiteSpace(PreferredEmail) ? LdapSrv.GetLdapEmailAddress(Username) : PreferredEmail;
 
                 return email.ToLower();
             }
