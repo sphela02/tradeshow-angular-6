@@ -118,7 +118,8 @@ import { BcdUpdatesPopupComponent } from './bcd-updates-popup/bcd-updates-popup.
     GridYesNoFilterComponent,
     FileAttachmentComponent,
     OrganizerFieldsComponent,
-    AttendeeSelectComponent
+    AttendeeSelectComponent,
+    BcdUpdatesPopupComponent
   ],
   entryComponents: [
     ProfileEditPopupComponent,

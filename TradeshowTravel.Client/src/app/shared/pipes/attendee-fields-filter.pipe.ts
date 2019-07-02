@@ -13,9 +13,6 @@ export class AttendeeFieldsFilterPipe implements PipeTransform {
     }
 
     var ffields = fields.filter(f => Role.Attendee == (f.Access & Role.Attendee));
-    
-    console.log("Role: " + Role.Attendee);
-    console.log(ffields);
     return fields.filter(f => Role.Attendee == (f.Access & Role.Attendee))
   }
 
