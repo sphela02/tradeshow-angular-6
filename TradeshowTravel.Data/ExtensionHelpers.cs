@@ -729,34 +729,39 @@ namespace TradeshowTravel.Data
 
             foreach (string key in uniquefilters.Keys)
             {
-                Expression expr = null;
-
-                foreach (var filter in uniquefilters[key])
+                if (aCustomFieldValues.Contains(uniquefilters[key].FirstOrDefault()?.Field))
                 {
-                    if(aCustomFieldValues.Contains(filter.Field))
+                    // since custom fields only allow 1 search box OR a yes and no checkbox we only want to apply the filter
+                    // when the 1 search box is used OR the user has checked 1 of the two yes/no boxes
+                    // when the 2 yes/no boxes are checked we want to bring back all results, thus don't add the where clause
+                    if (uniquefilters[key].Count() < 2)
                     {
-                        break;
+                        string searchingForLabel1 = uniquefilters[key][0]?.Field;
+                        string searchingForValue1 = uniquefilters[key][0]?.Value;
+                        query = query.Where(i => i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel1)).Value.Contains(searchingForValue1)
+                        || (searchingForValue1 == "No" && i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel1)).Value == null));
                     }
-                    if (expr == null)
-                    {
-                        expr = filter.ToFilterExpr(param);
-                    }
-                    else
-                    {
-                        expr = Expression.Or(expr, filter.ToFilterExpr(param));
-                    }
-                }
-
-                if (expr != null)
-                {
-                    query = query.Where(Expression.Lambda<Func<Attendee, bool>>(expr, param));
                 }
                 else
                 {
-                    string searchingForLabel = uniquefilters[key][0]?.Field;
-                    string searchingForValue = uniquefilters[key][0]?.Value;
+                    Expression expr = null;
 
-                    query = query.Where(i => i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel)).Value.Contains(searchingForValue));
+                    foreach (var filter in uniquefilters[key])
+                    {
+                        if (expr == null)
+                        {
+                            expr = filter.ToFilterExpr(param);
+                        }
+                        else
+                        {
+                            expr = Expression.Or(expr, filter.ToFilterExpr(param));
+                        }
+                    }
+
+                    if (expr != null)
+                    {
+                        query = query.Where(Expression.Lambda<Func<Attendee, bool>>(expr, param));
+                    }
                 }
             }
 

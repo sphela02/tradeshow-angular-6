@@ -442,11 +442,22 @@
                            title="{{field.Label}}"
                            field="{{field.Label}}"
                            width="200">
-          <ng-template kendoGridFilterMenuTemplate let-filter let-column="column">
-            <kendo-grid-string-filter-cell [showOperators]="false"
+          <ng-template kendoGridFilterMenuTemplate *ngIf="field.Input != InputType.YesOrNo"
+                       let-filter let-column="column">
+            <kendo-grid-string-filter-cell 
+                                           [showOperators]="false"
                                            [column]="column"
                                            [filter]="filter">
             </kendo-grid-string-filter-cell>
+          </ng-template>
+          <ng-template kendoGridFilterMenuTemplate *ngIf="field.Input == InputType.YesOrNo"
+                       let-column="column"
+                       let-filter="filter"
+                       let-filterService="filterService">
+            <grid-yesno-filter [field]="column.field"
+                               [filterService]="filterService"
+                               [currentFilter]="filter">
+            </grid-yesno-filter>
           </ng-template>
           <ng-template *ngIf="field.Input == InputType.Date"
                        kendoGridCellTemplate let-dataItem>
