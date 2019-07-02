@@ -25,9 +25,10 @@ import { AttendeeFieldsPopupComponent } from '../attendee-fields-popup/attendee-
 import { AttendeeDeletePopupComponent } from '../attendee-delete-popup/attendee-delete-popup.component';
 import { SendRsvpPopupComponent } from '../send-rsvp-popup/send-rsvp-popup.component';
 import { SendReminderPopupComponent } from '../send-reminder-popup/send-reminder-popup.component';
-import { AttendeeStatus } from '../shared/Enums';
+import { AttendeeStatus, Permissions } from '../shared/Enums';
 import { OrganizerFieldsComponent } from '../organizer-fields/organizer-fields.component';
 import { AttendeeSelectComponent } from '../attendee-select/attendee-select.component';
+import { BcdUpdatesPopupComponent } from '../bcd-updates-popup/bcd-updates-popup.component';
 
 declare var $: any;
 
@@ -44,6 +45,7 @@ export class EventViewComponent implements OnInit {
   @ViewChild(OrganizerFieldsComponent) organizerFieldsComponent:OrganizerFieldsComponent;
   @ViewChild(AttendeeSelectComponent) attendeeSelectComponent:AttendeeSelectComponent;
 
+  @Input() EventData: Event ;
   currentUser: UserProfile;
   results: EventAttendeeQueryResult;
   view: GridDataResult;
@@ -66,6 +68,18 @@ export class EventViewComponent implements OnInit {
   canViewPassportInfo: boolean = false;
   canEditOrganizerFields: boolean = false;
   checkedEventAttendees: { [key: number]: EventAttendee; } = {};
+  checkedAttendees: { [key: number]: EventAttendee; } = {};
+  bcdPopupTitle: string;
+  checkForUpdates: any;
+  bcdUpdateResults: any;
+  lastBcdUpdatedDateTime: Date;
+  lastBcdUpdatedUserName: string;
+  lastBcdUpdatedEmail: string;
+  isDisabled: boolean = false;
+  currentUserIsBcd: boolean;
+  updatedEvent: any;
+  updatesHaveOccured: boolean = false;
+  
 
   private _event: EventInfo;
   private _attendee: EventAttendee;
@@ -92,12 +106,36 @@ export class EventViewComponent implements OnInit {
   ngOnInit() {
     if (!this.event) {
       this.router.navigate(['events']);
-    }
+     }
 
     this.service.getMyProfile().subscribe(me => {
       this.currentUser = me;
       this.onInputsChanged();
     });
+
+     this.service.getBcdEventUpdates(this.event.ID)
+       .subscribe((updateResults) => {
+         this.bcdUpdateResults = updateResults;
+         this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+         this.event.LastBcdUpdatedEmail = this.currentUser.Email;
+
+        this.updatesHaveOccured = (this.bcdUpdateResults.LastBcdUpdatedUsername == null && this.bcdUpdateResults.LastBcdUpdatedDateTime == null);
+         if (this.updatesHaveOccured)
+         {
+            this.event.LastBcdUpdatedUsername = `${this.currentUser.FirstName} ${this.currentUser.LastName}`
+            this.event.LastBcdUpdatedEmail = this.currentUser.Email;
+            this.setStateBdcUpdateSection();
+         }
+         
+         this.currentUserIsBcd = this.currentUser.Role == Role.Travel;
+         if (this.updatesHaveOccured && this.currentUserIsBcd) {
+           this.popupBcdCheckUpdates();
+         } else if (this.currentUserIsBcd) {
+            this.event.showBcdUpdatesSection = true;
+            // show pretty date
+            this.event.LastBcdUpdatedDateTime = new Date(this.event.LastBcdUpdatedDateTime);
+         }
+     })
 
     this.service.getSegments()
       .subscribe(segments => {
@@ -115,7 +153,7 @@ export class EventViewComponent implements OnInit {
 
     this.dataStateChange(this.state);
 
-    this.rebindFieldTables(null);
+     this.rebindFieldTables(null);
   }
 
   private onInputsChanged() {
@@ -143,7 +181,7 @@ export class EventViewComponent implements OnInit {
       this.currentUser, null, this.event
     );
     this.canEditOrganizerFields = CommonService.canEditOrganizerFields(
-      this.currentUser
+      this.currentUser, this.event, Role.Support | Role.Lead
     ); 
   }
 
@@ -177,6 +215,10 @@ export class EventViewComponent implements OnInit {
 
   toggleShowAll() {
     this.showAllInfo = !this.showAllInfo;
+  }
+
+  toggleState() {
+    this.isDisabled = !this.isDisabled;
   }
 
   get daysUntilEvent(): number {
@@ -470,6 +512,60 @@ export class EventViewComponent implements OnInit {
       });
   }
 
+  getEventName() {
+    return this.event.Name;
+  }
+
+  popupBcdCheckUpdates() {
+    const modalOptions: NgbModalOptions = {
+      size: "lg",
+      backdrop: "static"
+    }
+    const popupModalRef = this.modal.open(BcdUpdatesPopupComponent, modalOptions);
+    popupModalRef.componentInstance.bcdPopupTitle = this.event.Name;
+    this.bcdPopupTitle = this.event.Name;
+  }
+
+  // conditions for showing BcdUpdateSection
+     // 1. current user is BCD
+     // 2. database lastUpdateBcd Name and Date isn't null
+  setStateBdcUpdateSection() {
+    if (this.currentUserIsBcd && this.bcdUpdateResults.LastBcdUpdatedUsername != null && this.bcdUpdateResults.LastBcdUpdatedDateTime != null) {
+      this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+      this.event.showBcdUpdatesSection = true;
+    }
+  }
+    
+  acknowledgeBcdUpdates() {
+    this.event.LastBcdUpdatedUsername = this.currentUser.Username;
+    this.event.LastBcdUpdatedEmail = this.currentUser.Email;
+    this.event.LastBcdUpdatedDateTime = new Date();
+    this.isDisabled = true;
+
+    this.service.saveEventInfo(this.event)
+      .subscribe(result => {
+        this.event = result;
+        this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+        this.event.LastBcdUpdatedEmail = this.currentUser.Email;
+        this.event.showBcdUpdatesSection = true;
+        // show pretty date
+        this.event.LastBcdUpdatedDateTime = new Date(Date.now());
+      }, error => {
+        console.log("Error: " + error);
+      });
+   
+    // display section only to organizer and admin roles
+    var profile = this.currentUser;
+    
+    if (profile.Privileges == Permissions.CreateShows ||
+      profile.Privileges == Permissions.Admin ||
+      profile.Role == Role.Support ||
+      profile.Role == Role.Lead) {
+      this.setStateBdcUpdateSection();
+    }
+    
+  }
+
   popupAddAttendees() {
     const modalOptions: NgbModalOptions = {
       size: "lg",
@@ -677,4 +773,9 @@ export class EventViewComponent implements OnInit {
   noRSVPs(element: EventAttendee, index: number, array: EventAttendee[]) {
     return element.Status == AttendeeStatus.Declined;
   }
+}
+
+interface bcdUpdateResults {
+   LastBcdUpdatedDateTime: Date;
+   LastBcdUpdatedUsername: string;
 }

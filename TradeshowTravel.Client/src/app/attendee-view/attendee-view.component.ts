@@ -135,7 +135,7 @@ export class AttendeeViewComponent implements OnInit {
     const popupModalRef = this.modal.open(AttendeeRsvpPopupComponent, modalOptions);
     popupModalRef.componentInstance.attendee = this.attendee;
     popupModalRef.result.then((attendee) => {
-      if (CommonService.getYesOrNoText(attendee.IsAttending) == "Yes") {
+      if (CommonService.getYesOrNoText(attendee.IsAttending, false) == "Yes") {
         this.attendee.IsAttending = "Yes";
         this.onTabClicked(AttendeeDisplayTab.Attendee);
         this.attendeeFields.popupEditFields();

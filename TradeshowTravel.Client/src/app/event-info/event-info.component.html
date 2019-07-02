@@ -64,11 +64,22 @@
       </div>
       <ng-template ngFor let-u let-i="index" [ngForOf]="event.Users | eventUserFilter : Role.Travel">
         <div *ngIf="showAllInfo || i == 0">
-            {{ u.User.FirstName }} {{ u.User.LastName }} (BCD) <a href="mailto:{{u.User.Email}}">{{ u.User.Email }}</a>
+          {{ u.User.FirstName }} {{ u.User.LastName }} (BCD) <a href="mailto:{{u.User.Email}}">{{ u.User.Email }}</a>
         </div>
       </ng-template>
+      <div *ngIf="event.showBcdUpdatesSection">
+        <div>
+          <div>
+            <strong>BCD Updates: </strong>
+          </div>
+          <div>
+            {{event.LastBcdUpdatedUsername}} ({{event.LastBcdUpdatedEmail}}) <br />
+            {{event.LastBcdUpdatedDateTime}}
+          </div>
+        </div>
+      </div>
+      </div>
     </div>
-  </div>
   <div class="row mt-3" *ngIf="showAllInfo">
     <div class="col-md-3">
       <div>

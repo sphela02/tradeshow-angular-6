@@ -8,7 +8,6 @@ namespace TradeshowTravel.Data
     using Domain;
     using Domain.DTOs;
     using Models;
-    using Common.Logging;
 
     public static class ExtensionHelpers
     {
@@ -44,7 +43,7 @@ namespace TradeshowTravel.Data
                 Privileges = user.Privileges,
                 Role = Role.Attendee,
                 ShowPicture = !string.IsNullOrWhiteSpace(user.EmplID),
-                Visa = user.Visa
+                Visa = user.Visa.ToYesNoString()
             };
 
             if (user.Delegate != null)
@@ -100,6 +99,7 @@ namespace TradeshowTravel.Data
                 CreatedDate = show.CreatedDate,
                 SendReminders = show.SendReminders,
                 Archived = show.Archived,
+                LastBcdUpdatedUsername = show.LastBcdUpdatedUsername,
                 LastBcdUpdatedDateTime = show.LastBcdUpdatedDateTime
             };
 
@@ -182,24 +182,12 @@ namespace TradeshowTravel.Data
                 return null;
             }
 
-            string isAttendingText = null;
-            AttendeeStatus status = attendee.Status.ToAttendeeStatus();
-            switch (status)
-            {
-                case AttendeeStatus.Accepted:
-                    isAttendingText = "Yes";
-                    break;
-                case AttendeeStatus.Declined:
-                    isAttendingText = "No";
-                    break;
-            }
-
             EventAttendee ea = new EventAttendee
             {
                 ID = attendee.ID,
                 EventID = attendee.TradeshowID,
                 Username = attendee.Username,
-                Status = status,
+                Status = attendee.Status.ToAttendeeStatus(),
                 SendRSVP = attendee.SendRSVP,
                 DateCreated = attendee.DateCreated,
                 DateRSVP = attendee.DateRSVP,
@@ -211,7 +199,7 @@ namespace TradeshowTravel.Data
                 CCNumber = attendee.CCNumber,
                 CCExpiration = attendee.CCExpiration,
                 CVVNumber = attendee.CVVNumber,
-                IsAttending = isAttendingText,
+                IsAttending = attendee.IsAttending.ToYesNoString(),
                 IsHotelNeeded = attendee.IsHotelNeeded.ToYesNoString(),
                 Properties = attendee.FieldValues
                     .Where(v => v.TradeshowField.Included)
@@ -598,6 +586,23 @@ namespace TradeshowTravel.Data
                 valexpr = Expression.Constant(filter.Value.ToDateTime(), member.Type);
             }
 
+            if (member.Type == typeof(bool))
+            {
+                valexpr = Expression.Constant(filter.Value.ToBool(), member.Type);
+            }
+
+            if (member.Type == typeof(bool?))
+            {
+                if(filter.Value == null || filter.Value == "null")
+                {
+                    valexpr = Expression.Constant(null, member.Type);
+                }
+                else
+                {
+                    valexpr = Expression.Constant(filter.Value.ToBool(), member.Type);
+                }
+            }
+
             if (member.Type == typeof(int))
             {
                 valexpr = Expression.Constant(int.Parse(filter.Value), member.Type);
@@ -674,6 +679,8 @@ namespace TradeshowTravel.Data
 
         public static IQueryable<Attendee> HandleAttendeeQueryFilters(this IQueryable<Attendee> query, List<FilterParams> filters)
         {
+            const string NO_VALUE = "NoValue";
+
             if (filters == null || filters.Count < 1)
             {
                 return query;
@@ -692,8 +699,12 @@ namespace TradeshowTravel.Data
 
                 filter.Operator = filter.Operator.ToLower();
 
+                // set key before changeing operator, this will ensure filters with the same key are OR together regarles if it is 'eq' or 'isnull'
+                // otherwise it will use an AND operator between them
+                string key = filter.Field + filter.Operator;
+
                 // check for null or notnull synonyms
-                if (filter.Value == null)
+                if (filter.Value == null || filter.Value == NO_VALUE)
                 {
                     switch (filter.Operator)
                     {
@@ -706,15 +717,15 @@ namespace TradeshowTravel.Data
                     }
                 }
 
-                string key = filter.Field + filter.Operator;
+                List<FilterParams> formatedFilters = GetFormatedFilter(filter);
 
                 if (uniquefilters.ContainsKey(key))
                 {
-                    uniquefilters[key].Add(filter);
+                    uniquefilters[key].AddRange(formatedFilters);
                 }
                 else
                 {
-                    uniquefilters[key] = new List<FilterParams>() { filter };
+                    uniquefilters[key] = formatedFilters;
                 }
             }
 
@@ -741,6 +752,31 @@ namespace TradeshowTravel.Data
             }
 
             return query;
+        }
+
+        private static List<FilterParams> GetFormatedFilter(FilterParams filter)
+        {
+            List<FilterParams> formatedFilters = new List<FilterParams>() { filter };
+
+            if (filter.Field == "User.Name")
+            {
+                var filter1 = new FilterParams()
+                {
+                    Field = "User.FirstName",
+                    Operator = filter.Operator,
+                    Value = filter.Value
+                };
+                var filter2 = new FilterParams()
+                {
+                    Field = "User.LastName",
+                    Operator = filter.Operator,
+                    Value = filter.Value
+                };
+
+                formatedFilters = new List<FilterParams>() { filter1, filter2 };
+            }
+
+            return formatedFilters;
         }
 
         public static IQueryable<Tradeshow> HandleEventQueryFilters(this IQueryable<Tradeshow> query, List<FilterParams> filters)

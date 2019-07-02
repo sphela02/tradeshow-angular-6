@@ -129,7 +129,7 @@ export class CommonService {
       };
   }
 
-  static getYesOrNoText(value: any): string {
+  static getYesOrNoText(value: any, isNoResponseAllowed: boolean): string {
       if (value) {
           if (isBoolean(value)) {
               return Boolean(value) ? "Yes" : "No";
@@ -142,7 +142,7 @@ export class CommonService {
                 return "No";
           }
       }
-      return null;
+    return isNoResponseAllowed ? "No Response" : null;
   }
 
   static getAttendeeStatusText(status: AttendeeStatus):String{
@@ -172,12 +172,29 @@ export class CommonService {
   }
 
   static canEditOrganizerFields(
-      currentUser: UserProfile
+      currentUser: UserProfile,
+      event: EventInfo = null,
+      maxRole: Role = Role.Support | Role.Lead
     ):boolean{
         if(!currentUser){
             return false;
         }
-        return currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows;
+      
+        if(currentUser.Privileges == Permissions.Admin || currentUser.Privileges == Permissions.CreateShows){
+            return true;
+        }
+
+        if (event) {
+            if (event.Users.some(u => {
+                if (u.User.Username == currentUser.Username &&
+                    Role.None != (u.Role & maxRole)) {
+                    return true;
+                }
+            })) {
+                return true;
+            }
+        }
+        return false;
   }
 
   // Permission Checks

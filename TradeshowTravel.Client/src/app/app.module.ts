@@ -57,6 +57,7 @@ import { ProfileImageUploadPopupComponent } from './profile-image-upload-popup/p
 import { OrganizerFieldsComponent } from './organizer-fields/organizer-fields.component';
 import { UploadModule } from '@progress/kendo-angular-upload';
 import { AttendeeSelectComponent } from './attendee-select/attendee-select.component';
+import { BcdUpdatesPopupComponent } from './bcd-updates-popup/bcd-updates-popup.component';
 
 @NgModule({
   imports: [
@@ -117,7 +118,8 @@ import { AttendeeSelectComponent } from './attendee-select/attendee-select.compo
     GridYesNoFilterComponent,
     FileAttachmentComponent,
     OrganizerFieldsComponent,
-    AttendeeSelectComponent
+    AttendeeSelectComponent,
+    BcdUpdatesPopupComponent
   ],
   entryComponents: [
     ProfileEditPopupComponent,
@@ -133,7 +135,8 @@ import { AttendeeSelectComponent } from './attendee-select/attendee-select.compo
     AttendeeRsvpPopupComponent,
     PrivilegedUsersPopupComponent,
     AlertPopupComponent,
-    ProfileImageUploadPopupComponent
+    ProfileImageUploadPopupComponent,
+    BcdUpdatesPopupComponent,
   ],
   bootstrap: [AppComponent]
 })

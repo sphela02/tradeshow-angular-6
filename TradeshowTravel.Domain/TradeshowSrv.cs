@@ -1894,20 +1894,9 @@ namespace TradeshowTravel.Domain
                     ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.BadgeName);
 
                     //set the travel document booleans
-                    var PassportDoc = "N";
-                    var VisaDoc = "N";
-                    var OtherDoc = "N";
-                    List<UserImages> UI = new List<UserImages>();
-                    UI = DataRepo.GetTravelDocs(attendee.Username.ToUpper());
-                    foreach (var user in UI)
-                    {
-                        if (user.Category.ToUpper() == "PASSPORT") PassportDoc = "Y";
-                        if (user.Category.ToUpper() == "VISA") VisaDoc = "Y";
-                        if (user.Category.ToUpper() == "OTHER") OtherDoc = "Y";
-                    }
-                    ws.Cells[rowIndex, ++colIndex].SetValue(PassportDoc);
-                    ws.Cells[rowIndex, ++colIndex].SetValue(VisaDoc);
-                    ws.Cells[rowIndex, ++colIndex].SetValue(OtherDoc);
+                    ws.Cells[rowIndex, ++colIndex].SetValue(DataRepo.IsPassportOnProfile(attendee.Username) ? "Y" : "N");
+                    ws.Cells[rowIndex, ++colIndex].SetValue(DataRepo.IsVisaOnProfile(attendee.Username) ? "Y" : "N");
+                    ws.Cells[rowIndex, ++colIndex].SetValue(DataRepo.IsOtherOnProfile(attendee.Username) ? "Y" : "N");
 
 
                     if (evt.Fields != null)
