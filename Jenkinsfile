@@ -1,43 +1,37 @@
 @Library('gba-jenkins-scripts') _
 
-//TODO Change the "CHANGE THIS" strings to the correct values and then uncomment.
 def solution = "tradeshow-travel"
 def projects = [ 'TradeshowTravel.Web' ] as String[]
 
 def compiler = 'msbuild'
 def testTool = 'mstest'
-//TODO Change the "CHANGE THIS" strings to the correct values and then uncomment.
-//def testProjects = ['CHANGE THIS'] as String[]
 
 def environment = 'Dev'
-def configuration = 'MLBIISDEVL1R2'
+def configuration = 'Debug'
 
 def shouldDeploy = false
-def destinationPath = "\\\\MLBIISDEVL1R2\\tradeshowtravel"
+def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
-    //TODO Change the "CHANGE THIS" strings to the correct values and then uncomment.
-   destinationPath = "\\\\MLBIISDEVL1R2\\tradeshowtravel"
+if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('TSTRAV-74-jenkins')) {
+    destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 
     shouldDeploy = true
 }
 
-//Production uses two servers for load balancing. I still need to figure out how to do that in Jenkins
-//if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
-//    TODO Change the "CHANGE THIS" strings to the correct values and then uncomment.
-//    destinationPath = "CHANGE THIS (PROD)"
+//Production uses two servers for load balancing.
+if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
+    destinationPaths =  ["\\\\MLBIIS1R2\\tradeshowtravel", "\\\\MLBIIS2R2\\tradeshowtravel"]
 
-//	environment = 'Prod'
-//	configuration = 'Release'
+	environment = 'Prod'
+	configuration = 'Release'
 
-//    shouldDeploy = true
-//}
+    shouldDeploy = true
+}
 
 def agent = tools.getBuildAgent()
 def branch = env.BRANCH_NAME.replaceAll('/', '-')
 def workPath = "workspace/GBA/${solution}/${branch}"
 
-// Pull requests and new branches won't have a previous build. Treat non-existing previous as successful.
 def previousBuild = "SUCCESS"
 
 node(agent) {
@@ -75,9 +69,9 @@ node(agent) {
                             bat "Robocopy /S dist ../Publish/${environment}"
                         }
                         catch(e) {
-                               currentBuild.result = "Failed"
-							   notify(currentBuild.result, 'Checkout')
-							   throw e
+                            currentBuild.result = "Failed"
+							notify(currentBuild.result, 'Checkout')
+							throw e
                         }      
                     }
                 }
@@ -92,10 +86,14 @@ node(agent) {
         if(shouldDeploy) {
             stage('Deploy') {		
                 try {
-                    projects.each { proj ->
-                        dir(proj) {
-                            def source = "../Publish/${environment}"
-                            deploy(source, destinationPath, false)
+                    destinationPaths.each{ path ->
+                        echo "deploying to ${path}"
+                        projects.each { proj ->
+                            echo "deploying ${proj} to ${path}"
+                            dir(proj) {
+                                def source = "../Publish/${environment}"
+                                deploy(source, path, false)
+                            }
                         }
                     }
                 }
