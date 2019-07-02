@@ -66,7 +66,12 @@ node(agent) {
                             bat "node_modules/.bin/ng.cmd build --prod"
 
                             echo "Copying Angular files to project publish folder"
-                            bat "Robocopy /S dist ../Publish/${environment}"
+                            def status = bat returnStatus: true, script: "ROBOCOPY /S dist ../Publish/${environment}"
+                            println "ROBOCOPY returned ${status}"
+                            if (status < 0 || status > 3)
+                            {
+                                throw new Exception("ROBOCOPY failed")
+                            }
                         }
                         catch(e) {
                             currentBuild.result = "Failed"
