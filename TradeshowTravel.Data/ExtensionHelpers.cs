@@ -677,7 +677,7 @@ namespace TradeshowTravel.Data
             return expr;
         }
 
-        public static IQueryable<Attendee> HandleAttendeeQueryFilters(this IQueryable<Attendee> query, List<FilterParams> filters)
+        public static IQueryable<Attendee> HandleAttendeeQueryFilters(this IQueryable<Attendee> query, List<FilterParams> filters, List<string> aCustomFieldValues)
         {
             const string NO_VALUE = "NoValue";
 
@@ -717,15 +717,13 @@ namespace TradeshowTravel.Data
                     }
                 }
 
-                List<FilterParams> formatedFilters = GetFormatedFilter(filter);
-
                 if (uniquefilters.ContainsKey(key))
                 {
-                    uniquefilters[key].AddRange(formatedFilters);
+                    uniquefilters[key].Add(filter);
                 }
                 else
                 {
-                    uniquefilters[key] = formatedFilters;
+                    uniquefilters[key] = new List<FilterParams>() { filter };
                 }
             }
 
@@ -735,6 +733,10 @@ namespace TradeshowTravel.Data
 
                 foreach (var filter in uniquefilters[key])
                 {
+                    if(aCustomFieldValues.Contains(filter.Field))
+                    {
+                        break;
+                    }
                     if (expr == null)
                     {
                         expr = filter.ToFilterExpr(param);
@@ -744,40 +746,23 @@ namespace TradeshowTravel.Data
                         expr = Expression.Or(expr, filter.ToFilterExpr(param));
                     }
                 }
-                
+
                 if (expr != null)
                 {
                     query = query.Where(Expression.Lambda<Func<Attendee, bool>>(expr, param));
+                }
+                else
+                {
+                    string searchingForLabel = uniquefilters[key][0]?.Field;
+                    string searchingForValue = uniquefilters[key][0]?.Value;
+
+                    query = query.Where(i => i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel)).Value.Contains(searchingForValue));
                 }
             }
 
             return query;
         }
 
-        private static List<FilterParams> GetFormatedFilter(FilterParams filter)
-        {
-            List<FilterParams> formatedFilters = new List<FilterParams>() { filter };
-
-            if (filter.Field == "User.Name")
-            {
-                var filter1 = new FilterParams()
-                {
-                    Field = "User.FirstName",
-                    Operator = filter.Operator,
-                    Value = filter.Value
-                };
-                var filter2 = new FilterParams()
-                {
-                    Field = "User.LastName",
-                    Operator = filter.Operator,
-                    Value = filter.Value
-                };
-
-                formatedFilters = new List<FilterParams>() { filter1, filter2 };
-            }
-
-            return formatedFilters;
-        }
 
         public static IQueryable<Tradeshow> HandleEventQueryFilters(this IQueryable<Tradeshow> query, List<FilterParams> filters)
         {
