@@ -133,7 +133,7 @@ export class EventViewComponent implements OnInit {
          } else if (this.currentUserIsBcd) {
             this.event.showBcdUpdatesSection = true;
             // show pretty date
-            this.event.LastBcdUpdatedDateTime = new Date(Date.now());
+            this.event.LastBcdUpdatedDateTime = new Date(this.event.LastBcdUpdatedDateTime);
          }
      })
 
