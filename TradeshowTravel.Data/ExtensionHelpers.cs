@@ -717,32 +717,15 @@ namespace TradeshowTravel.Data
                     }
                 }
 
+                List<FilterParams> formatedFilters = GetFormatedFilter(filter);
+
                 if (uniquefilters.ContainsKey(key))
                 {
-                    uniquefilters[key].Add(filter);
+                    uniquefilters[key].AddRange(formatedFilters);
                 }
                 else
                 {
-                    if(filter.Field == "User.Name")
-                    {
-                        var filter1 = new FilterParams()
-                        {
-                            Field = "User.FirstName",
-                            Operator = filter.Operator,
-                            Value = filter.Value
-                        };
-                        var filter2 = new FilterParams()
-                        {
-                            Field = "User.LastName",
-                            Operator = filter.Operator,
-                            Value = filter.Value
-                        };
-                        uniquefilters[key] = new List<FilterParams>() { filter1, filter2 };
-                    }
-                    else
-                    {
-                        uniquefilters[key] = new List<FilterParams>() { filter };
-                    }
+                    uniquefilters[key] = formatedFilters;
                 }
             }
 
@@ -769,6 +752,31 @@ namespace TradeshowTravel.Data
             }
 
             return query;
+        }
+
+        private static List<FilterParams> GetFormatedFilter(FilterParams filter)
+        {
+            List<FilterParams> formatedFilters = new List<FilterParams>() { filter };
+
+            if (filter.Field == "User.Name")
+            {
+                var filter1 = new FilterParams()
+                {
+                    Field = "User.FirstName",
+                    Operator = filter.Operator,
+                    Value = filter.Value
+                };
+                var filter2 = new FilterParams()
+                {
+                    Field = "User.LastName",
+                    Operator = filter.Operator,
+                    Value = filter.Value
+                };
+
+                formatedFilters = new List<FilterParams>() { filter1, filter2 };
+            }
+
+            return formatedFilters;
         }
 
         public static IQueryable<Tradeshow> HandleEventQueryFilters(this IQueryable<Tradeshow> query, List<FilterParams> filters)
