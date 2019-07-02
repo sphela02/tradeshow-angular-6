@@ -75,7 +75,9 @@ node(agent) {
                             bat "Robocopy /S dist ../Publish/${environment}"
                         }
                         catch(e) {
-                            // gobble gobble gobble
+                               currentBuild.result = "Failed"
+							   notify(currentBuild.result, 'Checkout')
+							   throw e
                         }      
                     }
                 }
