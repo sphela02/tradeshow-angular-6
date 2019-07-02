@@ -15,7 +15,7 @@ def configuration = 'MLBIISDEVL1R2'
 def shouldDeploy = false
 def destinationPath = "\\\\MLBIISDEVL1R2\\tradeshowtravel"
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('feature/TSTRAV-74-jenkins')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     //TODO Change the "CHANGE THIS" strings to the correct values and then uncomment.
    destinationPath = "\\\\MLBIISDEVL1R2\\tradeshowtravel"
 
