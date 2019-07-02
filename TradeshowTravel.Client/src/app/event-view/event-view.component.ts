@@ -181,7 +181,7 @@ export class EventViewComponent implements OnInit {
       this.currentUser, null, this.event
     );
     this.canEditOrganizerFields = CommonService.canEditOrganizerFields(
-      this.currentUser
+      this.currentUser, this.event, Role.Support | Role.Lead
     ); 
   }
 

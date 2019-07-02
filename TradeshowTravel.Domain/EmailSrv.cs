@@ -5,14 +5,14 @@ using System.Net.Mail;
 namespace TradeshowTravel.Domain
 {
     using Common.Logging;
-    using Domain.DTOs;
+    using DTOs;
     using System;
     using System.Configuration;
     using System.IO;
     using System.Text;
     using System.Web;
 
-    public class EmailSrv
+    public class EmailSrv : IReminderSrv
     {
         private readonly string smtpServer;
         private readonly string sender;
