@@ -99,6 +99,7 @@ namespace TradeshowTravel.Data
                 CreatedDate = show.CreatedDate,
                 SendReminders = show.SendReminders,
                 Archived = show.Archived,
+                LastBcdUpdatedUsername = show.LastBcdUpdatedUsername,
                 LastBcdUpdatedDateTime = show.LastBcdUpdatedDateTime
             };
 
