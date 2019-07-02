@@ -30,6 +30,7 @@ export class GridYesNoFilterComponent implements AfterViewInit {
   @Output() public valueChange = new EventEmitter<number[]>();
   
   private values: Array<string> = [];
+  private static readonly NO_VALUE: string = "NoValue";
 
   constructor() { }
 
@@ -55,9 +56,9 @@ export class GridYesNoFilterComponent implements AfterViewInit {
   }
   onNoneClicked(event) {
     if (event.target.checked && !this.isNoneChecked) {
-      this.values.push("null");
+      this.values.push(GridYesNoFilterComponent.NO_VALUE);
     } else if (!event.target.checed && this.isNoneChecked) {
-      this.values = this.values.filter(x => x !== "null");
+      this.values = this.values.filter(x => x !== GridYesNoFilterComponent.NO_VALUE);
     }
     this.onInputsChanged();
   }
@@ -104,6 +105,6 @@ export class GridYesNoFilterComponent implements AfterViewInit {
     return this.values.some(i => i == this.getFormatedResponse(false));
   }
   get isNoneChecked() {
-    return this.values.some(i => i == "null");
+    return this.values.some(i => i == GridYesNoFilterComponent.NO_VALUE);
   }
 }

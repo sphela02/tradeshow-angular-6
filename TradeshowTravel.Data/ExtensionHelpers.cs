@@ -678,6 +678,8 @@ namespace TradeshowTravel.Data
 
         public static IQueryable<Attendee> HandleAttendeeQueryFilters(this IQueryable<Attendee> query, List<FilterParams> filters)
         {
+            const string NO_VALUE = "NoValue";
+
             if (filters == null || filters.Count < 1)
             {
                 return query;
@@ -701,7 +703,7 @@ namespace TradeshowTravel.Data
                 string key = filter.Field + filter.Operator;
 
                 // check for null or notnull synonyms
-                if (filter.Value == null || filter.Value == "null")
+                if (filter.Value == null || filter.Value == NO_VALUE)
                 {
                     switch (filter.Operator)
                     {
