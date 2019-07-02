@@ -12,7 +12,7 @@ def configuration = 'Debug'
 def shouldDeploy = false
 def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('TSTRAV-74-jenkins')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('feature/TSTRAV-74-jenkins')) {
     destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 
     shouldDeploy = true
