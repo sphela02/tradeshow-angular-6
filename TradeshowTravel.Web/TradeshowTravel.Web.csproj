@@ -139,6 +139,7 @@
     <None Include="Properties\PublishProfiles\MLBIIS1R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS2R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIISDEVL1R2.pubxml" />
+    <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

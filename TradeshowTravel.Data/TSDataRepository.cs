@@ -775,7 +775,7 @@ namespace TradeshowTravel.Data
             DB.SaveChanges();
         }
                 
-        public EventAttendeeQueryResult GetEventAttendees(QueryParams parameters, bool includePassportInfo)
+        public EventAttendeeQueryResult GetEventAttendees(int eventID, QueryParams parameters, bool includePassportInfo)
         {
             var query = DB.Attendees
                 .Include("User")
@@ -784,7 +784,9 @@ namespace TradeshowTravel.Data
                 .Include("FieldValues.TradeshowField")
                 .AsQueryable();
 
-            query = query.HandleAttendeeQueryFilters(parameters.Filters);
+            List<string> customFieldValues = GetCustomFieldValues(eventID);
+
+            query = query.HandleAttendeeQueryFilters(parameters.Filters, customFieldValues);
 
             var subquery = query;
 
@@ -868,7 +870,7 @@ namespace TradeshowTravel.Data
             return false;
         }
 
-        public List<EventAttendee> GetEventAttendeesList(QueryParams parameters)
+        public List<EventAttendee> GetEventAttendeesList(int eventID, QueryParams parameters)
         {
             var query = DB.Attendees
                 .Include("User")
@@ -877,7 +879,9 @@ namespace TradeshowTravel.Data
                 .Include("FieldValues.TradeshowField")
                 .AsQueryable();
 
-            query = query.HandleAttendeeQueryFilters(parameters.Filters);
+            List<string> customFieldValues = GetCustomFieldValues(eventID);
+
+            query = query.HandleAttendeeQueryFilters(parameters.Filters, customFieldValues);
 
             // Handle Sorting
             query = query.HandleAttendeeQuerySorts(parameters.Sort);
@@ -898,7 +902,12 @@ namespace TradeshowTravel.Data
 
             return attendees;
         }
-        
+
+        private List<string> GetCustomFieldValues(int eventID)
+        {
+            return DB.TradeshowFields.Where(f => f.TradeshowID == eventID && f.Source == null).Select(f => f.Label).ToList();
+        }
+
         public EventAttendee GetAttendee(int attendeeID)
         {
             var attendee = DB.Attendees

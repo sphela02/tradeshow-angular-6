@@ -48,9 +48,9 @@ namespace TradeshowTravel.Domain
         
         void SaveEventFields(int eventID, List<EventField> fields);
 
-        EventAttendeeQueryResult GetEventAttendees(QueryParams parameters, bool includePassportInfo);
+        EventAttendeeQueryResult GetEventAttendees(int eventID, QueryParams parameters, bool includePassportInfo);
 
-        List<EventAttendee> GetEventAttendeesList(QueryParams parameters);
+        List<EventAttendee> GetEventAttendeesList(int eventID, QueryParams parameters);
 
         EventAttendee GetAttendee(int attendeeID);
         bool IsVisaOnProfile(string aUserName);
