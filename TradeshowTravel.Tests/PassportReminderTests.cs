@@ -35,7 +35,7 @@ namespace TradeshowTravel.Tests
             var userProfiles = Builder<UserProfile>
                 .CreateListOfSize(1)
                 .All()
-                .With(x => x.PassportExpirationDate = passportExpirationDate)
+                .With(x => x.PassportExpirationDate = passportExpirationDate.ToString())
                 .Build()
                 .ToList();
 
@@ -57,7 +57,7 @@ namespace TradeshowTravel.Tests
             var userProfiles = Builder<UserProfile>
                 .CreateListOfSize(1)
                 .All()
-                .With(x => x.PassportExpirationDate = passportExpirationDate)
+                .With(x => x.PassportExpirationDate = passportExpirationDate.ToString())
                 .Build()
                 .ToList();
 
@@ -79,7 +79,7 @@ namespace TradeshowTravel.Tests
             var userProfiles = Builder<UserProfile>
                 .CreateListOfSize(1)
                 .All()
-                .With(x => x.PassportExpirationDate = passportExpirationDate)
+                .With(x => x.PassportExpirationDate = passportExpirationDate.ToString())
                 .Build()
                 .ToList();
 
@@ -101,7 +101,7 @@ namespace TradeshowTravel.Tests
             var userProfiles = Builder<UserProfile>
                 .CreateListOfSize(1)
                 .All()
-                .With(x => x.PassportExpirationDate = passportExpirationDate)
+                .With(x => x.PassportExpirationDate = passportExpirationDate.ToString())
                 .Build()
                 .ToList();
 
@@ -143,6 +143,15 @@ namespace TradeshowTravel.Tests
             var reminder = new PassportReminder(repo, email);
 
             var result = reminder.SendReminders();
+        }
+
+        [TestMethod]
+        public void DateTime_Test()
+        {
+            var date = DateTime.Now;
+            var sixMonths = DateTime.Now.AddMonths(6);
+
+            var x = 0;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace TradeshowTravel.Data
                 BadgeName = user.BadgeName,
                 PassportNumber = (includePassportInfo) ? user.PassportNumber : null,
                 PassportName = (includePassportInfo) ? user.PassportName : null,
-                PassportExpirationDate = (includePassportInfo) ? user.PassportExpirationDate.ToDateTime() : null,
+                PassportExpirationDate = (includePassportInfo) ? user.PassportExpirationDate : null,
                 DOB = (includePassportInfo) ? user.DOB.ToDateTime() : null,
                 Nationality = (includePassportInfo) ? user.Nationality : null,
                 COB = (includePassportInfo) ? user.COB : null,
