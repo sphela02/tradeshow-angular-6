@@ -25,7 +25,7 @@ import { AttendeeFieldsPopupComponent } from '../attendee-fields-popup/attendee-
 import { AttendeeDeletePopupComponent } from '../attendee-delete-popup/attendee-delete-popup.component';
 import { SendRsvpPopupComponent } from '../send-rsvp-popup/send-rsvp-popup.component';
 import { SendReminderPopupComponent } from '../send-reminder-popup/send-reminder-popup.component';
-import { AttendeeStatus } from '../shared/Enums';
+import { AttendeeStatus, Permissions } from '../shared/Enums';
 import { OrganizerFieldsComponent } from '../organizer-fields/organizer-fields.component';
 import { AttendeeSelectComponent } from '../attendee-select/attendee-select.component';
 import { BcdUpdatesPopupComponent } from '../bcd-updates-popup/bcd-updates-popup.component';

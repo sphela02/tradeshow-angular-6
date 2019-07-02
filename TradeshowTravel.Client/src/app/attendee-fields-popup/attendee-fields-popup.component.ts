@@ -83,9 +83,9 @@ export class AttendeeFieldsPopupComponent implements OnInit {
             break;
           case InputType.YesOrNo:
             if (f.Source) {
-              this.values[f.ID] = CommonService.getYesOrNoText(firstAttendee[f.Source]);
+              this.values[f.ID] = CommonService.getYesOrNoText(firstAttendee[f.Source], false);
             } else {
-              this.values[f.ID] = CommonService.getYesOrNoText(firstAttendee.Properties[f.ID]);
+              this.values[f.ID] = CommonService.getYesOrNoText(firstAttendee.Properties[f.ID], false);
             }
             break;
           case InputType.MultiSelect:
@@ -165,7 +165,7 @@ export class AttendeeFieldsPopupComponent implements OnInit {
 
       // Check if the user is attending and ensure
       // all required fields are entered if so
-      if (CommonService.getYesOrNoText(attendee.IsAttending) == "Yes") {
+      if (CommonService.getYesOrNoText(attendee.IsAttending, false) == "Yes") {
         let hasError: boolean = false;
         this.fields.forEach(f => {
           if (f.Included && f.Required && !this.values[f.ID]) {

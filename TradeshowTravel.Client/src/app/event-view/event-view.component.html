@@ -190,22 +190,22 @@
           <label for="att_{{dataItem.ID}}" class="m-0 p-0 align-bottom"></label>
         </ng-template>
       </kendo-grid-column>
-      <!--
-            <kendo-grid-column width="80" [locked]="true" title="Pic">
-              <ng-template kendoGridCellTemplate let-dataItem>
-                <i *ngIf="!dataItem.Profile.EmplID; else elseBlock"
-                   class="fa fa-user-circle avatar" aria-hidden="true">
-                </i>
-                <ng-template #elseBlock>
-                  <img src="http://my.harris.com/PeopleFinder/employeePics/{{dataItem.Profile.EmplID}}.jpg"
-                       class="avatar img-fluid rounded-circle z-depth-0"
-                       (error)="imgErrHandler($event)">
-                  <i class="fa fa-user-circle avatar d-none" aria-hidden="true"></i>
-                </ng-template>
-              </ng-template>
-            </kendo-grid-column>
-      -->
-      <kendo-grid-column field="Name" width="200" [locked]="true" [filterable]="false" title="Name">
+<!--
+      <kendo-grid-column width="80" [locked]="true" title="Pic">
+        <ng-template kendoGridCellTemplate let-dataItem>
+          <i *ngIf="!dataItem.Profile.EmplID; else elseBlock"
+             class="fa fa-user-circle avatar" aria-hidden="true">
+          </i>
+          <ng-template #elseBlock>
+            <img src="http://my.harris.com/PeopleFinder/employeePics/{{dataItem.Profile.EmplID}}.jpg"
+                 class="avatar img-fluid rounded-circle z-depth-0"
+                 (error)="imgErrHandler($event)">
+            <i class="fa fa-user-circle avatar d-none" aria-hidden="true"></i>
+          </ng-template>
+        </ng-template>
+      </kendo-grid-column>
+-->
+      <kendo-grid-column field="User.Name" width="200" [locked]="true" [filterable]="true" title="Name">
         <ng-template kendoGridCellTemplate let-dataItem>
           <a (click)="onAttendeeInfoClicked(dataItem)" class="text-info">
             {{dataItem.Profile.FirstName}} {{dataItem.Profile.LastName}}
@@ -351,14 +351,14 @@
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.PassportNumber" title="Passport Number" [filterable]="false" width="200"
-                         *ngIf="canViewPassportInfo">
+      <kendo-grid-column field="User.PassportNumber" title="Passport Number" [filterable]="true" width="200"
+        *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.PassportNumber }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.PassportExpirationDate" title="Passport Expiration Date" [filterable]="false" width="200" *ngIf="canViewPassportInfo">
+      <kendo-grid-column field="User.PassportExpirationDate" title="Passport Expiration Date" [filterable]="true" width="200" *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           <div [className]="dataItem.Profile.PassportExpirationDateNear ? 'near_expire' : ''">
             {{ dataItem.Profile.PassportExpirationDate | date:'MM/dd/yyyy' }}
@@ -366,36 +366,36 @@
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.Nationality" title="Nationality" [filterable]="false" width="200"
-                         *ngIf="canViewPassportInfo">
+      <kendo-grid-column field="User.Nationality" title="Nationality" [filterable]="true" width="200"
+        *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.Nationality }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.COB" title="Country of Birth" [filterable]="false" width="200"
-                         *ngIf="canViewPassportInfo">
+      <kendo-grid-column field="User.COB" title="Country of Birth" [filterable]="true" width="200"
+        *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.COB }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.DOB" title="Date of Birth" [filterable]="false" width="200"
-                         *ngIf="canViewPassportInfo">
+      <kendo-grid-column field="User.DOB" title="Date of Birth" [filterable]="true" width="200"
+        *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{dataItem.Profile.DOB | date:'MM/dd/yyyy'}}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.COR" title="Country of Residence" [filterable]="false" width="200"
-                         *ngIf="canViewPassportInfo">
+      <kendo-grid-column field="User.COR" title="Country of Residence" [filterable]="true" width="200"
+        *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.COR }}
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.COI" title="Country of Issue" [filterable]="false" width="200"
-                         *ngIf="canViewPassportInfo">
+      <kendo-grid-column field="User.COI" title="Country of Issue" [filterable]="true" width="200"
+        *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.Profile.COI }}
         </ng-template>
@@ -438,23 +438,23 @@
           </ng-template>
         </kendo-grid-column>
 
-        <kendo-grid-column *ngIf="!field.Source" [filterable]="false"
-                           title="{{field.Label}}"
-                           width="200">
-          <ng-template *ngIf="field.Input == InputType.Date"
-                       kendoGridCellTemplate let-dataItem>
-            {{ dataItem.Properties[field.ID] | date: 'MM/dd/yyyy' }}
-          </ng-template>
-          <ng-template *ngIf="field.Input == InputType.MultiSelect"
-                       kendoGridCellTemplate let-dataItem>
-            {{ dataItem.Properties[field.ID] | replace : '|' : ', '}}
-          </ng-template>
-          <ng-template *ngIf="field.Input != InputType.Date && field.Input != InputType.MultiSelect"
-                       kendoGridCellTemplate let-dataItem>
-            {{ dataItem.Properties[field.ID] }}
-          </ng-template>
-        </kendo-grid-column>
-      </ng-template>
+          <kendo-grid-column *ngIf="!field.Source" [filterable]="true"
+                             title="{{field.Label}}"
+                             width="200">
+            <ng-template *ngIf="field.Input == InputType.Date"
+                         kendoGridCellTemplate let-dataItem>
+              {{ dataItem.Properties[field.ID] | date: 'MM/dd/yyyy' }}
+            </ng-template>
+            <ng-template *ngIf="field.Input == InputType.MultiSelect"
+                         kendoGridCellTemplate let-dataItem>
+              {{ dataItem.Properties[field.ID] | replace : '|' : ', '}}
+            </ng-template>
+            <ng-template *ngIf="field.Input != InputType.Date && field.Input != InputType.MultiSelect"
+                         kendoGridCellTemplate let-dataItem>
+              {{ dataItem.Properties[field.ID] }}
+            </ng-template>
+          </kendo-grid-column>
+</ng-template>
 
     </kendo-grid>
   </div>
