@@ -12,7 +12,7 @@ def configuration = 'Debug'
 def shouldDeploy = false
 def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('feature/TSTRAV-74-jenkins')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 
     shouldDeploy = true
@@ -68,7 +68,10 @@ node(agent) {
                             echo "Copying Angular files to project publish folder"
                             def status = bat returnStatus: true, script: "ROBOCOPY /S dist ../Publish/${environment}"
                             println "ROBOCOPY returned ${status}"
-                            if (status < 0 || status > 3)
+
+                            // Only fail the build if Robocopy returns serious errors. 
+                            // It's normal to have mismatched directory because files are constantly being added or removed
+                            if (status == 8 || status == 16) 
                             {
                                 throw new Exception("ROBOCOPY failed")
                             }
