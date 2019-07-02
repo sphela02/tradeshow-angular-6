@@ -142,7 +142,7 @@ export class CommonService {
                 return "No";
           }
       }
-    return isNoResponseAllowed ? "No Resonse" : null;
+    return isNoResponseAllowed ? "No Response" : null;
   }
 
   static getAttendeeStatusText(status: AttendeeStatus):String{
