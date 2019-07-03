@@ -10,7 +10,7 @@ namespace TradeshowTravel.Tests
         [TestMethod]
         public void Get_Email_Address_From_Ldap()
         {
-            Assert.AreEqual(LdapSrv.GetLdapEmailAddress("jbaldw99"), "jbaldw99@harris.com");
+            Assert.AreEqual(LdapSrv.GetLdapEmailAddress("jbaldw99"), "Jason.Baldwin@l3harris.com");
         }
 
         [TestMethod]

@@ -82,7 +82,7 @@ namespace TradeshowTravel.ScheduledTask
                 // see if we should send reminders, skip if not
                 if (!evt.SendReminders) continue;
 
-                var attendees = _repo.GetEventAttendeesList(parameters);
+                var attendees = _repo.GetEventAttendeesList(eventItem.ID, parameters);
 
                 // send RSVP summaries on RSVP deadline date and 5 days before the show.
                 if (DateTime.Now.ToShortDateString() == evt.RsvpDueDate.GetValueOrDefault().ToShortDateString() || DateTime.Now.ToShortDateString() == evt.StartDate.AddDays(-5).ToShortDateString())

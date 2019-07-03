@@ -33,3 +33,6 @@ BEGIN
   from [TradeshowTravel].[dbo].[UserImages] i
   where i.Category = 'VISA' and i.Username = [TradeshowTravel].[dbo].[Users].Username
 END
+
+-- reset email addresses so site will grab them from ldap
+UPDATE Users SET Email = '' WHERE Email LIKE '%harris.com'

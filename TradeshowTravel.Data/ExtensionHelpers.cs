@@ -11,6 +11,7 @@ namespace TradeshowTravel.Data
 
     public static class ExtensionHelpers
     {
+        private const string NO_VALUE = "NoValue";
 
         public static UserProfile ToUserProfile(this User user, bool includePassportInfo = true)
         {
@@ -34,7 +35,7 @@ namespace TradeshowTravel.Data
                 BadgeName = user.BadgeName,
                 PassportNumber = (includePassportInfo) ? user.PassportNumber : null,
                 PassportName = (includePassportInfo) ? user.PassportName : null,
-                PassportExpirationDate = (includePassportInfo) ? user.PassportExpirationDate.ToDateTime() : null,
+                PassportExpirationDate = (includePassportInfo) ? user.PassportExpirationDate : null,
                 DOB = (includePassportInfo) ? user.DOB.ToDateTime() : null,
                 Nationality = (includePassportInfo) ? user.Nationality : null,
                 COB = (includePassportInfo) ? user.COB : null,
@@ -593,7 +594,7 @@ namespace TradeshowTravel.Data
 
             if (member.Type == typeof(bool?))
             {
-                if(filter.Value == null || filter.Value == "null")
+                if(filter.Value == null || filter.Value == ExtensionHelpers.NO_VALUE)
                 {
                     valexpr = Expression.Constant(null, member.Type);
                 }
@@ -677,10 +678,8 @@ namespace TradeshowTravel.Data
             return expr;
         }
 
-        public static IQueryable<Attendee> HandleAttendeeQueryFilters(this IQueryable<Attendee> query, List<FilterParams> filters)
+        public static IQueryable<Attendee> HandleAttendeeQueryFilters(this IQueryable<Attendee> query, List<FilterParams> filters, List<string> aCustomFieldValues)
         {
-            const string NO_VALUE = "NoValue";
-
             if (filters == null || filters.Count < 1)
             {
                 return query;
@@ -704,7 +703,7 @@ namespace TradeshowTravel.Data
                 string key = filter.Field + filter.Operator;
 
                 // check for null or notnull synonyms
-                if (filter.Value == null || filter.Value == NO_VALUE)
+                if (filter.Value == null || filter.Value == ExtensionHelpers.NO_VALUE)
                 {
                     switch (filter.Operator)
                     {
@@ -729,28 +728,45 @@ namespace TradeshowTravel.Data
 
             foreach (string key in uniquefilters.Keys)
             {
-                Expression expr = null;
-
-                foreach (var filter in uniquefilters[key])
+                if (aCustomFieldValues.Contains(uniquefilters[key].FirstOrDefault()?.Field))
                 {
-                    if (expr == null)
+                    // since custom fields only allow 1 search box OR a yes and no checkbox we only want to apply the filter
+                    // when the 1 search box is used OR the user has checked 1 of the two yes/no boxes
+                    // when the 2 yes/no boxes are checked we want to bring back all results, thus don't add the where clause
+                    if (uniquefilters[key].Count() < 2)
                     {
-                        expr = filter.ToFilterExpr(param);
-                    }
-                    else
-                    {
-                        expr = Expression.Or(expr, filter.ToFilterExpr(param));
+                        string searchingForLabel1 = uniquefilters[key][0]?.Field;
+                        string searchingForValue1 = uniquefilters[key][0]?.Value;
+                        query = query.Where(i => i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel1)).Value.Contains(searchingForValue1)
+                        || (searchingForValue1 == "No" && i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel1)).Value == null));
                     }
                 }
-                
-                if (expr != null)
+                else
                 {
-                    query = query.Where(Expression.Lambda<Func<Attendee, bool>>(expr, param));
+                    Expression expr = null;
+
+                    foreach (var filter in uniquefilters[key])
+                    {
+                        if (expr == null)
+                        {
+                            expr = filter.ToFilterExpr(param);
+                        }
+                        else
+                        {
+                            expr = Expression.Or(expr, filter.ToFilterExpr(param));
+                        }
+                    }
+
+                    if (expr != null)
+                    {
+                        query = query.Where(Expression.Lambda<Func<Attendee, bool>>(expr, param));
+                    }
                 }
             }
 
             return query;
         }
+
 
         public static IQueryable<Tradeshow> HandleEventQueryFilters(this IQueryable<Tradeshow> query, List<FilterParams> filters)
         {
