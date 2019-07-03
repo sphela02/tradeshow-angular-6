@@ -11,6 +11,7 @@ namespace TradeshowTravel.Data
 
     public static class ExtensionHelpers
     {
+        private const string NO_VALUE = "NoValue";
 
         public static UserProfile ToUserProfile(this User user, bool includePassportInfo = true)
         {
@@ -593,7 +594,7 @@ namespace TradeshowTravel.Data
 
             if (member.Type == typeof(bool?))
             {
-                if(filter.Value == null || filter.Value == "null")
+                if(filter.Value == null || filter.Value == ExtensionHelpers.NO_VALUE)
                 {
                     valexpr = Expression.Constant(null, member.Type);
                 }
@@ -679,8 +680,6 @@ namespace TradeshowTravel.Data
 
         public static IQueryable<Attendee> HandleAttendeeQueryFilters(this IQueryable<Attendee> query, List<FilterParams> filters, List<string> aCustomFieldValues)
         {
-            const string NO_VALUE = "NoValue";
-
             if (filters == null || filters.Count < 1)
             {
                 return query;
@@ -704,7 +703,7 @@ namespace TradeshowTravel.Data
                 string key = filter.Field + filter.Operator;
 
                 // check for null or notnull synonyms
-                if (filter.Value == null || filter.Value == NO_VALUE)
+                if (filter.Value == null || filter.Value == ExtensionHelpers.NO_VALUE)
                 {
                     switch (filter.Operator)
                     {
