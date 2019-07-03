@@ -131,7 +131,6 @@ namespace TradeshowTravel.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void SendPassportReminder_Integration_Test()
         {
             var repo = new TSDataRepository();

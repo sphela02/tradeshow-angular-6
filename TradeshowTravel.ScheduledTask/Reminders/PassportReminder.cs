@@ -27,19 +27,22 @@ namespace TradeshowTravel.ScheduledTask.Reminders
                 // remove hours and seconds
                 expirationDate = new DateTime(expirationDate.Year, expirationDate.Month, expirationDate.Day);
 
-                bool sendReminder = expirationDate <= DateTime.Today;
+                bool sendReminder = expirationDate == DateTime.Today;
 
                 // check six months out for reminders
-                for (int x = 1; x <= 6; x++)
+                if (!sendReminder)
                 {
-                    DateTime interval = DateTime.Today.AddMonths(x);
-
-                     if (expirationDate == interval)
+                    for (int x = 1; x <= 6; x++)
                     {
-                        sendReminder = true;
+                        DateTime interval = DateTime.Today.AddMonths(x);
+
+                         if (expirationDate == interval)
+                        {
+                            sendReminder = true;
+                        }
                     }
                 }
-
+                
                 if(sendReminder)
                 { 
                     _emailSrv.SendPassportExpiringReminder(user);
