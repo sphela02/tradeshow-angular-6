@@ -79,6 +79,9 @@ export class EventViewComponent implements OnInit {
   currentUserIsBcd: boolean;
   updatedEvent: any;
   updatesHaveOccured: boolean = false;
+  eventViewBcdUpdateUsername: string;
+  eventViewBcdUpdateEmail: string;
+  eventViewBcdUpdateDate: string;
   
 
   private _event: EventInfo;
@@ -116,6 +119,7 @@ export class EventViewComponent implements OnInit {
      this.service.getBcdEventUpdates(this.event.ID)
        .subscribe((updateResults) => {
          this.bcdUpdateResults = updateResults;
+         this.getBcdUpdateInfo(updateResults);
         //  this.event.LastBcdUpdatedUsername = this.bcdUpdateResults.FirstName + " " + this.bcdUpdateResults.LastName;
         this.lastBcdUpdatedUserName = this.bcdUpdateResults.Username;
          this.event.LastBcdUpdatedEmail = this.currentUser.Email;
@@ -572,12 +576,14 @@ export class EventViewComponent implements OnInit {
           }
     }
     
-  getBcdUpdateInfo() {
-    this.service.getUsersByUsername(this.bcdUpdateResults)
+  getBcdUpdateInfo(bcdUpdateData) {
+    this.service.getUsersByUsername(bcdUpdateData.LastBcdUpdatedUsername)
       .subscribe(result => {
         let bcdUpdatedResult = result;
-
-        this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+        this.eventViewBcdUpdateUsername = result[0].FirstName + " " + result[0].LastName;
+      // eventViewBcdUpdateEmail: string;
+      // eventViewBcdUpdateDate: string;
+        // this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
         this.event.LastBcdUpdatedEmail = this.currentUser.Email;
         this.event.showBcdUpdatesSection = true;
         // show pretty date
