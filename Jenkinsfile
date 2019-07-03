@@ -1,7 +1,7 @@
 @Library('gba-jenkins-scripts') _
 
 def solution = "tradeshow-travel"
-def projects = [ 'TradeshowTravel.Web' ] as String[]
+def projects = [ 'TradeshowTravel.Web', 'TradeshowTravel.ScheduledTask' ] as String[]
 
 def compiler = 'msbuild'
 def testTool = 'mstest'
