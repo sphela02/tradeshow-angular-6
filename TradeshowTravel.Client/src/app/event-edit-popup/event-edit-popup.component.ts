@@ -219,6 +219,7 @@ export class EventEditPopupComponent implements OnInit {
     if (this.userRole != Role.Lead && this.userRole != Role.Support) {
       return;
     }
+
     let username = this.businessPF.value.Username;
     if (this.businessList.find(u => {
       return u.Username == username;
@@ -315,6 +316,14 @@ export class EventEditPopupComponent implements OnInit {
     this.activeModal.close();
   }
 
+  get HasBusinessLeads():boolean{
+    return this.businessList && this.businessList.length > 0;
+  }
+
+  get HasParticipatingSegments():boolean{
+    return this.selectedSegments && this.selectedSegments.length > 0;
+  }
+
   get IsValid() : boolean {
     if (!this.event.Name) {
       return false;
@@ -329,6 +338,9 @@ export class EventEditPopupComponent implements OnInit {
       return false;
     }
     if (!this.event.OwnerUsername) {
+      return false;
+    }
+    if(this.HasBusinessLeads && !this.HasParticipatingSegments){
       return false;
     }
     if (this.event.EstAttendCount) {
