@@ -50,10 +50,15 @@ node(agent) {
 
         stage('Build') {
             try {
-                projects.each { proj ->
-                    dir(proj) {
-                        build(compiler, configuration, environment, '../')
-                    }
+                dir('TradeshowTravel.Web') {
+                    build(compiler, configuration, environment, '../')
+                }
+
+                dir('TradeshowTravel.ScheduledTask'){
+                    def msbuild_cmd = "\"C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe\""
+                    def msbuild_args = "/t:Build /p:Configuration=${configuration} /v:m"
+                    bat "${msbuild_cmd} /t:Clean"
+                    bat "${msbuild_cmd} ${msbuild_args}"
                 }
 
 				if(shouldDeploy){
