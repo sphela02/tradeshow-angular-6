@@ -317,7 +317,7 @@ export class EventEditPopupComponent implements OnInit {
   }
 
   get HasBusinessLeads():boolean{
-    return this.businessList && this.businessList.length > 0;
+    return (this.businessPF && this.businessPF.value) || (this.businessList && this.businessList.length > 0);
   }
 
   get HasParticipatingSegments():boolean{
