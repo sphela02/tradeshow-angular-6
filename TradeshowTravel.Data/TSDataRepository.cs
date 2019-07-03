@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 
 namespace TradeshowTravel.Data
@@ -204,6 +203,13 @@ namespace TradeshowTravel.Data
             }
 
             return userProfiles;
+        }
+
+        public List<UserProfile> GetAllUserProfiles()
+        {
+            var users = DB.Users.ToList();
+
+            return users.Select(x => x.ToUserProfile(false)).ToList();
         }
 
         public UserProfile GetProfile(string username, string identityUser = null)
