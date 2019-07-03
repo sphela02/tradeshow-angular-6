@@ -35,9 +35,9 @@
 <div id="tabPanel1" class="mt-3 mx-3" [class.d-none]="activeTab != EventDisplayTab.Details">
   <div *ngIf="updatesHaveOccured && currentUserIsBcd">
     <div class="row">
-      <div class="col-6"><input #reviewdCheckbox [disabled]="reviewdCheckbox.checked" disabled={{checkBoxState}} class="filled-in m-2 text-right" id="reviewed_changes" type="checkbox"><label for="reviewed_changes" class="mt-3 pl-1 float-right"></label></div>
+      <div class="col-6"><input #reviewdCheckbox [disabled]="isDisabled" (click)="toggleState()" class="filled-in m-2 text-right" id="reviewed_changes" type="checkbox"><label for="reviewed_changes" class="mt-3 pl-1 float-right"></label></div>
       <div class="col-4 p-2"><label [className]="reviewdCheckbox.checked ? 'disabled_label' : ''" id="lbl_reviewed_changes" for="reviewed_changes" class="pl-3"> Check here to indicate that you have reviewed  recent updates made to the Trade Show</label></div>
-      <div class="col-2"><button [disabled]="!reviewdCheckbox.checked" (click)="acknowledgeBcdUpdates()" class="btn btn-info btn-sm waves-effect waves-light px-5 float-right m-3" type="button">Save</button></div>
+      <div class="col-2"><button [disabled]="!isDisabled" (click)="acknowledgeBcdUpdates()" class="btn btn-info btn-sm waves-effect waves-light px-5 float-right m-3" type="button">Save</button></div>
     </div>
   </div>
   

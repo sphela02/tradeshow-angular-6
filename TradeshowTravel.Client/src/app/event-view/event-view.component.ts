@@ -116,7 +116,8 @@ export class EventViewComponent implements OnInit {
      this.service.getBcdEventUpdates(this.event.ID)
        .subscribe((updateResults) => {
          this.bcdUpdateResults = updateResults;
-         this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+        //  this.event.LastBcdUpdatedUsername = this.bcdUpdateResults.FirstName + " " + this.bcdUpdateResults.LastName;
+        this.lastBcdUpdatedUserName = this.bcdUpdateResults.Username;
          this.event.LastBcdUpdatedEmail = this.currentUser.Email;
 
         this.updatesHaveOccured = (this.bcdUpdateResults.LastBcdUpdatedUsername == null && this.bcdUpdateResults.LastBcdUpdatedDateTime == null);
@@ -127,7 +128,9 @@ export class EventViewComponent implements OnInit {
             this.setStateBdcUpdateSection();
          }
          
-         this.currentUserIsBcd = this.currentUser.Role == Role.Travel;
+         this.currentUserIsBcd = this._event.Users.some(u => 
+          (u.User.Username == this.currentUser.Username && Role.None != (u.Role & Role.Travel)) );
+
          if (this.updatesHaveOccured && this.currentUserIsBcd) {
            this.popupBcdCheckUpdates();
          } else if (this.currentUserIsBcd) {
@@ -531,7 +534,7 @@ export class EventViewComponent implements OnInit {
      // 2. database lastUpdateBcd Name and Date isn't null
   setStateBdcUpdateSection() {
     if (this.currentUserIsBcd && this.bcdUpdateResults.LastBcdUpdatedUsername != null && this.bcdUpdateResults.LastBcdUpdatedDateTime != null) {
-      this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+      // this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
       this.event.showBcdUpdatesSection = true;
     }
   }
@@ -545,7 +548,7 @@ export class EventViewComponent implements OnInit {
     this.service.saveEventInfo(this.event)
       .subscribe(result => {
         this.event = result;
-        this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+        this.event.LastBcdUpdatedUsername = this.currentUser.Username;
         this.event.LastBcdUpdatedEmail = this.currentUser.Email;
         this.event.showBcdUpdatesSection = true;
         // show pretty date
@@ -557,13 +560,32 @@ export class EventViewComponent implements OnInit {
     // display section only to organizer and admin roles
     var profile = this.currentUser;
     
-    if (profile.Privileges == Permissions.CreateShows ||
-      profile.Privileges == Permissions.Admin ||
-      profile.Role == Role.Support ||
-      profile.Role == Role.Lead) {
-      this.setStateBdcUpdateSection();
+    if (profile.Privileges == Permissions.CreateShows  ||
+        profile.Privileges == Permissions.Admin  ||
+        this._event.Users.some(u => 
+          (u.User.Username == this.currentUser.Username && Role.None != (u.Role & Role.Travel) ||
+           u.User.Username == this.currentUser.Username && Role.None != (u.Role & Role.Support) ||
+           u.User.Username == this.currentUser.Username && Role.None != (u.Role & Role.Lead))
+
+           )) {
+            this.setStateBdcUpdateSection();
+          }
     }
     
+  getBcdUpdateInfo() {
+    this.service.getUsersByUsername(this.bcdUpdateResults)
+      .subscribe(result => {
+        let bcdUpdatedResult = result;
+
+        this.event.LastBcdUpdatedUsername = this.currentUser.FirstName + " " + this.currentUser.LastName;
+        this.event.LastBcdUpdatedEmail = this.currentUser.Email;
+        this.event.showBcdUpdatesSection = true;
+        // show pretty date
+        this.event.LastBcdUpdatedDateTime = new Date(Date.now());
+      }, error => {
+        console.log("Error: " + error);
+      });
+   
   }
 
   popupAddAttendees() {
