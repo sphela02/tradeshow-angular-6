@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileSrvTests.cs" />
     <Compile Include="LdapSrvTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TradeshowSrvTests.cs" />
