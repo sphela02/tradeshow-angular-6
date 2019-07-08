@@ -29,6 +29,9 @@ export interface EventInfo {
     LastBcdUpdatedDateTime: Date;
     LastBcdUpdatedEmail: string;
     showBcdUpdatesSection: boolean;
+    eventViewBcdUpdateUsername: string;
+    eventViewBcdUpdateEmail: string;
+    eventViewBcdUpdateDate: string;
 }
 
 export interface EventUser { 
