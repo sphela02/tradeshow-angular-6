@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.Linq;
 using TradeshowTravel.Domain;
 
 namespace TradeshowTravel.ScheduledTask.Reminders
@@ -18,15 +17,37 @@ namespace TradeshowTravel.ScheduledTask.Reminders
 
         public int SendReminders()
         {
-            var passportReminderInterval = int.Parse(ConfigurationManager.AppSettings["PassportReminderInterval"]);
+            var users = _repo.GetActiveUsersWithExpiringPassport();
+            int count = 0;
 
-            var users = _repo.GetActiveUsersWithExpiringPassport()
-                .Where(x => (int)Math.Round((x.PassportExpirationDate - DateTime.Now).Value.TotalDays) % passportReminderInterval == 0)
-                .ToList();
+            foreach (var user in users)
+            {
+                DateTime expirationDate = user.PassportExpirationDate.ToDateTime().GetValueOrDefault(DateTime.Today);
 
-            users.ForEach(_emailSrv.SendPassportExpiringReminder);
+                // remove hours and seconds
+                expirationDate = new DateTime(expirationDate.Year, expirationDate.Month, expirationDate.Day);
 
-            return users.Count;
+                bool sendReminder = expirationDate <= DateTime.Today;
+
+                // check six months out for reminders
+                for (int x = 1; x <= 6; x++)
+                {
+                    DateTime interval = DateTime.Today.AddMonths(x);
+
+                     if (expirationDate == interval)
+                    {
+                        sendReminder = true;
+                    }
+                }
+
+                if(sendReminder)
+                { 
+                    _emailSrv.SendPassportExpiringReminder(user);
+                    count++;
+                }
+            }
+
+            return count;
         }
     }
 }
