@@ -1,7 +1,7 @@
 @Library('gba-jenkins-scripts') _
 
 def solution = "tradeshow-travel"
-def projects = [ 'TradeshowTravel.Web', 'TradeshowTravel.ScheduledTask' ] as String[]
+def projects = [ 'TradeshowTravel.Web' ] as String[]
 
 def compiler = 'msbuild'
 def testTool = 'mstest'
@@ -11,10 +11,11 @@ def configuration = 'Debug'
 
 def shouldDeploy = false
 def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
+def scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('feature/TSTRAV-74-jenkins')) {
     destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
-
+    scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
     shouldDeploy = true
 }
 
@@ -72,7 +73,7 @@ node(agent) {
 
                             echo "Copying Angular files to project publish folder"
                             def status = bat returnStatus: true, script: "ROBOCOPY /S dist ../Publish/${environment}"
-                            println "ROBOCOPY returned ${status}"
+                            echo "ROBOCOPY returned ${status}"
 
                             // Only fail the build if Robocopy returns serious errors. 
                             // It's normal to have mismatched directory because files are constantly being added or removed
@@ -97,6 +98,21 @@ node(agent) {
         }
 
         if(shouldDeploy) {
+            stage('Deploy - Scheduled Task'){
+                dir('TradeshowTravel.ScheduledTask'){
+                    try{
+                        echo "Deploy scheduled task to ${scheduledTaskPath}"
+                        def scheduledTaskSource = "bin/${configuration}"
+                        deploy(scheduledTaskSource, scheduledTaskPath, false)
+                    }
+                    catch(e) {
+                        currentBuild.result = "Failed"
+						notify(currentBuild.result, 'Checkout')
+						throw e
+                    }      
+                }
+            }
+
             stage('Deploy') {		
                 try {
                     destinationPaths.each{ path ->
