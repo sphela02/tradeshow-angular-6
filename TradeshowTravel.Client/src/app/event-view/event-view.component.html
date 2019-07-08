@@ -243,9 +243,21 @@
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="DateRSVP" filter="date" title="RSVP Request Sent" width="200">
+      <kendo-grid-column field="DateRSVP" title="RSVP Request Sent" width="200">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{ dataItem.DateRSVP ? (dataItem.DateRSVP | date: 'MM/dd/yyyy') : "NOT SENT" }}
+        </ng-template>
+        <ng-template kendoGridFilterMenuTemplate
+                     let-filter
+                     let-column="column"
+                     let-filterService="filterService">
+
+          <kendo-grid-date-filter-menu [column]="column" [filter]="filter" [filterService]="filterService"
+                                       [extra]="false" operator="lt">
+            <kendo-filter-gt-operator></kendo-filter-gt-operator>
+            <kendo-filter-lt-operator></kendo-filter-lt-operator>
+          </kendo-grid-date-filter-menu>
+
         </ng-template>
       </kendo-grid-column>
 
@@ -444,8 +456,7 @@
                        let-filter let-column="column">
             <kendo-grid-string-filter-cell 
                                            [showOperators]="false"
-                                           [column]="column"
-                                           [filter]="filter">
+                                           [column]="column">
             </kendo-grid-string-filter-cell>
           </ng-template>
           <ng-template kendoGridFilterMenuTemplate *ngIf="field.Input == InputType.YesOrNo"
