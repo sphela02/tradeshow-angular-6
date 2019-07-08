@@ -738,7 +738,7 @@ namespace TradeshowTravel.Data
                         string searchingForLabel1 = uniquefilters[key][0]?.Field;
                         string searchingForValue1 = uniquefilters[key][0]?.Value;
                         query = query.Where(i => i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel1)).Value.Contains(searchingForValue1)
-                        || (searchingForValue1 == "No" && i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel1)).Value == null));
+                        || (i.FieldValues.FirstOrDefault(f => f.TradeshowField.Label.Equals(searchingForLabel1)).Value == searchingForValue1));
                     }
                 }
                 else
