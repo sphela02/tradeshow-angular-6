@@ -13,7 +13,7 @@ def shouldDeploy = false
 def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 def scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('feature/TSTRAV-74-jenkins')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
     scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
     shouldDeploy = true
@@ -22,7 +22,7 @@ if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('
 //Production uses two servers for load balancing.
 if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
     destinationPaths =  ["\\\\MLBIIS1R2\\tradeshowtravel", "\\\\MLBIIS2R2\\tradeshowtravel"]
-
+    scheduledTaskPath = "\\\\mlbiis1r2\\TradeshowTravelScheduledTask"
 	environment = 'Prod'
 	configuration = 'Release'
 
