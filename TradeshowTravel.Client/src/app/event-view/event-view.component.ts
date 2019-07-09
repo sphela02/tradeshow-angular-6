@@ -480,7 +480,7 @@ export class EventViewComponent implements OnInit {
     this.service.getAllTravelDocs(
       ids
     ).subscribe(data => {
-      let filename: string = this.event.Name + ".zip";
+      let filename: string = this.event.Name.replace(/[^a-z0-9]/gi, '') + ".zip";
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveOrOpenBlob(data, filename);
       } else {
