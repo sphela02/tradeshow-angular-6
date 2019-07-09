@@ -80,55 +80,17 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/TravelDocs")]
         public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
         {
-            var attendees = Service.GetAttendeeDocuments(ids);
+            ValidationResponse<byte[]> response = Service.GetAttendeeDocuments(ids);
 
-            using (var stream = new MemoryStream())
+            if (response.Success)
             {
-                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
-                {
-                    foreach (var attendeeGroup in attendees.Result.GroupBy(x => x.Username))
-                    {
-                        foreach (var attendeeImage in attendeeGroup)
-                        {
-                            string fileExtension;
-
-                            switch (attendeeImage.ImageType)
-                            {
-                                case MediaTypeNames.Image.Jpeg:
-                                    fileExtension = ".jpeg";
-                                    break;
-                                case MediaTypeNames.Image.Gif:
-                                    fileExtension = ".gif";
-                                    break;
-                                case "application/png":
-                                    fileExtension = ".png";
-                                    break;
-                                default:
-                                    continue;
-                            }
-
-                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username.ToLower()}/{attendeeImage.Category.ToLower()}{fileExtension}");
-
-                            using (var image = new MemoryStream(attendeeImage.Image))
-                            {
-                                using (Stream zipEntryStream = entry.Open())
-                                {
-                                    image.CopyTo(zipEntryStream);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                stream.Seek(0, SeekOrigin.Begin);
-
                 var result = new HttpResponseMessage(HttpStatusCode.OK)
                 {
-                    Content = new ByteArrayContent(stream.ToArray())
+                    Content = new ByteArrayContent(response.Result)
                     {
                         Headers =
                         {
-                            ContentDisposition = new ContentDispositionHeaderValue(DispositionTypeNames.Attachment) { FileName = $"{DateTime.Now.ToFileTime()}.zip" },
+                            ContentDisposition = new ContentDispositionHeaderValue(DispositionTypeNames.Attachment),
                             ContentType = new MediaTypeHeaderValue(MediaTypeNames.Application.Octet)
                         }
                     }
@@ -136,6 +98,8 @@ namespace TradeshowTravel.Web.Controllers
 
                 return ResponseMessage(result);
             }
+
+            return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
         }
 
         [HttpPost]

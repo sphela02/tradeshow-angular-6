@@ -6,6 +6,10 @@ using System.Web;
 using System.Web.Caching;
 using System.Net;
 using System.IO;
+using System.IO.Compression;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 
 
 namespace TradeshowTravel.Domain
@@ -239,16 +243,66 @@ namespace TradeshowTravel.Domain
             return ValidationResponse<List<UserImages>>.CreateSuccess(result);
         }
 
-        public ValidationResponse<List<UserImages>> GetAttendeeDocuments(int[] ids)
+        public ValidationResponse<byte[]> GetAttendeeDocuments(int[] ids)
         {
+            byte[] zipArchive = CreateAttendeeDocumentsZip(DataRepo.GetTravelDocs(ids));
+
             try
             {
-                return ValidationResponse<List<UserImages>>.CreateSuccess(DataRepo.GetTravelDocs(ids));
+                return ValidationResponse<byte[]>.CreateSuccess(zipArchive);
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error querying user images. Ex: {ex}");
-                return ValidationResponse<List<UserImages>>.CreateFailure("Error querying user images.");
+                string message = "Error zipping travel documents.";
+
+                Logging.LogMessage(LogLevel.Error, $"{message} Ex: {ex}");
+                return ValidationResponse<byte[]>.CreateFailure(message);
+            }
+        }
+
+        private byte[] CreateAttendeeDocumentsZip(List<UserImages> attendees)
+        {
+            using (var stream = new MemoryStream())
+            {
+                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var attendeeGroup in attendees.GroupBy(x => x.Username))
+                    {
+                        foreach (var attendeeImage in attendeeGroup)
+                        {
+                            string fileExtension;
+
+                            switch (attendeeImage.ImageType)
+                            {
+                                case MediaTypeNames.Image.Jpeg:
+                                    fileExtension = ".jpeg";
+                                    break;
+                                case MediaTypeNames.Image.Gif:
+                                    fileExtension = ".gif";
+                                    break;
+                                case "image/png":
+                                    fileExtension = ".png";
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username.ToLower()}/{attendeeImage.Category.ToLower()}{fileExtension}");
+
+                            using (var image = new MemoryStream(attendeeImage.Image))
+                            {
+                                using (Stream zipEntryStream = entry.Open())
+                                {
+                                    image.CopyTo(zipEntryStream);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return stream.ToArray();
             }
         }
 
