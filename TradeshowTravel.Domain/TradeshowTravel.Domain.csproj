@@ -90,7 +90,6 @@
     <Compile Include="DTOs\UserImages.cs" />
     <Compile Include="DTOs\UserInfo.cs" />
     <Compile Include="DTOs\ValidationResponse.cs" />
-    <Compile Include="FileSrv.cs" />
     <Compile Include="IDataRepository.cs" />
     <Compile Include="IReminderSrv.cs" />
     <Compile Include="IUserProfileQuery.cs" />
