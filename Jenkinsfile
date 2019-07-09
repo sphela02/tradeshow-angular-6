@@ -11,17 +11,18 @@ def configuration = 'Debug'
 
 def shouldDeploy = false
 def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
+def scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
 
 if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
-
+    scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
     shouldDeploy = true
 }
 
 //Production uses two servers for load balancing.
 if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
     destinationPaths =  ["\\\\MLBIIS1R2\\tradeshowtravel", "\\\\MLBIIS2R2\\tradeshowtravel"]
-
+    scheduledTaskPath = "\\\\mlbiis1r2\\TradeshowTravelScheduledTask"
 	environment = 'Prod'
 	configuration = 'Release'
 
@@ -50,10 +51,15 @@ node(agent) {
 
         stage('Build') {
             try {
-                projects.each { proj ->
-                    dir(proj) {
-                        build(compiler, configuration, environment, '../')
-                    }
+                dir('TradeshowTravel.Web') {
+                    build(compiler, configuration, environment, '../')
+                }
+
+                dir('TradeshowTravel.ScheduledTask'){
+                    def msbuild_cmd = "\"C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\MSBuild.exe\""
+                    def msbuild_args = "/t:Build /p:Configuration=${configuration} /v:m"
+                    bat "${msbuild_cmd} /t:Clean"
+                    bat "${msbuild_cmd} ${msbuild_args}"
                 }
 
 				if(shouldDeploy){
@@ -67,7 +73,7 @@ node(agent) {
 
                             echo "Copying Angular files to project publish folder"
                             def status = bat returnStatus: true, script: "ROBOCOPY /S dist ../Publish/${environment}"
-                            println "ROBOCOPY returned ${status}"
+                            echo "ROBOCOPY returned ${status}"
 
                             // Only fail the build if Robocopy returns serious errors. 
                             // It's normal to have mismatched directory because files are constantly being added or removed
@@ -92,6 +98,21 @@ node(agent) {
         }
 
         if(shouldDeploy) {
+            stage('Deploy - Scheduled Task'){
+                dir('TradeshowTravel.ScheduledTask'){
+                    try{
+                        echo "Deploy scheduled task to ${scheduledTaskPath}"
+                        def scheduledTaskSource = "bin/${configuration}"
+                        deploy(scheduledTaskSource, scheduledTaskPath, false)
+                    }
+                    catch(e) {
+                        currentBuild.result = "Failed"
+						notify(currentBuild.result, 'Checkout')
+						throw e
+                    }      
+                }
+            }
+
             stage('Deploy') {		
                 try {
                     destinationPaths.each{ path ->
