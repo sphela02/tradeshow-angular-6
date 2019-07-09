@@ -471,6 +471,37 @@ export class EventViewComponent implements OnInit {
     });
   }
 
+  onDocumentsDownload() {
+    let ids: Array<number> = [];
+    Object.keys(this.checkedEventAttendees).forEach(k => {
+      ids.push(Number(k));
+    });
+    this.pagetitle.setLoading(true);
+    this.service.getAllTravelDocs(
+      ids
+    ).subscribe(data => {
+      let filename: string = this.event.Name + ".zip";
+      if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(data, filename);
+      } else {
+        const url = window.URL.createObjectURL(data);
+
+        var link = document.createElement('a');
+        document.body.appendChild(link);
+        link.setAttribute('style', 'display: none');
+        link.download = filename;
+        link.href = url;
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+        link.remove();
+      }
+      this.pagetitle.setLoading(false);
+    }, error => {
+      this.pagetitle.setLoading(false);
+    });
+  }
+
   onAttendeeExport() {
     const params: QueryParams =  CommonService.convertToServiceQueryParams(this.state);
 

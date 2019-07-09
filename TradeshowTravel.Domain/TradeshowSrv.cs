@@ -171,44 +171,6 @@ namespace TradeshowTravel.Domain
             }
         }
 
-        //public ValidationResponse<bool> SaveImages(List<UserImages> docs)
-        //{
-        //    if (docs == null || docs.Count == 0)
-        //    {
-        //        return ValidationResponse<bool>.CreateFailure("Travel Documents are not specified.");
-        //    }
-
-        //    // Make sure user profile exists and user has privs to save travel docs
-        //    // Assumption that username is the same for all objects
-        //    UserProfile userprofilerec = GetProfile(docs[0].Username.ToUpper());
-        //    if (userprofilerec == null)
-        //    {
-        //        return ValidationResponse<bool>.CreateFailure("User profile was not found.  Must exist to add travel documents.");
-        //    }
-        //    else
-        //    {
-
-        //        if (GetCurrentUserRole() != Role.Admin)
-        //        {
-        //            if (userprofilerec.Username.ToUpper() != docs[0].Username.ToUpper())
-        //            {
-        //                return ValidationResponse<bool>.CreateFailure($"User '{docs[0].Username}' does not have permission to edit the profile travel docs.");
-        //            }
-        //        }
-        //    }
-
-        //    try
-        //    {
-        //        this.DataRepo.SaveImages(docs);
-        //        return ValidationResponse<bool>.CreateSuccess(true);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Logging.LogMessage(LogLevel.Error, $"Error saving the profile travel docs for '{docs[0].Username}'.  Ex: {ex}");
-        //        return ValidationResponse<bool>.CreateFailure($"Error saving the travel doc images for (username={docs[0].Username})");
-        //    }
-        //}
-
         public ValidationResponse<bool> SaveImage(string username, HttpPostedFile file, string category, string description)
         {
 
@@ -275,6 +237,19 @@ namespace TradeshowTravel.Domain
             }
 
             return ValidationResponse<List<UserImages>>.CreateSuccess(result);
+        }
+
+        public ValidationResponse<List<UserImages>> GetAttendeeDocuments(int[] ids)
+        {
+            try
+            {
+                return ValidationResponse<List<UserImages>>.CreateSuccess(DataRepo.GetTravelDocs(ids));
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage(LogLevel.Error, $"Error querying user images. Ex: {ex}");
+                return ValidationResponse<List<UserImages>>.CreateFailure("Error querying user images.");
+            }
         }
 
         #endregion

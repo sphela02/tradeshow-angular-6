@@ -6,13 +6,12 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web;
 using System.IO;
+using System.IO.Compression;
+using System.Net.Mime;
 
 namespace TradeshowTravel.Web.Controllers
 {
     using Domain.DTOs;
-    using Common.Logging;
-    using Data;
-    using Domain;
     using System.Net.Http.Headers;
 
     [Authorize]
@@ -74,6 +73,68 @@ namespace TradeshowTravel.Web.Controllers
             else
             {
                 return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("~/api/TravelDocs")]
+        public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
+        {
+            var attendees = Service.GetAttendeeDocuments(ids);
+
+            using (var stream = new MemoryStream())
+            {
+                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var attendeeGroup in attendees.Result.GroupBy(x => x.Username))
+                    {
+                        foreach (var attendeeImage in attendeeGroup)
+                        {
+                            string fileExtension;
+
+                            switch (attendeeImage.ImageType)
+                            {
+                                case MediaTypeNames.Image.Jpeg:
+                                    fileExtension = ".jpeg";
+                                    break;
+                                case MediaTypeNames.Image.Gif:
+                                    fileExtension = ".gif";
+                                    break;
+                                case "application/png":
+                                    fileExtension = ".png";
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username.ToLower()}/{attendeeImage.Category.ToLower()}{fileExtension}");
+
+                            using (var image = new MemoryStream(attendeeImage.Image))
+                            {
+                                using (Stream zipEntryStream = entry.Open())
+                                {
+                                    image.CopyTo(zipEntryStream);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                var result = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new ByteArrayContent(stream.ToArray())
+                    {
+                        Headers =
+                        {
+                            ContentDisposition = new ContentDispositionHeaderValue(DispositionTypeNames.Attachment) { FileName = $"{DateTime.Now.ToFileTime()}.zip" },
+                            ContentType = new MediaTypeHeaderValue(MediaTypeNames.Application.Octet)
+                        }
+                    }
+                };
+
+                return ResponseMessage(result);
             }
         }
 

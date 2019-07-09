@@ -14,6 +14,8 @@ namespace TradeshowTravel.Domain
 
         List<UserImages> GetTravelDocs(string username);
 
+        List<UserImages> GetTravelDocs(int[] ids);
+
         List<string> GetSegments();
 
         UserProfile GetProfile(string username, string identityUser = null);
