@@ -288,7 +288,7 @@ namespace TradeshowTravel.Domain
                                     continue;
                             }
 
-                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username.ToLower()}/{attendeeImage.Category.ToLower()}{fileExtension}");
+                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username}/{attendeeImage.Category}{fileExtension}".ToLower());
 
                             using (var image = new MemoryStream(attendeeImage.Image))
                             {
