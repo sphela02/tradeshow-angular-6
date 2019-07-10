@@ -664,6 +664,23 @@ export class TradeshowService {
     });
   }
 
+  getAllTravelDocs(ids: Array<number>): Observable<Blob> {
+    let url: string = this._serviceUrl + "/traveldocs?ids=" + ids.join("&ids=");
+    return new Observable(observer => {
+      this.http.post(url, ids, {
+        responseType: 'blob',
+        withCredentials: true
+      })
+      .pipe(catchError(this.handleError))
+      .subscribe(data => {
+        observer.next(data);
+        observer.complete();
+      }, error => {
+        observer.error(error);
+      })
+    });
+  }
+
   deleteTravelDocs(username: string, delCategories: Array<string>): Observable<boolean> {
     let url: string = this._serviceUrl + "/TravelDocs/Delete/" + username;
     return new Observable(observer => {

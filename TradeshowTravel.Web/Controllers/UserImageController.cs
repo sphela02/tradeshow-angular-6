@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web;
 using System.IO;
+using System.Net.Mime;
 
 namespace TradeshowTravel.Web.Controllers
 {
     using Domain.DTOs;
-    using Common.Logging;
-    using Data;
-    using Domain;
     using System.Net.Http.Headers;
 
     [Authorize]
@@ -75,6 +71,32 @@ namespace TradeshowTravel.Web.Controllers
             {
                 return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
             }
+        }
+
+        [HttpPost]
+        [Route("~/api/TravelDocs")]
+        public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
+        {
+            ValidationResponse<byte[]> response = Service.GetAttendeeDocuments(ids);
+
+            if (response.Success)
+            {
+                var result = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new ByteArrayContent(response.Result)
+                    {
+                        Headers =
+                        {
+                            ContentDisposition = new ContentDispositionHeaderValue(DispositionTypeNames.Attachment),
+                            ContentType = new MediaTypeHeaderValue(MediaTypeNames.Application.Octet)
+                        }
+                    }
+                };
+
+                return ResponseMessage(result);
+            }
+
+            return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
         }
 
         [HttpPost]

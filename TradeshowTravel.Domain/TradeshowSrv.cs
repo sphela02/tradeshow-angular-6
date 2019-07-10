@@ -6,6 +6,10 @@ using System.Web;
 using System.Web.Caching;
 using System.Net;
 using System.IO;
+using System.IO.Compression;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 
 
 namespace TradeshowTravel.Domain
@@ -171,44 +175,6 @@ namespace TradeshowTravel.Domain
             }
         }
 
-        //public ValidationResponse<bool> SaveImages(List<UserImages> docs)
-        //{
-        //    if (docs == null || docs.Count == 0)
-        //    {
-        //        return ValidationResponse<bool>.CreateFailure("Travel Documents are not specified.");
-        //    }
-
-        //    // Make sure user profile exists and user has privs to save travel docs
-        //    // Assumption that username is the same for all objects
-        //    UserProfile userprofilerec = GetProfile(docs[0].Username.ToUpper());
-        //    if (userprofilerec == null)
-        //    {
-        //        return ValidationResponse<bool>.CreateFailure("User profile was not found.  Must exist to add travel documents.");
-        //    }
-        //    else
-        //    {
-
-        //        if (GetCurrentUserRole() != Role.Admin)
-        //        {
-        //            if (userprofilerec.Username.ToUpper() != docs[0].Username.ToUpper())
-        //            {
-        //                return ValidationResponse<bool>.CreateFailure($"User '{docs[0].Username}' does not have permission to edit the profile travel docs.");
-        //            }
-        //        }
-        //    }
-
-        //    try
-        //    {
-        //        this.DataRepo.SaveImages(docs);
-        //        return ValidationResponse<bool>.CreateSuccess(true);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Logging.LogMessage(LogLevel.Error, $"Error saving the profile travel docs for '{docs[0].Username}'.  Ex: {ex}");
-        //        return ValidationResponse<bool>.CreateFailure($"Error saving the travel doc images for (username={docs[0].Username})");
-        //    }
-        //}
-
         public ValidationResponse<bool> SaveImage(string username, HttpPostedFile file, string category, string description)
         {
 
@@ -275,6 +241,69 @@ namespace TradeshowTravel.Domain
             }
 
             return ValidationResponse<List<UserImages>>.CreateSuccess(result);
+        }
+
+        public ValidationResponse<byte[]> GetAttendeeDocuments(int[] ids)
+        {
+            byte[] zipArchive = CreateAttendeeDocumentsZip(DataRepo.GetTravelDocs(ids));
+
+            try
+            {
+                return ValidationResponse<byte[]>.CreateSuccess(zipArchive);
+            }
+            catch (Exception ex)
+            {
+                string message = "Error zipping travel documents.";
+
+                Logging.LogMessage(LogLevel.Error, $"{message} Ex: {ex}");
+                return ValidationResponse<byte[]>.CreateFailure(message);
+            }
+        }
+
+        private byte[] CreateAttendeeDocumentsZip(List<UserImages> attendees)
+        {
+            using (var stream = new MemoryStream())
+            {
+                using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
+                {
+                    foreach (var attendeeGroup in attendees.GroupBy(x => x.Username))
+                    {
+                        foreach (var attendeeImage in attendeeGroup)
+                        {
+                            string fileExtension;
+
+                            switch (attendeeImage.ImageType)
+                            {
+                                case MediaTypeNames.Image.Jpeg:
+                                    fileExtension = ".jpeg";
+                                    break;
+                                case MediaTypeNames.Image.Gif:
+                                    fileExtension = ".gif";
+                                    break;
+                                case "image/png":
+                                    fileExtension = ".png";
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username.ToLower()}/{attendeeImage.Category.ToLower()}{fileExtension}");
+
+                            using (var image = new MemoryStream(attendeeImage.Image))
+                            {
+                                using (Stream zipEntryStream = entry.Open())
+                                {
+                                    image.CopyTo(zipEntryStream);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return stream.ToArray();
+            }
         }
 
         #endregion

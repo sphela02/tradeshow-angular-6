@@ -114,6 +114,15 @@ namespace TradeshowTravel.Data
                 .ToList();
         }
 
+        public List<UserImages> GetTravelDocs(int[] ids)
+        {
+            var usernames = DB.Attendees.Where(x => ids.Contains(x.ID)).Select(x => x.Username).Distinct().ToList();
+
+            var travelDocs = DB.UserImages.Where(u => usernames.Contains(u.Username) && u.Category != "AVATAR").ToList();
+
+            return travelDocs;
+        }
+
         #endregion
 
         #region Segments
