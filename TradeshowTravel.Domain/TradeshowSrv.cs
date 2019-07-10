@@ -272,6 +272,9 @@ namespace TradeshowTravel.Domain
 
                             switch (attendeeImage.ImageType)
                             {
+                                case MediaTypeNames.Application.Pdf:
+                                    fileExtension = ".pdf";
+                                    break;
                                 case MediaTypeNames.Image.Jpeg:
                                     fileExtension = ".jpeg";
                                     break;
