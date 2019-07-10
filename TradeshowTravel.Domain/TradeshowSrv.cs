@@ -272,6 +272,9 @@ namespace TradeshowTravel.Domain
 
                             switch (attendeeImage.ImageType)
                             {
+                                case MediaTypeNames.Application.Pdf:
+                                    fileExtension = ".pdf";
+                                    break;
                                 case MediaTypeNames.Image.Jpeg:
                                     fileExtension = ".jpeg";
                                     break;
@@ -285,7 +288,7 @@ namespace TradeshowTravel.Domain
                                     continue;
                             }
 
-                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username.ToLower()}/{attendeeImage.Category.ToLower()}{fileExtension}");
+                            ZipArchiveEntry entry = archive.CreateEntry($"{attendeeImage.Username}/{attendeeImage.Category}{fileExtension}".ToLower());
 
                             using (var image = new MemoryStream(attendeeImage.Image))
                             {
