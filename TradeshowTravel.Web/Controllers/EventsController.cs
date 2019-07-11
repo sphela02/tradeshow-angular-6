@@ -229,7 +229,7 @@ namespace TradeshowTravel.Web.Controllers
 
         [HttpGet]
         [HttpPost]
-        [Route("~/api/events/{eventID}/attendees/export")]
+        [Route("~/api/events/attendees/export/{eventID}")]
         public IHttpActionResult ExportAttendees(int eventID, QueryParams parameters)
         {
             ValidationResponse<Workbook> response = Service.ExportEventAttendees(eventID, parameters);
