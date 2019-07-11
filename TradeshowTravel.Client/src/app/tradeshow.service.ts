@@ -404,7 +404,7 @@ export class TradeshowService {
   }
 
   getEventAttendeeExport(eventID: number, params: QueryParams) : Observable<Blob> {
-    let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/attendees/export";
+    let url: string = this._serviceUrl + "/events/attendees/export/" + eventID.toString();
     return new Observable(observer => {
       this.http.post(url, params, {
         params: {},
