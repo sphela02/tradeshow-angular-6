@@ -526,7 +526,7 @@ namespace TradeshowTravel.Domain
         private string getSignature(EventInfo evt)
         {
             var profile = getProfile(evt.Owner.Username);
-            return $"Thank you,\n\n{evt.Owner.FirstName} {evt.Owner.LastName}\n{evt.Owner.Email}\n{profile.Telephone}\nEvent Management Team\nHarris Corporation";
+            return $"Thank you,\n\n{evt.Owner.FirstName} {evt.Owner.LastName}\n{evt.Owner.Email}\n{profile.Telephone}\nEvent Management Team\nL3Harris Technologies";
         }
 
         private UserProfile getProfile(string username)
