@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Common.Logging")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("HARRIS CORPORATION")]
+[assembly: AssemblyCompany("L3Harris Technologies")]
 [assembly: AssemblyProduct("Common.Logging")]
-[assembly: AssemblyCopyright("Copyright © HARRIS CORPORATION 2016")]
+[assembly: AssemblyCopyright("Copyright © L3Harris Technologies 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
