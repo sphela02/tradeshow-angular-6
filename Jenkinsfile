@@ -14,7 +14,7 @@ def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 def scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
 
 if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
-    destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
+    destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel", "\\\\gswwwdev4\\TradeShow1", "\\\\gswwwdev4\\TradeShow2"]
     scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
     shouldDeploy = true
 }
