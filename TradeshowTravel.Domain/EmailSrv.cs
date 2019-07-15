@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 namespace TradeshowTravel.Domain
 {
@@ -486,11 +488,16 @@ namespace TradeshowTravel.Domain
 
         private void Send(string to, string subject, string body, ICollection<string> cc, Attachment[] aAttachment = null, bool isBodyHtml = false)
         {
+            if (!IsValidEmail(to))
+            {
+                return;
+            }
+
             SmtpClient client = new SmtpClient(this.smtpServer);
 
             var message = new MailMessage(this.sender, to, subject, body);
 
-            foreach (var address in cc.Where(a => !string.IsNullOrWhiteSpace(a)))
+            foreach (var address in cc.Where(a => !string.IsNullOrWhiteSpace(a) && IsValidEmail(a)))
             {
                 message.CC.Add(address);
             }
@@ -532,6 +539,13 @@ namespace TradeshowTravel.Domain
         private UserProfile getProfile(string username)
         {
             return repo.GetProfile(username);
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            var attribute = new EmailAddressAttribute();
+
+            return attribute.IsValid(email);
         }
     }
 }
