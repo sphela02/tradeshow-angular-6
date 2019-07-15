@@ -51,7 +51,7 @@ export class SendRsvpPopupComponent implements OnInit {
         + "\n\n" + profile.FirstName + " " + profile.LastName
         + "\n" + profile.Email
         + "\n" + profile.Telephone
-        + "\nEvent Management\nTeam Harris Corporation";
+        + "\nEvent Management\nTeam L3Harris Technologies";
     });
 
       // set up attachment component

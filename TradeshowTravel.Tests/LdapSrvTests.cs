@@ -27,12 +27,11 @@ namespace TradeshowTravel.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public void Update_L3Harris_Email_Addresses()
         {
             var repo = new TSDataRepository();
 
-            var users = repo.GetAllUserProfiles().Where(x => string.IsNullOrWhiteSpace(x.Email) || x.Email.Contains("harris.com")).ToList();
+            var users = repo.GetAllUserProfiles().Where(x => string.IsNullOrWhiteSpace(x.Email) || x.Email.Contains("harris.com") || !x.Email.Contains("@")).ToList();
 
             foreach (var user in users)
             {
