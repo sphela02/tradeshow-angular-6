@@ -94,6 +94,11 @@ namespace TradeshowTravel.Domain
 
         private static void RemoveTempFiles(string folder, List<Attachment> attachments)
         {
+            if (attachments == null || attachments.Count == 0)
+            {
+                return;
+            }
+
             foreach (object o in attachments)
             {
                 System.IDisposable disposableObject = o as System.IDisposable;
@@ -102,7 +107,7 @@ namespace TradeshowTravel.Domain
                     disposableObject.Dispose();
                 }
             }
-
+            
             foreach (var item in Directory.GetFiles(folder))
             {
                 try
