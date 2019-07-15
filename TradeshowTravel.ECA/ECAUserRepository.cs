@@ -46,7 +46,7 @@ namespace TradeshowTravel.ECA
                         EmplID = associate.EmplID,
                         FirstName = associate.FirstName,
                         LastName = associate.LastName,
-                        Email = string.IsNullOrWhiteSpace(associate.Email) ? LdapSrv.GetLdapEmailAddress(username) : associate.Email,
+                        Email = LdapSrv.GetLdapEmailAddress(username),
                         Segment = associate.Segment ?? (associate.Company != null ? associate.Company.Trim() : ""),
                         Title = associate.Title,
                         Mobile = associate.Mobile,
@@ -117,7 +117,7 @@ namespace TradeshowTravel.ECA
                     FirstName = a.FirstName,
                     LastName = a.LastName,
                     Segment = a.Segment ?? (a.Company != null ? a.Company.Trim() : string.Empty),
-                    Email = a.Email
+                    Email = LdapSrv.GetLdapEmailAddress(a.Username)
                 });
             }
 
