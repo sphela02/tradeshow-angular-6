@@ -125,7 +125,7 @@ node(agent) {
                     downloadPaths.each{ path ->
                         echo "Deploy download project to ${path}"
                         dir('TradeshowTravel.Web.Download'){
-                            def downloadPublishDir = "Publish/${configuration}"
+                            def downloadPublishDir = "Publish/${environment}"
                             deploy(downloadPublishDir, path, false)
                         }
                     }
