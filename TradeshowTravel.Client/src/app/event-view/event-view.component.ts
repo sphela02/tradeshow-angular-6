@@ -29,6 +29,7 @@ import { AttendeeStatus, Permissions } from '../shared/Enums';
 import { OrganizerFieldsComponent } from '../organizer-fields/organizer-fields.component';
 import { AttendeeSelectComponent } from '../attendee-select/attendee-select.component';
 import { BcdUpdatesPopupComponent } from '../bcd-updates-popup/bcd-updates-popup.component';
+import { environment } from '../../environments/environment';
 
 declare var $: any;
 
@@ -82,6 +83,7 @@ export class EventViewComponent implements OnInit {
   eventViewBcdUpdateUsername: string;
   eventViewBcdUpdateEmail: string;
   eventViewBcdUpdateDate: string;
+  isVpn: boolean;
   
 
   private _event: EventInfo;
@@ -153,6 +155,8 @@ export class EventViewComponent implements OnInit {
     this.dataStateChange(this.state);
 
      this.rebindFieldTables(null);
+
+     this.isVpn = environment.isVpn;
   }
 
   private onInputsChanged() {

@@ -227,6 +227,7 @@ namespace TradeshowTravel.Web.Controllers
             }
         }
 
+        [VpnFilter]
         [HttpGet]
         [HttpPost]
         [Route("~/api/events/attendees/export/{eventID}")]
