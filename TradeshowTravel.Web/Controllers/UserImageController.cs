@@ -73,6 +73,7 @@ namespace TradeshowTravel.Web.Controllers
             }
         }
 
+        [VpnFilter]
         [HttpPost]
         [Route("~/api/TravelDocs")]
         public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
@@ -99,14 +100,15 @@ namespace TradeshowTravel.Web.Controllers
             return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
         }
 
+        [VpnFilter]
         [HttpPost]
         [Route("~/api/TravelDocs/Save/{username}/{category}/{description}")]
         public IHttpActionResult SaveTravelDocs(string username, string category, string description)
         {
-            var file = HttpContext.Current.Request.Files.Count > 0 ?
-               HttpContext.Current.Request.Files[0] : null;
+            var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
 
             ValidationResponse<bool> response = Service.SaveImage(username.ToUpper(), file, category.ToUpper(), description);
+
             if (response.Success)
             {
                 return HttpResult.Create(Request, HttpStatusCode.NoContent);
@@ -117,6 +119,7 @@ namespace TradeshowTravel.Web.Controllers
             }
         }
 
+        [VpnFilter]
         [HttpPost]
         [HttpDelete]
         [Route("~/api/TravelDocs/Delete/{username}")]

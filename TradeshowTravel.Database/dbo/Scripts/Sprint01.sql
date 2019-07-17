@@ -14,7 +14,6 @@ BEGIN
 	ALTER TABLE TradeShows ADD LastBcdUpdatedDateTime DATETIME NULL
 END
 
-
 -- TSTRAV-89 Fix VISA field in the Event grid
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID('Users') AND name = 'Visa')
 BEGIN
