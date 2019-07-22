@@ -76,11 +76,12 @@ node(agent) {
                             bat "npm install"
 
                             echo "Building Angular"
-							if(	environment = 'Prod'){
+							if(environment = 'Prod'){
 								bat "node_modules/.bin/ng.cmd build --prod --environment=prod"
 							}else{
 								bat "node_modules/.bin/ng.cmd build --environment=dev"
 							}
+
                             echo "Copying Angular files to project publish folder"
                             def status = bat returnStatus: true, script: "ROBOCOPY /S dist ../Publish/${environment}"
                             echo "ROBOCOPY returned ${status}"
