@@ -14,6 +14,7 @@ using TradeshowTravel.ECA;
 namespace TradeshowTravel.Web.Download.Controllers
 {
     [Authorize]
+    [EnableCors]
     public class HomeController : ApiController
     {
         protected TradeshowSrv Service { get; set; }
@@ -23,17 +24,7 @@ namespace TradeshowTravel.Web.Download.Controllers
             Service = new TradeshowSrv(new TSDataRepository(), new ECAUserRepository());
         }
 
-        /// <summary>
-        /// If the user is on 
-        /// </summary>
-        /// <returns></returns>
         [HttpGet]
-        [Route("~/api/isOnNetwork")]
-        public IHttpActionResult IsOnNetwork()
-        {
-            return Ok(true);
-        }
-
         [HttpPost]
         [Route("~/api/TravelDocs")]
         public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
@@ -85,7 +76,7 @@ namespace TradeshowTravel.Web.Download.Controllers
         [Route("~/api/events/{eventID}/attendees")]
         public IHttpActionResult GetAttendees(int eventID, QueryParams parameters)
         {
-            ValidationResponse<EventAttendeeQueryResult> response = Service.GetEventAttendees(eventID, false, parameters);
+            ValidationResponse<EventAttendeeQueryResult> response = Service.GetEventAttendees(eventID, true, parameters);
 
             return response.Success
                 ? (IHttpActionResult)Ok(response.Result)
