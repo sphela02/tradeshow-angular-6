@@ -169,7 +169,7 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/events/{eventID}/attendees")]
         public IHttpActionResult GetAttendees(int eventID, QueryParams parameters)
         {
-            ValidationResponse<EventAttendeeQueryResult> response = Service.GetEventAttendees(eventID, true, parameters);
+            ValidationResponse<EventAttendeeQueryResult> response = Service.GetEventAttendees(eventID, false, parameters);
 
             if (response.Success)
             {
@@ -184,7 +184,7 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/events/{eventID}/attendees/{attendeeID}")]
         public IHttpActionResult GetAttendee(int eventID, int attendeeID)
         {
-            ValidationResponse<EventAttendee> response = Service.GetEventAttendee(attendeeID, true);
+            ValidationResponse<EventAttendee> response = Service.GetEventAttendee(attendeeID, false);
 
             if (response.Success)
             {
@@ -232,12 +232,6 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/events/attendees/export/{eventID}")]
         public IHttpActionResult ExportAttendees(int eventID, QueryParams parameters)
         {
-            //
-            if (Service.GetCurrentUserRole(eventID) == Role.Admin)
-            {
-
-            }
-
             ValidationResponse<Workbook> response = Service.ExportEventAttendees(eventID, parameters);
 
             if (response.Success == false)
