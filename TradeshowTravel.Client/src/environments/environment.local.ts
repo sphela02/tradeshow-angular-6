@@ -1,7 +1,7 @@
 export const environment = {
     production: false,
     apiServiceURL: 'api/',
-    imgLibraryURL: 'http://my-dev.harris.com/tradeshowtravel/photos',
-    isVpn: true
+    apiPiServiceURL: 'http://tradeshowtraveldownloads-dev.harris.com/api',
+    imgLibraryURL: 'http://my-dev.harris.com/tradeshowtravel/photos'
 };
   

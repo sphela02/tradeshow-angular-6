@@ -35,7 +35,7 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/attendees/{attendeeID}")]
         public IHttpActionResult Get(int attendeeID)
         {
-            ValidationResponse<EventAttendee> response = Service.GetEventAttendee(attendeeID);
+            ValidationResponse<EventAttendee> response = Service.GetEventAttendee(attendeeID, true);
 
             if (response.Success)
             {

@@ -1391,7 +1391,7 @@ namespace TradeshowTravel.Domain
             return ValidationResponse<bool>.CreateSuccess(true);
         }
 
-        public ValidationResponse<EventAttendeeQueryResult> GetEventAttendees(int eventID, QueryParams parameters = null)
+        public ValidationResponse<EventAttendeeQueryResult> GetEventAttendees(int eventID, bool showPassportInfo, QueryParams parameters = null)
         {
             Role role = GetCurrentUserRole(eventID);
 
@@ -1425,7 +1425,7 @@ namespace TradeshowTravel.Domain
 
             try
             {
-                result = DataRepo.GetEventAttendees(eventID, parameters, role != Role.Travel);
+                result = DataRepo.GetEventAttendees(eventID, parameters, !showPassportInfo && role != Role.Travel);
             }
             catch (Exception ex)
             {
@@ -1436,7 +1436,7 @@ namespace TradeshowTravel.Domain
             return ValidationResponse<EventAttendeeQueryResult>.CreateSuccess(result);
         }
 
-        public ValidationResponse<EventAttendee> GetEventAttendee(int attendeeID)
+        public ValidationResponse<EventAttendee> GetEventAttendee(int attendeeID, bool showPassportInfo)
         {
             if (attendeeID < 1)
             {
@@ -1472,7 +1472,7 @@ namespace TradeshowTravel.Domain
                         return ValidationResponse<EventAttendee>.CreateFailure($"User '{CurrentUsername}' does not have permission to access attendees of event {attendee.EventID}.");
                     }
 
-                    if (role == Role.Travel)
+                    if (!showPassportInfo || role == Role.Travel )
                     {
                         // Hide Passport Info
                         attendee.Profile.HidePassportInfo();
