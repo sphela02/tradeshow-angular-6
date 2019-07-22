@@ -168,6 +168,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Properties\PublishProfiles\Dev.pubxml" />
+    <None Include="Properties\PublishProfiles\Prod.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TradeshowTravel.Data\TradeshowTravel.Data.csproj">
