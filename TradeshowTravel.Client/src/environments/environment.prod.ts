@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   apiServiceURL: 'api',
-  imgLibraryURL: 'photos',
-  isVpn: true
+  apiPiServiceURL: 'https://tradeshowtraveldownloads.harris.com/api',
+  imgLibraryURL: 'photos'
 };

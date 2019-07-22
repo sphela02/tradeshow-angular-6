@@ -169,7 +169,7 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/events/{eventID}/attendees")]
         public IHttpActionResult GetAttendees(int eventID, QueryParams parameters)
         {
-            ValidationResponse<EventAttendeeQueryResult> response = Service.GetEventAttendees(eventID, parameters);
+            ValidationResponse<EventAttendeeQueryResult> response = Service.GetEventAttendees(eventID, false, parameters);
 
             if (response.Success)
             {
@@ -184,7 +184,7 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/events/{eventID}/attendees/{attendeeID}")]
         public IHttpActionResult GetAttendee(int eventID, int attendeeID)
         {
-            ValidationResponse<EventAttendee> response = Service.GetEventAttendee(attendeeID);
+            ValidationResponse<EventAttendee> response = Service.GetEventAttendee(attendeeID, false);
 
             if (response.Success)
             {
@@ -227,7 +227,6 @@ namespace TradeshowTravel.Web.Controllers
             }
         }
 
-        [VpnFilter]
         [HttpGet]
         [HttpPost]
         [Route("~/api/events/attendees/export/{eventID}")]

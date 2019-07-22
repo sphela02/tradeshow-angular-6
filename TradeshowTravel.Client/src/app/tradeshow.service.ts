@@ -34,6 +34,7 @@ import { TravelDoc } from './shared/UserImage';
 @Injectable()
 export class TradeshowService {
   private _serviceUrl: string;
+  private _piServiceUrl: string;
   private _currentUser: UserProfile;
   private _segments: Array<string>;
   private _showTypes: Array<string>;
@@ -50,6 +51,12 @@ export class TradeshowService {
       url = this.location.prepareExternalUrl(url);
     }
     this._serviceUrl = url;
+
+    let piUrl: string = this.location.normalize(environment.apiPiServiceURL);
+    if (piUrl.indexOf("http") == -1) {
+      piUrl = this.location.prepareExternalUrl(piUrl);
+    }
+    this._piServiceUrl = piUrl;
 
     this._tiers = [
       "",
@@ -423,31 +430,46 @@ export class TradeshowService {
   }
 
   getEventAttendees(eventID: number, params: QueryParams): Observable<EventAttendeeQueryResult> {
-    let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/attendees";
+    let url: string = "/events/" + eventID.toString() + "/attendees";
     return new Observable(observer => {
-      this.http.post<EventAttendeeQueryResult>(url, params,
+      this.http.post<EventAttendeeQueryResult>(this._piServiceUrl + url, params,
         { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
           observer.complete();
         }, error => {
-          observer.error(error);
+          this.http.post<EventAttendeeQueryResult>(this._serviceUrl + url, params,
+            { withCredentials: true })
+            .pipe(catchError(this.handleError))
+            .subscribe(results => {
+              observer.next(results);
+              observer.complete();
+            }, error => {
+              observer.error(error);
+            })
         })
     });
   }
 
   saveAttendee(eventID: number, attendee: EventAttendee): Observable<EventAttendee> {
-    let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/attendees/save";
+    let url: string = "/events/" + eventID.toString() + "/attendees/save";
     return new Observable(observer => {
-      this.http.post(url, attendee, { withCredentials: true })
+      this.http.post(this._serviceUrl + url, attendee, { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(attendee => {
           observer.next(attendee);
           observer.complete();
         }, error => {
-          observer.error(error);
-        })
+          this.http.post(this._piServiceUrl + url, attendee, { withCredentials: true })
+        .pipe(catchError(this.handleError))
+          .subscribe(attendee => {
+              observer.next(attendee);
+              observer.complete();
+            }, error => {
+              observer.error(error);
+            })
+          })
     });
   }
 
@@ -539,30 +561,46 @@ export class TradeshowService {
   }
 
   getAttendees(params: QueryParams): Observable<AttendeeQueryResult> {
-    let url: string = this._serviceUrl + "/attendees";
+    let url: string = "/attendees";
     return new Observable(observer => {
-      this.http.post<AttendeeQueryResult>(url, params,
+      this.http.post<AttendeeQueryResult>(this._piServiceUrl + url, params,
         { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
           observer.complete();
         }, error => {
-          observer.error(error);
+          this.http.post<AttendeeQueryResult>(this._serviceUrl, params,
+            { withCredentials: true })
+            .pipe(catchError(this.handleError))
+            .subscribe(results => {
+              observer.next(results);
+              observer.complete();
+            }, error => {
+              observer.error(error);
+            })
         })
     });
   }
 
-  getAttendeeEvents(username: string): Observable<Array<AttendeeEvent>> {
-    let url: string = this._serviceUrl + "/attendees/" + username.toLowerCase() + "/events";
+  getAttendeeEvents(username: string, ): Observable<Array<AttendeeEvent>> {
+    let url: string = "/attendees/" + username.toLowerCase() + "/events";
+
     return new Observable(observer => {
-      this.http.get<Array<AttendeeEvent>>(url, { withCredentials: true })
+      this.http.get<Array<AttendeeEvent>>(this._piServiceUrl + url, { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(events => {
           observer.next(events);
           observer.complete();
         }, error => {
-          observer.error(error);
+          this.http.get<Array<AttendeeEvent>>(this._serviceUrl + url, { withCredentials: true })
+            .pipe(catchError(this.handleError))
+            .subscribe(events => {
+              observer.next(events);
+              observer.complete();
+            }, error => {
+              observer.error(error);
+            })
         })
     });
   }
@@ -650,7 +688,7 @@ export class TradeshowService {
   }
    
   getTravelDocs(username: string): Observable<Array<TravelDoc>> {
-    let url: string = this._serviceUrl + "/traveldocs/" + username;
+    let url: string = this._piServiceUrl + "/TravelDocs/" + username;
     return new Observable(observer => {
       this.http.get<Array<TravelDoc>>(url, 
         { withCredentials: true })
@@ -665,7 +703,7 @@ export class TradeshowService {
   }
 
   getAllTravelDocs(ids: Array<number>): Observable<Blob> {
-    let url: string = this._serviceUrl + "/traveldocs?ids=" + ids.join("&ids=");
+    let url: string = this._piServiceUrl + "/TravelDocs?ids=" + ids.join("&ids=");
     return new Observable(observer => {
       this.http.post(url, ids, {
         responseType: 'blob',
@@ -682,7 +720,7 @@ export class TradeshowService {
   }
 
   deleteTravelDocs(username: string, delCategories: Array<string>): Observable<boolean> {
-    let url: string = this._serviceUrl + "/TravelDocs/Delete/" + username;
+    let url: string = this._piServiceUrl + "/TravelDocs/Delete/" + username;
     return new Observable(observer => {
       this.http.post(url, delCategories,
         { withCredentials: true })
@@ -697,7 +735,7 @@ export class TradeshowService {
   }
 
   saveTravelDoc(fd: FormData, username: string, category: string, description:string) : Observable<string> {
-    let url: string = this._serviceUrl + "/TravelDocs/save/" + username + "/" + category + "/" + description;
+    let url: string = this._piServiceUrl + "/TravelDocs/save/" + username + "/" + category + "/" + description;
     return new Observable(observer => {
       this.http.post(url, fd,
       { withCredentials: true })

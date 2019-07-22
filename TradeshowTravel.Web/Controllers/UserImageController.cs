@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web;
 using System.IO;
-using System.Net.Mime;
 
 namespace TradeshowTravel.Web.Controllers
 {
     using Domain.DTOs;
-    using System.Net.Http.Headers;
 
     [Authorize]
     [EnableCors]
@@ -53,86 +50,6 @@ namespace TradeshowTravel.Web.Controllers
             {
                 //    return new HttpResponseMessage(HttpStatusCode.InternalServerError);
                 return new HttpResponseMessage(HttpStatusCode.NoContent);
-            }
-        }
-
-        [HttpGet]
-        [HttpPost]
-        [Route("~/api/TravelDocs/{username}")]
-        public IHttpActionResult GetTravelDocs(string username)
-        {
-            ValidationResponse<List<UserImages>> response = Service.GetTravelDocs(username.ToUpper());
-
-            if (response.Success)
-            {
-                return Ok(response.Result);
-            }
-            else
-            {
-                return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
-            }
-        }
-
-        [VpnFilter]
-        [HttpPost]
-        [Route("~/api/TravelDocs")]
-        public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
-        {
-            ValidationResponse<byte[]> response = Service.GetAttendeeDocuments(ids);
-
-            if (response.Success)
-            {
-                var result = new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new ByteArrayContent(response.Result)
-                    {
-                        Headers =
-                        {
-                            ContentDisposition = new ContentDispositionHeaderValue(DispositionTypeNames.Attachment),
-                            ContentType = new MediaTypeHeaderValue(MediaTypeNames.Application.Octet)
-                        }
-                    }
-                };
-
-                return ResponseMessage(result);
-            }
-
-            return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
-        }
-
-        [VpnFilter]
-        [HttpPost]
-        [Route("~/api/TravelDocs/Save/{username}/{category}/{description}")]
-        public IHttpActionResult SaveTravelDocs(string username, string category, string description)
-        {
-            var file = HttpContext.Current.Request.Files.Count > 0 ? HttpContext.Current.Request.Files[0] : null;
-
-            ValidationResponse<bool> response = Service.SaveImage(username.ToUpper(), file, category.ToUpper(), description);
-
-            if (response.Success)
-            {
-                return HttpResult.Create(Request, HttpStatusCode.NoContent);
-            }
-            else
-            {
-                return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
-            }
-        }
-
-        [VpnFilter]
-        [HttpPost]
-        [HttpDelete]
-        [Route("~/api/TravelDocs/Delete/{username}")]
-        public IHttpActionResult DeleteImage(string username, [FromBody] List<string> categories)
-        {
-            ValidationResponse<bool> response = Service.DeleteImages(username, categories);
-            if (response.Success)
-            {
-                return Ok(true);
-            }
-            else
-            {
-                return HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
             }
         }
     }

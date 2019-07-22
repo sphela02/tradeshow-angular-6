@@ -11,10 +11,12 @@ def configuration = 'Debug'
 
 def shouldDeploy = false
 def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
+def downloadPaths = ["\\\\mlbiisdevl1r2\\wwwroot-TradeshowTravelDownloads"]
 def scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
-    destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel", "\\\\gswwwdev4\\TradeShow1", "\\\\gswwwdev4\\TradeShow2"]
+if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('content-filtering')) {
+    destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
+    downloadPaths = ["\\\\mlbiisdevl1r2\\wwwroot-TradeshowTravelDownloads"]
     scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
     shouldDeploy = true
 }
@@ -22,6 +24,7 @@ if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
 //Production uses two servers for load balancing.
 if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
     destinationPaths =  ["\\\\MLBIIS1R2\\tradeshowtravel", "\\\\MLBIIS2R2\\tradeshowtravel"]
+    downloadPaths = ["\\\\mlbiis1r2\\wwwroot-TradeshowTravelDownloads", "\\\\mlbiis2r2\\wwwroot-TradeshowTravelDownloads " ]
     scheduledTaskPath = "\\\\mlbiis1r2\\TradeshowTravelScheduledTask"
 	environment = 'Prod'
 	configuration = 'Release'
@@ -52,6 +55,10 @@ node(agent) {
         stage('Build') {
             try {
                 dir('TradeshowTravel.Web') {
+                    build(compiler, configuration, environment, '../')
+                }
+
+				dir('TradeshowTravel.Web.Download') {
                     build(compiler, configuration, environment, '../')
                 }
 
@@ -111,6 +118,23 @@ node(agent) {
 						throw e
                     }      
                 }
+            }
+
+            stage('Deploy - Download'){
+                try{
+                    downloadPaths.each{ path ->
+                        echo "Deploy download project to ${path}"
+                        dir('TradeshowTravel.Web.Download'){
+                            def downloadPublishDir = "Publish/${environment}"
+                            deploy(downloadPublishDir, path, false)
+                        }
+                    }
+                }
+                catch(e) {
+                    currentBuild.result = "Failed"
+					notify(currentBuild.result, 'Checkout')
+					throw e
+                }      
             }
 
             stage('Deploy') {		
