@@ -430,31 +430,46 @@ export class TradeshowService {
   }
 
   getEventAttendees(eventID: number, params: QueryParams): Observable<EventAttendeeQueryResult> {
-    let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/attendees";
+    let url: string = "/events/" + eventID.toString() + "/attendees";
     return new Observable(observer => {
-      this.http.post<EventAttendeeQueryResult>(url, params,
+      this.http.post<EventAttendeeQueryResult>(this._piServiceUrl + url, params,
         { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
           observer.complete();
         }, error => {
-          observer.error(error);
+          this.http.post<EventAttendeeQueryResult>(this._serviceUrl + url, params,
+            { withCredentials: true })
+            .pipe(catchError(this.handleError))
+            .subscribe(results => {
+              observer.next(results);
+              observer.complete();
+            }, error => {
+              observer.error(error);
+            })
         })
     });
   }
 
   saveAttendee(eventID: number, attendee: EventAttendee): Observable<EventAttendee> {
-    let url: string = this._serviceUrl + "/events/" + eventID.toString() + "/attendees/save";
+    let url: string = "/events/" + eventID.toString() + "/attendees/save";
     return new Observable(observer => {
-      this.http.post(url, attendee, { withCredentials: true })
+      this.http.post(this._serviceUrl + url, attendee, { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(attendee => {
           observer.next(attendee);
           observer.complete();
         }, error => {
-          observer.error(error);
-        })
+          this.http.post(this._piServiceUrl + url, attendee, { withCredentials: true })
+        .pipe(catchError(this.handleError))
+          .subscribe(attendee => {
+              observer.next(attendee);
+              observer.complete();
+            }, error => {
+              observer.error(error);
+            })
+          })
     });
   }
 
@@ -569,17 +584,23 @@ export class TradeshowService {
   }
 
   getAttendeeEvents(username: string, ): Observable<Array<AttendeeEvent>> {
-    let url: string = this._serviceUrl + "/attendees/" + username.toLowerCase() + "/events";
+    let url: string = "/attendees/" + username.toLowerCase() + "/events";
 
     return new Observable(observer => {
-      this.http.get<Array<AttendeeEvent>>(url, { withCredentials: true })
+      this.http.get<Array<AttendeeEvent>>(this._piServiceUrl + url, { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(events => {
           observer.next(events);
           observer.complete();
         }, error => {
-          error = true;
-          observer.error(error);
+          this.http.get<Array<AttendeeEvent>>(this._serviceUrl + url, { withCredentials: true })
+            .pipe(catchError(this.handleError))
+            .subscribe(events => {
+              observer.next(events);
+              observer.complete();
+            }, error => {
+              observer.error(error);
+            })
         })
     });
   }

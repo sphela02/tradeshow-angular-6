@@ -1425,7 +1425,7 @@ namespace TradeshowTravel.Domain
 
             try
             {
-                result = DataRepo.GetEventAttendees(eventID, parameters, !showPassportInfo && role != Role.Travel);
+                result = DataRepo.GetEventAttendees(eventID, parameters, showPassportInfo && role != Role.Travel);
             }
             catch (Exception ex)
             {
