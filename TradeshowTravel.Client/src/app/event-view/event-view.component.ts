@@ -82,6 +82,7 @@ export class EventViewComponent implements OnInit {
   eventViewBcdUpdateUsername: string;
   eventViewBcdUpdateEmail: string;
   eventViewBcdUpdateDate: string;
+  showPi: boolean = false;
   
 
   private _event: EventInfo;
@@ -152,7 +153,14 @@ export class EventViewComponent implements OnInit {
 
     this.dataStateChange(this.state);
 
-     this.rebindFieldTables(null);
+    this.rebindFieldTables(null);
+
+    this.service.showPi()
+      .subscribe(data => {
+        this.showPi = data;
+      }, error => {
+        this.showPi = false;
+      });
   }
 
   private onInputsChanged() {

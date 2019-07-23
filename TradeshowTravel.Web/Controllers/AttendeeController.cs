@@ -9,7 +9,7 @@ namespace TradeshowTravel.Web.Controllers
     [Authorize]
     [EnableCors]
     public class AttendeeController : BaseController
-    {
+    { 
         [HttpGet]
         [HttpPost]
         [Route("~/api/attendees")]
