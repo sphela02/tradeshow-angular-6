@@ -114,7 +114,7 @@ node(agent) {
                     try{
                         echo "Deploy scheduled task to ${scheduledTaskPath}"
                         def scheduledTaskSource = "bin/${configuration}"
-                        deploy(scheduledTaskSource, scheduledTaskPath, false)
+                        deploy(scheduledTaskSource, scheduledTaskPath)
                     }
                     catch(e) {
                         currentBuild.result = "Failed"
@@ -130,7 +130,7 @@ node(agent) {
                         echo "Deploy download project to ${path}"
                         dir('TradeshowTravel.Web.Download'){
                             def downloadPublishDir = "Publish/${environment}"
-                            deploy(downloadPublishDir, path, false)
+                            deploy(downloadPublishDir, path)
                         }
                     }
                 }
@@ -149,7 +149,18 @@ node(agent) {
                             echo "deploying ${proj} to ${path}"
                             dir(proj) {
                                 def source = "../Publish/${environment}"
-                                deploy(source, path, false)
+                                // deploy(source, path, false)
+
+								// Verify source directory actually exists before trying to use it
+								if (fileExists(source)) {
+									def publishStatus = bat returnStatus: true, script: "ROBOCOPY ${source} ${path} /e /purge"
+									echo "ROBOCOPY returned ${publishStatus}"
+
+									if (publishStatus == 8 || publishStatus == 16) 
+									{
+										throw new Exception("ROBOCOPY failed")
+									}
+								}
                             }
                         }
                     }
