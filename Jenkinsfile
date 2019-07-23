@@ -110,7 +110,7 @@ node(agent) {
 
         if(shouldDeploy) {
             stage('Deploy - Scheduled Task'){
-                if(scheduledTaskPath && !scheduledTaskPath.allWhitespace){
+                if(scheduledTaskPath != null && !scheduledTaskPath.isEmpty()){
                     dir('TradeshowTravel.ScheduledTask'){
                         try{
                             echo "Deploy scheduled task to ${scheduledTaskPath}"
