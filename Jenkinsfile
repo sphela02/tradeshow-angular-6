@@ -110,17 +110,19 @@ node(agent) {
 
         if(shouldDeploy) {
             stage('Deploy - Scheduled Task'){
-                dir('TradeshowTravel.ScheduledTask'){
-                    try{
-                        echo "Deploy scheduled task to ${scheduledTaskPath}"
-                        def scheduledTaskSource = "bin/${configuration}"
-                        deploy(scheduledTaskSource, scheduledTaskPath)
+                if(scheduledTaskPath != null && !scheduledTaskPath.isEmpty()){
+                    dir('TradeshowTravel.ScheduledTask'){
+                        try{
+                            echo "Deploy scheduled task to ${scheduledTaskPath}"
+                            def scheduledTaskSource = "bin/${configuration}"
+                            deploy(scheduledTaskSource, scheduledTaskPath)
+                        }
+                        catch(e) {
+                            currentBuild.result = "Failed"
+                            notify(currentBuild.result, 'Checkout')
+                            throw e
+                        }      
                     }
-                    catch(e) {
-                        currentBuild.result = "Failed"
-						notify(currentBuild.result, 'Checkout')
-						throw e
-                    }      
                 }
             }
 
