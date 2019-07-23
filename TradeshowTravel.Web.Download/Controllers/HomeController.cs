@@ -25,6 +25,13 @@ namespace TradeshowTravel.Web.Download.Controllers
         }
 
         [HttpGet]
+        [Route("~/api/showPi")]
+        public IHttpActionResult Index()
+        {
+            return Ok(true);
+        }
+
+        [HttpGet]
         [HttpPost]
         [Route("~/api/TravelDocs")]
         public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)

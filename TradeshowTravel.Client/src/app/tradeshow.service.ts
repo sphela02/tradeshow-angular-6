@@ -587,20 +587,13 @@ export class TradeshowService {
     let url: string = "/attendees/" + username.toLowerCase() + "/events";
 
     return new Observable(observer => {
-      this.http.get<Array<AttendeeEvent>>(this._piServiceUrl + url, { withCredentials: true })
+      this.http.get<Array<AttendeeEvent>>(this._serviceUrl + url, { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(events => {
           observer.next(events);
           observer.complete();
         }, error => {
-          this.http.get<Array<AttendeeEvent>>(this._serviceUrl + url, { withCredentials: true })
-            .pipe(catchError(this.handleError))
-            .subscribe(events => {
-              observer.next(events);
-              observer.complete();
-            }, error => {
-              observer.error(error);
-            })
+          observer.error(error);
         })
     });
   }
@@ -751,6 +744,20 @@ export class TradeshowService {
 
   getBcdEventUpdates(eventID: number): Observable<object> {
     let url: string = this._serviceUrl + "/events/" + eventID.toString();
+    return new Observable(observer => {
+      this.http.get(url, { withCredentials: true })
+        .pipe(catchError(this.handleError))
+        .subscribe(result => {
+          observer.next(result);
+          observer.complete();
+        }, error => {
+          observer.error(error);
+        });
+    });
+  }
+
+  showPi(): Observable<boolean> {
+    let url: string = this._piServiceUrl + "/showPi";
     return new Observable(observer => {
       this.http.get(url, { withCredentials: true })
         .pipe(catchError(this.handleError))
