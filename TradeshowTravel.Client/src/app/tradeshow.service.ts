@@ -41,7 +41,6 @@ export class TradeshowService {
   private _tiers: Array<string>;
   private _eventListState: DataStateChangeEvent;
   private _attendeeListState: DataStateChangeEvent;
-  private _httpHeaders : HttpHeaders;
 
   constructor(
     private http: HttpClient,
@@ -67,9 +66,6 @@ export class TradeshowService {
       "Tier 4",
       "Customer Event"
     ];
-
-    this._httpHeaders = new HttpHeaders();
-    this._httpHeaders.append('Access-Control-Allow-Origin', '*'); 
   }
 
   private get currentUser(): UserProfile {
@@ -437,7 +433,7 @@ export class TradeshowService {
     let url: string = "/events/" + eventID.toString() + "/attendees";
     return new Observable(observer => {
       this.http.post<EventAttendeeQueryResult>(this._piServiceUrl + url, params,
-        { withCredentials: true, headers: this._httpHeaders })
+        { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
@@ -465,7 +461,7 @@ export class TradeshowService {
           observer.next(attendee);
           observer.complete();
         }, error => {
-          this.http.post(this._piServiceUrl + url, attendee, { withCredentials: true, headers: this._httpHeaders })
+          this.http.post(this._piServiceUrl + url, attendee, { withCredentials: true })
         .pipe(catchError(this.handleError))
           .subscribe(attendee => {
               observer.next(attendee);
@@ -568,7 +564,7 @@ export class TradeshowService {
     let url: string = "/attendees";
     return new Observable(observer => {
       this.http.post<AttendeeQueryResult>(this._piServiceUrl + url, params,
-        { withCredentials: true, headers: this._httpHeaders })
+        { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
@@ -591,7 +587,7 @@ export class TradeshowService {
     let url: string = "/attendees/" + username.toLowerCase() + "/events";
 
     return new Observable(observer => {
-      this.http.get<Array<AttendeeEvent>>(this._piServiceUrl + url, { withCredentials: true, headers: this._httpHeaders })
+      this.http.get<Array<AttendeeEvent>>(this._piServiceUrl + url, { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(events => {
           observer.next(events);
@@ -695,7 +691,7 @@ export class TradeshowService {
     let url: string = this._piServiceUrl + "/TravelDocs/" + username;
     return new Observable(observer => {
       this.http.get<Array<TravelDoc>>(url, 
-        { withCredentials: true, headers: this._httpHeaders })
+        { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
@@ -711,8 +707,7 @@ export class TradeshowService {
     return new Observable(observer => {
       this.http.post(url, ids, {
         responseType: 'blob',
-        withCredentials: true,
-        headers: this._httpHeaders
+        withCredentials: true
       })
       .pipe(catchError(this.handleError))
       .subscribe(data => {
@@ -728,7 +723,7 @@ export class TradeshowService {
     let url: string = this._piServiceUrl + "/TravelDocs/Delete/" + username;
     return new Observable(observer => {
       this.http.post(url, delCategories,
-        { withCredentials: true, headers: this._httpHeaders })
+        { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
@@ -741,10 +736,9 @@ export class TradeshowService {
 
   saveTravelDoc(fd: FormData, username: string, category: string, description:string) : Observable<string> {
     let url: string = this._piServiceUrl + "/TravelDocs/save/" + username + "/" + category + "/" + description;
-
     return new Observable(observer => {
       this.http.post(url, fd,
-      { withCredentials: true, headers: this._httpHeaders })
+      { withCredentials: true })
       .pipe(catchError(this.handleError))
       .subscribe(result => {
         observer.next(result);
