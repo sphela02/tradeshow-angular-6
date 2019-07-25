@@ -12,32 +12,26 @@ namespace TradeshowTravel.Web
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
     public class EnableCorsAttribute : Attribute, ICorsPolicyProvider
     {
-        private CorsPolicy _policy;
-
-        public EnableCorsAttribute()
+        public Task<CorsPolicy> GetCorsPolicyAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            _policy = new CorsPolicy
+            var policy = new CorsPolicy
             {
                 AllowAnyHeader = true,
                 AllowAnyMethod = true,
                 SupportsCredentials = true
             };
-        }
 
-        public Task<CorsPolicy> GetCorsPolicyAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            var policy = new CorsPolicy();
             var requestUri = request.RequestUri;
             var authority = requestUri.Authority.ToLowerInvariant();
             var origins = ConfigurationManager.AppSettings["AllowedOrigins"].Split(';');
 
             if (origins.Any(x => authority.EndsWith(x)))
             {
-                var origin = requestUri.GetComponents(System.UriComponents.SchemeAndServer, System.UriFormat.SafeUnescaped);
+                var origin = requestUri.GetComponents(UriComponents.SchemeAndServer, UriFormat.SafeUnescaped);
                 policy.Origins.Add(origin);
             }
 
-            return Task.FromResult(_policy);
+            return Task.FromResult(policy);
         }
     }
 }
