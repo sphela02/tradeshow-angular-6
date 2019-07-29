@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -19,7 +18,7 @@ namespace TradeshowTravel.Web
             var originRequested = corsRequestContext.Origin;
             var origins = ConfigurationManager.AppSettings["AllowedOrigins"].Split(';');
 
-            if (origins.Any(request.Headers.Referrer.DnsSafeHost.EndsWith))
+            if (origins.Any(corsRequestContext.RequestUri.DnsSafeHost.EndsWith))
             {
                 var policy = new CorsPolicy
                 {

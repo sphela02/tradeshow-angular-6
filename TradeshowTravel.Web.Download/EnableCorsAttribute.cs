@@ -18,7 +18,7 @@ namespace TradeshowTravel.Web.Download
             var originRequested = corsRequestContext.Origin;
             var origins = ConfigurationManager.AppSettings["AllowedOrigins"].Split(';');
 
-            if (origins.Any(request.Headers.Referrer.DnsSafeHost.EndsWith))
+            if (origins.Any(corsRequestContext.RequestUri.DnsSafeHost.EndsWith))
             {
                 var policy = new CorsPolicy
                 {
