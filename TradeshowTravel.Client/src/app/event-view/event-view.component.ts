@@ -667,7 +667,11 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.title = "Edit Other Attendee Details for " + attendee.Profile.FirstName + " " + attendee.Profile.LastName;
     popupModalRef.componentInstance.filter = Role.All;
     popupModalRef.componentInstance.event = this.event;
-    popupModalRef.componentInstance.attendee = attendee;
+    
+    var attendeeFields: { [key: number]: EventAttendee; } = {}
+    attendeeFields[attendee.ID] = attendee;
+    popupModalRef.componentInstance.attendees = attendeeFields;
+
     popupModalRef.componentInstance.saveClicked.subscribe(attendee => {
       this.onAttendeeChanged();
       popupModalRef.close();
@@ -688,7 +692,11 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.title = "Edit Organizer Only for " + attendee.Profile.FirstName + " " + attendee.Profile.LastName;
     popupModalRef.componentInstance.filter = Role.BackOffice;
     popupModalRef.componentInstance.event = this.event;
-    popupModalRef.componentInstance.attendee = attendee;
+       
+    var attendeeFields: { [key: number]: EventAttendee; } = {}
+    attendeeFields[attendee.ID] = attendee;
+    popupModalRef.componentInstance.attendees = attendeeFields;
+
     popupModalRef.componentInstance.saveClicked.subscribe(attendee => {
       this.onAttendeeChanged();
       popupModalRef.close();
