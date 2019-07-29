@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Web;
+using System.Web.Security;
 using TradeshowTravel.Data;
 using TradeshowTravel.Domain;
 using TradeshowTravel.Domain.DTOs;
@@ -14,10 +15,11 @@ using TradeshowTravel.ECA;
 namespace TradeshowTravel.Web.Download.Controllers
 {
     [Authorize]
+    [HideFromBcd]
     [EnableCors]
     public class HomeController : ApiController
     {
-        protected TradeshowSrv Service { get; set; }
+        private TradeshowSrv Service;
 
         public HomeController()
         {

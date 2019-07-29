@@ -153,7 +153,7 @@
             <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;
             Attendee Configuration
           </button>
-          <button type="button" [disabled]="(!checkedAttendeeCount || attendeeGrid.loading) && !showPi"
+          <button type="button" [disabled]="!showPi || !checkedAttendeeCount || attendeeGrid.loading"
                   (click)="onDocumentsDownload()"
                   class="btn btn-info btn-sm waves-effect waves-light px-3">
             <i class="fa fa-download" aria-hidden="true"></i>&nbsp;
