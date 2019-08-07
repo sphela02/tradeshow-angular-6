@@ -1460,8 +1460,8 @@ namespace TradeshowTravel.Domain
             // Check permissions
             if (CurrentUser.Privileges != Permissions.Admin)
             {
-                if (!CurrentUsername.Equals(attendee.Username) &&
-                    !CurrentUsername.Equals(attendee.Profile.DelegateUsername))
+                if (!CurrentUsername.Equals(attendee.Username, StringComparison.OrdinalIgnoreCase) &&
+                    !CurrentUsername.Equals(attendee.Profile.DelegateUsername, StringComparison.OrdinalIgnoreCase))
                 {
                     Role role = attendee.Event.GetUserRole(CurrentUsername);
 
