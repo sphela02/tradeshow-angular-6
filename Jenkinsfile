@@ -14,7 +14,7 @@ def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 def downloadPaths = ["\\\\mlbiisdevl1r2\\wwwroot-TradeshowTravelDownloads"]
 def scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('content-filtering')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
     downloadPaths = ["\\\\mlbiisdevl1r2\\wwwroot-TradeshowTravelDownloads"]
     scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
