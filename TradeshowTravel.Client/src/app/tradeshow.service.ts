@@ -563,27 +563,19 @@ export class TradeshowService {
   getAttendees(params: QueryParams): Observable<AttendeeQueryResult> {
     let url: string = "/attendees";
     return new Observable(observer => {
-      this.http.post<AttendeeQueryResult>(this._piServiceUrl + url, params,
+      this.http.post<AttendeeQueryResult>(this._serviceUrl + url, params,
         { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
           observer.next(results);
           observer.complete();
         }, error => {
-          this.http.post<AttendeeQueryResult>(this._serviceUrl, params,
-            { withCredentials: true })
-            .pipe(catchError(this.handleError))
-            .subscribe(results => {
-              observer.next(results);
-              observer.complete();
-            }, error => {
               observer.error(error);
-            })
         })
     });
   }
 
-  getAttendeeEvents(username: string, ): Observable<Array<AttendeeEvent>> {
+  getAttendeeEvents(username: string): Observable<Array<AttendeeEvent>> {
     let url: string = "/attendees/" + username.toLowerCase() + "/events";
 
     return new Observable(observer => {
