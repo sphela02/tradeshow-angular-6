@@ -1866,7 +1866,7 @@ namespace TradeshowTravel.Domain
                     }
                     else
                     {
-                        string url = $"https://my.harris.com/peopleFinder/employeePics/{attendee.Profile.EmplID}.jpg";
+                        string url = string.Format(ConfigurationManager.AppSettings["EmployeePicsUrl"], attendee.Profile.EmplID);
                         Logging.LogMessage(LogLevel.DebugBasic, $"Fetching picture for {attendee.Username}. ({url})");
 
                         using (var client = new WebClient())
