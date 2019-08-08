@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Web;
-using System.Web.Security;
 using TradeshowTravel.Data;
 using TradeshowTravel.Domain;
 using TradeshowTravel.Domain.DTOs;
@@ -35,6 +34,18 @@ namespace TradeshowTravel.Web.Download.Controllers
 
         [HttpGet]
         [HttpPost]
+        [Route("~/api/attendees")]
+        public IHttpActionResult GetAttendees(QueryParams parameters)
+        {
+            ValidationResponse<AttendeeQueryResult> response = Service.GetAttendees(parameters ?? new QueryParams());
+
+            return response.Success
+                ? (IHttpActionResult) Ok(response.Result)
+                : HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
+        }
+
+        [HttpGet]
+        [HttpPost]
         [Route("~/api/TravelDocs")]
         public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
         {
@@ -53,6 +64,18 @@ namespace TradeshowTravel.Web.Download.Controllers
                         }
                     }
                 });
+        }
+
+        [HttpGet]
+        [HttpPost]
+        [Route("~/api/TravelDocs/{username}")]
+        public IHttpActionResult GetTravelDocs(string username)
+        {
+            ValidationResponse<List<UserImages>> response = Service.GetTravelDocs(username.ToUpper());
+
+            return response.Success
+                ? (IHttpActionResult) Ok(response.Result)
+                : HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
         }
 
         [HttpPost]
