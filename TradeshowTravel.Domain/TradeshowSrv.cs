@@ -508,7 +508,7 @@ namespace TradeshowTravel.Domain
                         $"The delegate '{profile.DelegateUsername}' was not found."
                         );
                 }
-                else if (profile.Username.Equals(del.DelegateUsername))
+                else if (profile.Username.Equals(del.DelegateUsername, StringComparison.OrdinalIgnoreCase))
                 {
                     return ValidationResponse<UserProfile>.CreateFailure(
                         $"the delegate '{profile.DelegateUsername}' is already one for '{profile.Username}'."
@@ -530,7 +530,7 @@ namespace TradeshowTravel.Domain
             // Validate save is done by authorized user.
             if (GetCurrentUserRole() != Role.Admin)
             {
-                if (!CurrentUsername.Equals(profile.Username) && !CurrentUsername.Equals(profile.DelegateUsername))
+                if (!CurrentUsername.Equals(profile.Username, StringComparison.OrdinalIgnoreCase) && !CurrentUsername.Equals(profile.DelegateUsername, StringComparison.OrdinalIgnoreCase))
                 {
                     // Check if current user is part of a show user group
                     if (!CurrentUser.Role.HasFlag(Role.Lead) && !CurrentUser.Role.HasFlag(Role.Support))
@@ -1604,7 +1604,7 @@ namespace TradeshowTravel.Domain
                             $"The delegate '{attendee.Profile.DelegateUsername}' was not found."
                             );
                     }
-                    else if (attendee.Profile.Username.Equals(del.DelegateUsername))
+                    else if (attendee.Profile.Username.Equals(del.DelegateUsername, StringComparison.OrdinalIgnoreCase))
                     {
                         return ValidationResponse<List<EventAttendee>>.CreateFailure(
                             $"the delegate '{attendee.Profile.DelegateUsername}' is already one for '{attendee.Profile.Username}'."

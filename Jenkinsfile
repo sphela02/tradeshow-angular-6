@@ -24,7 +24,7 @@ if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('
 //Production uses two servers for load balancing.
 if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
     destinationPaths =  ["\\\\MLBIIS1R2\\tradeshowtravel", "\\\\MLBIIS2R2\\tradeshowtravel"]
-    downloadPaths = ["\\\\mlbiis1r2\\wwwroot-TradeshowTravelDownloads", "\\\\mlbiis2r2\\wwwroot-TradeshowTravelDownloads " ]
+    downloadPaths = ["\\\\mlbiis1r2\\wwwroot-TradeshowTravelDownloads", "\\\\mlbiis2r2\\wwwroot-TradeshowTravelDownloads" ]
     scheduledTaskPath = "\\\\mlbiis1r2\\TradeshowTravelScheduledTask"
 	environment = 'Prod'
 	configuration = 'Release'
