@@ -12,12 +12,12 @@ def configuration = 'Debug'
 def shouldDeploy = false
 def destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
 def downloadPaths = ["\\\\mlbiisdevl1r2\\wwwroot-TradeshowTravelDownloads"]
-def scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
+def scheduledTaskPath = "\\\\mlbiisdevl1r2\\TradeshowTravelScheduledTask"
 
 if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     destinationPaths = ["\\\\MLBIISDEVL1R2\\tradeshowtravel"]
     downloadPaths = ["\\\\mlbiisdevl1r2\\wwwroot-TradeshowTravelDownloads"]
-    scheduledTaskPath = "\\\\gswwwdev4\\TradeShowScheduledTaskTest"
+    scheduledTaskPath = "\\\\mlbiisdevl1r2\\TradeshowTravelScheduledTask"
     shouldDeploy = true
 }
 
