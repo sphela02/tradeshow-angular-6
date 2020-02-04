@@ -10,22 +10,22 @@ def environment = 'Dev'
 def configuration = 'Debug'
 
 def shouldDeploy = false
-def destinationPaths = ["\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-tradeshowtravel"]
-def downloadPaths = ["\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads"]
-def scheduledTaskPath = "\\\\usmlb1web1d\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask"
+def destinationPaths = ['\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-tradeshowtravel']
+def downloadPaths = ['\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads']
+def scheduledTaskPath = '\\\\usmlb1web1d\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask'
 
 if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
-    destinationPaths = ["\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-tradeshowtravel"]
-    downloadPaths = ["\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads"]
-    scheduledTaskPath = "\\\\usmlb1web1d\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask"
+    destinationPaths = ['\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-tradeshowtravel']
+    downloadPaths = ['\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads']
+    scheduledTaskPath = '\\\\usmlb1web1d\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask'
     shouldDeploy = true
 }
 
 //Production uses two servers for load balancing.
 if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
-    destinationPaths =  ["\\\\usmlb1web1p\\e$\\inetpub\\wwwroot-tradeshowtravel", "\\\\usmlb1web2p\\e$\\inetpub\\wwwroot-tradeshowtravel"]
-    downloadPaths = ["\\\\usmlb1web1p\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads", "\\\\usmlb1web2p\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads" ]
-    scheduledTaskPath = "\\\\usmlb1web2p\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask"
+    destinationPaths =  ['\\\\usmlb1web1p\\e$\\inetpub\\wwwroot-tradeshowtravel', '\\\\usmlb1web2p\\e$\\inetpub\\wwwroot-tradeshowtravel']
+    downloadPaths = ['\\\\usmlb1web1p\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads', '\\\\usmlb1web2p\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads' ]
+    scheduledTaskPath = '\\\\usmlb1web2p\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask'
 	environment = 'Prod'
 	configuration = 'Release'
 
