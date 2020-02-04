@@ -10,12 +10,12 @@ def environment = 'Dev'
 def configuration = 'Debug'
 
 def shouldDeploy = false
-def destinationPaths = [' \\\\usmlb1web1d\\wwwroot-tradeshowtravel']
+def destinationPaths = ['\\\\usmlb1web1d\\wwwroot-tradeshowtravel']
 def downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
 def scheduledTaskPath = '\\\\usmlb1web1d\\TradeshowTravelScheduledTask'
 
 if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
-    destinationPaths = [' \\\\usmlb1web1d\\wwwroot-tradeshowtravel']
+    destinationPaths = ['\\\\usmlb1web1d\\wwwroot-tradeshowtravel']
     downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
     scheduledTaskPath = '\\\\usmlb1web1d\\TradeshowTravelScheduledTask'
     shouldDeploy = true
