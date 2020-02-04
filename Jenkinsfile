@@ -12,7 +12,7 @@ def configuration = 'Debug'
 def shouldDeploy = true
 def destinationPaths = ['\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-tradeshowtravel']
 def downloadPaths = ['\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads']
-def scheduledTaskPath = '\\\\mlbiisdevl1r2\\TradeshowTravelScheduledTask'
+def scheduledTaskPath = '\\\\mlbiisdevl1r2\\TradeShowScheduledTask'
 
 if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     destinationPaths = ['\\\\usmlb1web1d\\e$\\inetpub\\wwwroot-tradeshowtravel']
