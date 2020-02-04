@@ -12,20 +12,20 @@ def configuration = 'Debug'
 def shouldDeploy = true
 def destinationPaths = [' \\\\usmlb1web1d\\wwwroot-tradeshowtravel']
 def downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
-def scheduledTaskPath = '\\\\mlbiisdevl1r2\\TradeShowScheduledTask'
+def scheduledTaskPath = '\\\\usmlb1web1d\\TradeShowScheduledTask'
 
 if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
     destinationPaths = [' \\\\usmlb1web1d\\wwwroot-tradeshowtravel']
     downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
-    scheduledTaskPath = '\\\\usmlb1web1d\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask'
+    scheduledTaskPath = '\\\\usmlb1web1d\\TradeShowScheduledTask'
     shouldDeploy = true
 }
 
 //Production uses two servers for load balancing.
 if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
-    destinationPaths =  ['\\\\usmlb1web1p\\e$\\inetpub\\wwwroot-tradeshowtravel', '\\\\usmlb1web2p\\e$\\inetpub\\wwwroot-tradeshowtravel']
-    downloadPaths = ['\\\\usmlb1web1p\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads', '\\\\usmlb1web2p\\e$\\inetpub\\wwwroot-TradeshowTravelDownloads' ]
-    scheduledTaskPath = '\\\\usmlb1web2p\\e$\\ScheduledTasks\\TradeshowTravelScheduledTask'
+    destinationPaths =  ['\\\\usmlb1web1p\\wwwroot-tradeshowtravel', '\\\\usmlb1web2p\\wwwroot-tradeshowtravel']
+    downloadPaths = ['\\\\usmlb1web1p\\wwwroot-TradeshowTravelDownloads', '\\\\usmlb1web2p\\wwwroot-TradeshowTravelDownloads' ]
+    scheduledTaskPath = '\\\\usmlb1web2p\\TradeshowTravelScheduledTask'
 	environment = 'Prod'
 	configuration = 'Release'
 
