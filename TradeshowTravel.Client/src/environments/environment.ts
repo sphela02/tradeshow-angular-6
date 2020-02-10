@@ -7,5 +7,5 @@ export const environment = {
   production: false,
   apiServiceURL: 'http://localhost/tradeshowtravel/api',
   apiPiServiceURL: 'http://localhost/tradeshowtraveldownloads/api',
-  imgLibraryURL: 'http://my-dev.harris.com/tradeshowtravel/photos'
+  imgLibraryURL: 'https://tradeshowtravel-dev.l3harris.com/photos'
 };
