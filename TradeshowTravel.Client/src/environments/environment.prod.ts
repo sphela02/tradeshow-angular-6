@@ -2,5 +2,11 @@ export const environment = {
   production: true,
   apiServiceURL: 'api',
   apiPiServiceURL: 'https://tradeshowtraveldownloads.l3harris.com/api',
-  imgLibraryURL: 'https://tradeshowtravel.l3harris.com/photos'
+  imgLibraryURL: 'https://tradeshowtravel.l3harris.com/photos',
+  authority: 'https://sso.l3harris.com/ofisid/api/discovery',
+  clientId: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/',
+  redirectUri: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/auth-callback/',
+  postLogoutRedirectUri: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/',
+  silentRedirectUri: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/auth-callback?silent=true',
+  refererUrlKey: 'referer_url'
 };
