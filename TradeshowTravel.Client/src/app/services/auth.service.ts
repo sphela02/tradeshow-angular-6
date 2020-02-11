@@ -40,7 +40,7 @@ export class AuthService {
     return this.manager.signinRedirectCallback().then(user => {
       this.user = user;
       var refererUrl = localStorage.getItem(environment.refererUrlKey);
-      console.log(refererUrl);
+     
       if (refererUrl) {
         this.router.navigate([refererUrl]);
       }

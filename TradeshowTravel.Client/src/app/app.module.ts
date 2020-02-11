@@ -60,6 +60,8 @@ import { AttendeeSelectComponent } from './attendee-select/attendee-select.compo
 import { BcdUpdatesPopupComponent } from './bcd-updates-popup/bcd-updates-popup.component';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { TokenInterceptor } from './services/token-interceptor.service';
+import { AppShellComponent } from './shared/app-shell/app-shell.component';
+
 
 @NgModule({
   imports: [
@@ -128,7 +130,8 @@ import { TokenInterceptor } from './services/token-interceptor.service';
     OrganizerFieldsComponent,
     AttendeeSelectComponent,
     BcdUpdatesPopupComponent,
-    AuthCallbackComponent
+    AuthCallbackComponent,
+    AppShellComponent
   ],
   entryComponents: [
     ProfileEditPopupComponent,

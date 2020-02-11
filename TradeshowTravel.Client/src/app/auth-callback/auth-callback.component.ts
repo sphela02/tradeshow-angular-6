@@ -17,7 +17,7 @@ export class AuthCallbackComponent implements OnInit {
       this.isSlientRefresh = params['silent'] as boolean;
       if (this.isSlientRefresh) {
         this.authService.silentRefresh();
-      } else {
+      } else {        
         this.authService.completeAuthentication();
       }
     });

@@ -14,8 +14,10 @@ export class AuthGuardService implements CanActivate {
       return true;
     }
 
-    localStorage.setItem(environment.refererUrlKey, state.url);
-    this.authService.startAuthentication();
+    if (!state.url.includes("auth-callback")) {
+      localStorage.setItem(environment.refererUrlKey, state.url);
+      this.authService.startAuthentication();
+    }
     return false;
   }
 }
