@@ -192,7 +192,6 @@
     <None Include="Properties\PublishProfiles\MLBIIS2R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIISDEVL1R2.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
-    <Content Include="READ_ME_OpenId.md" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -275,7 +274,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>10952</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:1401/tradeshowtravel</IISUrl>
+          <IISUrl>http://localhost:4201/tradeshowtravel</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
