@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
@@ -58,6 +58,10 @@ import { OrganizerFieldsComponent } from './organizer-fields/organizer-fields.co
 import { UploadModule } from '@progress/kendo-angular-upload';
 import { AttendeeSelectComponent } from './attendee-select/attendee-select.component';
 import { BcdUpdatesPopupComponent } from './bcd-updates-popup/bcd-updates-popup.component';
+import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
+import { TokenInterceptor } from './services/token-interceptor.service';
+import { AppShellComponent } from './shared/app-shell/app-shell.component';
+
 
 @NgModule({
   imports: [
@@ -72,12 +76,18 @@ import { BcdUpdatesPopupComponent } from './bcd-updates-popup/bcd-updates-popup.
     InputsModule,
     DateInputsModule,
     UploadModule,
+    HttpClientModule,
     NgbModule.forRoot()
   ],
   providers: [
     CommonService,
     TradeshowService, 
-    PageTitleService
+    PageTitleService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
   ],
   declarations: [
     AppComponent,
@@ -119,7 +129,9 @@ import { BcdUpdatesPopupComponent } from './bcd-updates-popup/bcd-updates-popup.
     FileAttachmentComponent,
     OrganizerFieldsComponent,
     AttendeeSelectComponent,
-    BcdUpdatesPopupComponent
+    BcdUpdatesPopupComponent,
+    AuthCallbackComponent,
+    AppShellComponent
   ],
   entryComponents: [
     ProfileEditPopupComponent,
