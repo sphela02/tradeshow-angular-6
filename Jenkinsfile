@@ -109,40 +109,7 @@ node(agent) {
         }
 
         if(shouldDeploy) {
-            stage('Deploy - Scheduled Task'){
-                if(scheduledTaskPath != null && !scheduledTaskPath.isEmpty()){
-                    dir('TradeshowTravel.ScheduledTask'){
-                        try{
-                            echo "Deploy scheduled task to ${scheduledTaskPath}"
-                            def scheduledTaskSource = "bin/${configuration}"
-                            deploy(scheduledTaskSource, scheduledTaskPath)
-                        }
-                        catch(e) {
-                            currentBuild.result = "Failed"
-                            notify(currentBuild.result, 'Checkout')
-                            throw e
-                        }      
-                    }
-                }
-            }
-
-            stage('Deploy - Download'){
-                try{
-                    downloadPaths.each{ path ->
-                        echo "Deploy download project to ${path}"
-                        dir('TradeshowTravel.Web.Download'){
-                            def downloadPublishDir = "Publish/${environment}"
-                            deploy(downloadPublishDir, path)
-                        }
-                    }
-                }
-                catch(e) {
-                    currentBuild.result = "Failed"
-					notify(currentBuild.result, 'Checkout')
-					throw e
-                }      
-            }
-
+          
             stage('Deploy') {		
                 try {
                     destinationPaths.each{ path ->
