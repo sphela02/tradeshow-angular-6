@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { UserManager, UserManagerSettings, User } from 'oidc-client';
+import { UserManager, UserManagerSettings, User, WebStorageStateStore } from 'oidc-client';
 import { environment } from '../../environments/environment';
-import { Router, RouterStateSnapshot } from '@angular/router';
 
 @Injectable()
 export class AuthService {
@@ -9,7 +8,7 @@ export class AuthService {
   private manager = new UserManager(getClientSettings());
   private user: User | null = null;
 
-  constructor(private router: Router) {
+  constructor() {
     this.manager.getUser().then(user => {
       this.user = user;
     });
@@ -38,12 +37,7 @@ export class AuthService {
 
   completeAuthentication(): Promise<void> {
     return this.manager.signinRedirectCallback().then(user => {
-      this.user = user;
-      var refererUrl = localStorage.getItem(environment.refererUrlKey);
-     
-      if (refererUrl) {
-        this.router.navigate([refererUrl]);
-      }
+      this.user = user;   
     });
   }
 
@@ -63,8 +57,9 @@ export function getClientSettings(): UserManagerSettings {
     scope: 'openid',
     filterProtocolClaims: true,
     loadUserInfo: false,
-    client_secret: 'r66T266jpKjkAXR',
+    client_secret: environment.clientSecret,
     automaticSilentRenew: true,
     silent_redirect_uri: environment.silentRedirectUri,
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
   };
 }
