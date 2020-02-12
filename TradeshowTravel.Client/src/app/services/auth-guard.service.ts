@@ -9,15 +9,14 @@ export class AuthGuardService implements CanActivate {
 
   constructor(private authService: AuthService) { }
 
-  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.authService.isLoggedIn()) {
-      return true;
-    }
-
-    if (!state.url.includes("auth-callback")) {
-      localStorage.setItem(environment.refererUrlKey, state.url);
-      this.authService.startAuthentication();
-    }
-    return false;
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    let isloggedIn = this.authService.isLoggedIn();
+    isloggedIn.subscribe((loggedin) => {
+      if (!loggedin && !state.url.includes("auth-callback")) {
+        localStorage.setItem(environment.refererUrlKey, state.url);
+        this.authService.startAuthentication();
+      }
+    });
+    return isloggedIn;
   }
 }
