@@ -61,6 +61,5 @@ export function getClientSettings(): UserManagerSettings {
     automaticSilentRenew: true,
     silent_redirect_uri: environment.silentRedirectUri,
     userStore: new WebStorageStateStore({ store: window.localStorage }),
-    prompt: "login"
   };
 }
