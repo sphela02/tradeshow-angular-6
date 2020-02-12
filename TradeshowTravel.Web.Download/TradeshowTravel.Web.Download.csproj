@@ -51,8 +51,8 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="L3Harris.OpenIdAuthenticationLegacy, Version=1.0.7345.15178, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\L3Harris.OpenIdAuthenticationLegacy.1.0.7345.15178-prerelease\lib\net45\L3Harris.OpenIdAuthenticationLegacy.dll</HintPath>
+    <Reference Include="L3Harris.OpenIdAuthenticationLegacy, Version=1.0.7346.30643, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\L3Harris.OpenIdAuthenticationLegacy.1.0.7346.30643\lib\net45\L3Harris.OpenIdAuthenticationLegacy.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.3\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>

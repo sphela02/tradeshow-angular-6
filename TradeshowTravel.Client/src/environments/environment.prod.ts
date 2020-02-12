@@ -5,6 +5,7 @@ export const environment = {
   imgLibraryURL: 'https://tradeshowtravel.l3harris.com/photos',
   authority: 'https://sso.l3harris.com/ofisid/api/discovery',
   clientId: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/',
+  clientSecret:"r66T266jpKjkAXR",
   redirectUri: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/auth-callback/',
   postLogoutRedirectUri: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/',
   silentRedirectUri: 'https://tradeshowtravel.l3harris.com/tradeshowtravel/auth-callback?silent=true',

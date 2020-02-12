@@ -10,8 +10,9 @@ export const environment = {
   imgLibraryURL: 'https://tradeshowtravel-dev.l3harris.com/photos',
   authority: 'https://sso.l3harris.com/ofisid/api/discovery',
   clientId: 'https://tradeshowtravel-local.harris.com:4200/',
+  clientSecret:"r66T266jpKjkAXR",
   redirectUri: 'http://localhost:4200/auth-callback/',
   postLogoutRedirectUri: 'http://localhost:4200/',
   silentRedirectUri: 'http://localhost:4200/auth-callback?silent=true',
-  refererUrlKey: 'referer_url'
+  refererUrlKey: 'referer_url',
 };
