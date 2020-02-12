@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserManager, UserManagerSettings, User, WebStorageStateStore } from 'oidc-client';
 import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -9,13 +10,18 @@ export class AuthService {
   private user: User | null = null;
 
   constructor() {
-    this.manager.getUser().then(user => {
+    this.getUser();
+  }
+
+  getUser(): Promise<User> {
+    return this.manager.getUser().then(user => {
       this.user = user;
+      return this.user;
     });
   }
 
-  isLoggedIn(): boolean {
-    return this.user != null && !this.user.expired;
+  isLoggedIn(): Observable<boolean> {
+    return Observable.fromPromise(this.getUser()).map<User, boolean>((user) => user != null && !this.user.expired);
   }
 
   getClaims(): any {
@@ -37,13 +43,8 @@ export class AuthService {
 
   completeAuthentication(): Promise<void> {
     return this.manager.signinRedirectCallback().then(user => {
-      this.user = user;   
+      this.user = user;
     });
-  }
-
-  public retryFailedRequests(): void {
-    // retry the requests. this method can
-    // be called after the token is refreshed
   }
 }
 
