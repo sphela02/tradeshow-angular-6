@@ -74,7 +74,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LdapSrvTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TradeshowSrvTests.cs" />
     <Compile Include="PassportReminderTests.cs" />

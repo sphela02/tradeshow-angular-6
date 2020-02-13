@@ -13,7 +13,7 @@
         </div>
         <div class="col-sm" *ngIf="userProfile">
           <span class="d-block mt-2">{{userProfile.FirstName}}&nbsp;{{userProfile.LastName}}</span>
-          <a class="d-block p-0 font-weight-bold" [routerLink]="['attendees', userProfile.Username.toLowerCase()]">
+          <a class="d-block p-0 font-weight-bold" [routerLink]="['/attendees', userProfile.Username.toLowerCase()]">
             View Profile
           </a>
         </div>
@@ -33,7 +33,7 @@
         </li>
         <li class="nav-item border-top border-light" aria-expanded="true"
           [class.active]="activeMenu==SideMenuMode.Attendees">
-          <a class="nav-link" [routerLink]="['attendees']">
+          <a class="nav-link" [routerLink]="['/attendees']">
             <i class="fa fa-users"></i> Contact Directory
           </a>
           <ul class="nav flex-column" [class.d-none]="activeMenu != SideMenuMode.Attendees || !activeChildmenu">
@@ -66,11 +66,11 @@
       </a>
     </div>
     <span [ngSwitch]="activeMenu" class="h5 m-0 pl-3 py-1">
-      <a *ngSwitchCase="SideMenuMode.Events" [routerLink]="['events']" style="font-size: inherit;color:white">Event
+      <a *ngSwitchCase="SideMenuMode.Events" [routerLink]="['/events']" style="font-size: inherit;color:white">Event
         Management</a>
-      <a *ngSwitchCase="SideMenuMode.Settings" [routerLink]="['settings']"
+      <a *ngSwitchCase="SideMenuMode.Settings" [routerLink]="['/settings']"
         style="font-size: inherit;color:white">Administrative Settings</a>
-      <a *ngSwitchDefault [routerLink]="['attendees']" style="font-size: inherit;color:white">Contact Directory</a>
+      <a *ngSwitchDefault [routerLink]="['/attendees']" style="font-size: inherit;color:white">Contact Directory</a>
       <span *ngIf="activeChildmenu">&gt;</span>
       <span *ngIf="activeChildmenu">{{activeChildmenu}}</span>
     </span>

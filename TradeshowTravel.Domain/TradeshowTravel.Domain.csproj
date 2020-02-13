@@ -93,7 +93,6 @@
     <Compile Include="IReminderSrv.cs" />
     <Compile Include="IUserProfileQuery.cs" />
     <Compile Include="DTOs\UserProfile.cs" />
-    <Compile Include="LdapSrv.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DomainExtensions.cs" />
     <Compile Include="EmailSrv.cs" />
