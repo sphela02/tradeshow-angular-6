@@ -129,6 +129,13 @@
                 .IsUnicode(false)
                 .IsOptional();
 
+            Property(p => p.StandardEmail)
+                .HasColumnOrder(17)
+                .HasColumnName("EMAIL_ADDRESS")
+                .HasMaxLength(64)
+                .IsUnicode(false)
+                .IsOptional();
+
             Ignore(p => p.FirstName);
             Ignore(p => p.LastName);
             Ignore(p => p.Email);
