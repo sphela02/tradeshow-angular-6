@@ -170,7 +170,7 @@ namespace TradeshowTravel.Domain
             var documentsRootPath = HttpContext.Current.Server.MapPath(@"~\App_Data");
 
             Attachment attachment1 = new Attachment(Path.Combine(documentsRootPath, "EventTravelPortal_QuickStartGuide_Attendee.pdf"));
-            Attachment attachment2 = new Attachment(Path.Combine(documentsRootPath, "EventTravelPortal_UserManual_Attendee.pptx"));
+            Attachment attachment2 = new Attachment(Path.Combine(documentsRootPath, "EventTravelPortal_UserManual_Attendee.pdf"));
 
             if (attendee.Profile.Delegate != null)
             {
