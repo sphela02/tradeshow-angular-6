@@ -185,8 +185,12 @@
     <Content Include="EmailTemplates\UserDetailsUpdatedNotification.html" />
     <Content Include="Global.asax" />
     <Content Include="packages.config" />
-    <Content Include="App_Data\EventTravelPortal_UserManual_Attendee.pptx" />
-    <Content Include="App_Data\EventTravelPortal_QuickStartGuide_Attendee.pdf" />
+    <Content Include="App_Data\EventTravelPortal_QuickStartGuide_Attendee.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\EventTravelPortal_UserManual_Attendee.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS1R2.pubxml" />
     <None Include="Properties\PublishProfiles\MLBIIS2R2.pubxml" />
