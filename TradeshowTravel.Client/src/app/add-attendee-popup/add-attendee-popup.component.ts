@@ -45,6 +45,10 @@ export class AddAttendeePopupComponent implements OnInit {
       })
   }
 
+  onSendRSVPChanged(value: any){
+    this.attendees.forEach(a => a.SendRSVP = this.sendRSVP);
+  }
+
   addAttendee() {
     if (!this.attendee) {
       return;

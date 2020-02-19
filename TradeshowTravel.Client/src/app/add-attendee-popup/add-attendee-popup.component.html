@@ -67,7 +67,7 @@
     <div class="row border-top">
       <div class="col">
         <div class="md-form mt-0">
-          <input type="checkbox" class="filled-in" id="sendRSVPRequest" [(ngModel)]="sendRSVP">
+          <input type="checkbox" class="filled-in" id="sendRSVPRequest" [(ngModel)]="sendRSVP" (change)="onSendRSVPChanged($event)">
           <label for="sendRSVPRequest">Send attendees (or their delegates) an RSVP request?</label>
         </div>
       </div>

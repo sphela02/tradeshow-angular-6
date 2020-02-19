@@ -1528,6 +1528,8 @@ namespace TradeshowTravel.Domain
                     return ValidationResponse<List<EventAttendee>>.CreateFailure("One or more attendee usernames were not specified.");
                 }
 
+                bool isNewUser = DataRepo.IsUserNew(attendee.Username);
+
                 // Check permissions
                 if (CurrentUser.Privileges != Permissions.Admin)
                 {
@@ -1685,7 +1687,7 @@ namespace TradeshowTravel.Domain
                                         attendee = DataRepo.SaveAttendee(attendee);
                                         EmailSrv.SendRSVP(evt, attendee);
 
-                                        if(DataRepo.IsUserNew(attendee.Username))
+                                        if(isNewUser)
                                         {
                                             EmailSrv.SendNewUser(evt, attendee);
                                             Logging.LogMessage(LogLevel.DebugBasic, $"Send Welcome notification to {attendee.Username}.");
