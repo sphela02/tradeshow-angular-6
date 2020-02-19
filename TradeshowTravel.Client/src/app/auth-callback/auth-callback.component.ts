@@ -5,8 +5,7 @@ import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-auth-callback',
-  templateUrl: './auth-callback.component.html',
-  styleUrls: []
+  template: '' // Component needs a template even if it's empty
 })
 export class AuthCallbackComponent implements OnInit {
   private isSlientRefresh: boolean = false;
