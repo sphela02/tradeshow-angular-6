@@ -382,7 +382,7 @@ namespace TradeshowTravel.Domain
             // modify subject to notify BCD when attendee has been added after the created time
             if (evt.CreatedDate < DateTime.Now && !string.IsNullOrWhiteSpace(newAttendeeName))
             {
-                subject = $"Event Travel Portal | {newAttendeeName} Has Been Added To {evt.Name}";
+                subject = $"Event Travel Portal | {evt.Name} :{newAttendeeName} Added";
             }
 
             // send to owner/lead

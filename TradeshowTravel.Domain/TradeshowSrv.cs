@@ -1592,12 +1592,6 @@ namespace TradeshowTravel.Domain
                     {
                         attendee.Profile.BadgeName = profile.BadgeName;
                     }
-
-                    // ensure that this only populates when adding a single attendee
-                    if (eventAttendees.Count == 1)
-                    {
-                        newAttendeeName = profile.BadgeName;
-                    }
                 }
 
                 // Check if a new delegate was assigned
