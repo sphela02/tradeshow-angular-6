@@ -1732,14 +1732,16 @@ namespace TradeshowTravel.Domain
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
                 }
+
+                if (newAttendeeCount > 0)
+                {
+                    // TODO: Send email notification to event Lead that new attendees have been added.
+                    EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, attendee.Profile.BadgeName);
+                    Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
+                }
             }
 
-            if (newAttendeeCount > 0)
-            {
-                // TODO: Send email notification to event Lead that new attendees have been added.
-                EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, newAttendeeName);
-                Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
-            }
+            
 
             return ValidationResponse<List<EventAttendee>>.CreateSuccess(eventAttendees);
         }
