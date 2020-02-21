@@ -1516,7 +1516,6 @@ namespace TradeshowTravel.Domain
             Role currentRole = evt.GetUserRole(CurrentUsername);
 
             int newAttendeeCount = 0;
-            string newAttendeeName = string.Empty;
 
             for (int i = 0; i < eventAttendees.Count; ++i)
             {
