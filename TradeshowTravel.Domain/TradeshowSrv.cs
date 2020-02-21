@@ -1829,6 +1829,7 @@ namespace TradeshowTravel.Domain
                 ws.Cells[rowIndex, ++colIndex].SetValue("Passport");
                 ws.Cells[rowIndex, ++colIndex].SetValue("VISA");
                 ws.Cells[rowIndex, ++colIndex].SetValue("Other");
+                ws.Cells[rowIndex, ++colIndex].SetValue("Last Updated");
 
                 if (evt.Fields != null)
                 {
@@ -1936,6 +1937,7 @@ namespace TradeshowTravel.Domain
                     ws.Cells[rowIndex, ++colIndex].SetValue(DataRepo.IsPassportOnProfile(attendee.Username) ? "Y" : "N");
                     ws.Cells[rowIndex, ++colIndex].SetValue(DataRepo.IsVisaOnProfile(attendee.Username) ? "Y" : "N");
                     ws.Cells[rowIndex, ++colIndex].SetValue(DataRepo.IsOtherOnProfile(attendee.Username) ? "Y" : "N");
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee?.DateCompleted.ToString() ?? string.Empty);
 
 
                     if (evt.Fields != null)
