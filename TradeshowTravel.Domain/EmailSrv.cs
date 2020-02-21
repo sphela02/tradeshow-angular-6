@@ -375,9 +375,15 @@ namespace TradeshowTravel.Domain
 
 
         // A new attendee has been added. RSVP request sent.
-        public void SendAttendeeAddedNotifications(EventInfo evt, string username)
+        public void SendAttendeeAddedNotifications(EventInfo evt, string username, string newAttendeeName)
         {
             var subject = $"Event Travel Portal | {evt.Name}: New Attendee(s) Added";
+
+            // modify subject to notify BCD when attendee has been added after the created time
+            if (evt.CreatedDate < DateTime.Now && !string.IsNullOrWhiteSpace(newAttendeeName))
+            {
+                subject = $"Event Travel Portal | {newAttendeeName} Has Been Added To {evt.Name}";
+            }
 
             // send to owner/lead
             var body = $"Hello {evt.Owner.FirstName},\n\nThe list of attendees for {evt.Name} has been updated by {username}.\n\nView Event: {getEventUrl(evt.ID)}\n\n{getSignature(evt)}";

@@ -1516,6 +1516,7 @@ namespace TradeshowTravel.Domain
             Role currentRole = evt.GetUserRole(CurrentUsername);
 
             int newAttendeeCount = 0;
+            string newAttendeeName = string.Empty;
 
             for (int i = 0; i < eventAttendees.Count; ++i)
             {
@@ -1590,6 +1591,12 @@ namespace TradeshowTravel.Domain
                     if (string.IsNullOrWhiteSpace(attendee.Profile.BadgeName))
                     {
                         attendee.Profile.BadgeName = profile.BadgeName;
+                    }
+
+                    // ensure that this only populates when adding a single attendee
+                    if (eventAttendees.Count == 1)
+                    {
+                        newAttendeeName = profile.BadgeName;
                     }
                 }
 
@@ -1730,7 +1737,7 @@ namespace TradeshowTravel.Domain
             if (newAttendeeCount > 0)
             {
                 // TODO: Send email notification to event Lead that new attendees have been added.
-                EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername);
+                EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, newAttendeeName);
                 Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
             }
 
