@@ -1727,12 +1727,9 @@ namespace TradeshowTravel.Domain
                     }
                 }
 
-                if (newAttendeeCount > 0)
-                {
-                    // TODO: Send email notification to event Lead that new attendees have been added.
-                    EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, attendee.Profile.BadgeName);
-                    Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
-                }
+                // TODO: Send email notification to event Lead that new attendees have been added.
+                EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, attendee.Profile.BadgeName);
+                Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
             }
 
             
