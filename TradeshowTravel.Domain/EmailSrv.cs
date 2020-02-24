@@ -375,19 +375,37 @@ namespace TradeshowTravel.Domain
 
 
         // A new attendee has been added. RSVP request sent.
-        public void SendAttendeeAddedNotifications(EventInfo evt, string username, string newAttendeeName)
+        public void SendAttendeeAddedNotifications(EventInfo evt, string username, List<string> newAttendeeList)
         {
-            var subject = $"Event Travel Portal | {evt.Name}: New Attendee(s) Added";
+            var subject = string.Empty;
+            var body = string.Empty;
 
-            // modify subject to notify BCD when attendee has been added after the created time
-            if (evt.CreatedDate < DateTime.Now && !string.IsNullOrWhiteSpace(newAttendeeName))
+            if (newAttendeeList.Count > 1)
             {
-                subject = $"Event Travel Portal | {evt.Name} :{newAttendeeName} Added";
+                subject = $"Event Travel Portal | {evt.Name}: New Attendee(s) Added";
+
+                // send to owner/lead
+                body = $"Hello {evt.Owner.FirstName},\n\nThe list of attendees for {evt.Name} has been updated by {username}.\n\n" +
+
+                $"Attendees Added: \n\n";
+                for (var i = 0; i < newAttendeeList.Count; i++)
+                {
+                    body += $"{newAttendeeList[i]} \n";
+                }
+
+                body += $"\n View Event: {getEventUrl(evt.ID)}\n\n{getSignature(evt)}";
+                this.Send(evt.Owner.Email, subject, body);
+            }
+            else
+            {
+                string newAttendee = newAttendeeList[0];
+                subject = $"Event Travel Portal | {evt.Name} :{newAttendee} Added";
+
+                body = $"Hello {evt.Owner.FirstName},\n\nThe list of attendees for {evt.Name} has been updated by {username}.\n\nView Event: {getEventUrl(evt.ID)}\n\n{getSignature(evt)}";
+                this.Send(evt.Owner.Email, subject, body);
             }
 
-            // send to owner/lead
-            var body = $"Hello {evt.Owner.FirstName},\n\nThe list of attendees for {evt.Name} has been updated by {username}.\n\nView Event: {getEventUrl(evt.ID)}\n\n{getSignature(evt)}";
-            this.Send(evt.Owner.Email, subject, body);
+           
 
             // send to travel, support, leads, business leads (only receive emails for their segments)
             if (evt.Users != null)

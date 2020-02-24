@@ -1516,11 +1516,12 @@ namespace TradeshowTravel.Domain
             Role currentRole = evt.GetUserRole(CurrentUsername);
 
             int newAttendeeCount = 0;
+            List<string> newAttendeeList = new List<string>();
 
             for (int i = 0; i < eventAttendees.Count; ++i)
             {
                 var attendee = eventAttendees[i];
-
+                
                 attendee.Event = evt;
 
                 if (string.IsNullOrWhiteSpace(attendee.Username))
@@ -1591,6 +1592,8 @@ namespace TradeshowTravel.Domain
                     {
                         attendee.Profile.BadgeName = profile.BadgeName;
                     }
+
+                    newAttendeeList.Add(attendee.Profile.BadgeName);
                 }
 
                 // Check if a new delegate was assigned
@@ -1725,13 +1728,14 @@ namespace TradeshowTravel.Domain
                         Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
                 }
-
-                // TODO: Send email notification to event Lead that new attendees have been added.
-                EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, attendee.Profile.BadgeName);
-                Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
             }
 
-            
+            if (newAttendeeCount > 0)
+            {
+                // TODO: Send email notification to event Lead that new attendees have been added.
+                EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, newAttendeeList);
+                Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
+            }
 
             return ValidationResponse<List<EventAttendee>>.CreateSuccess(eventAttendees);
         }
