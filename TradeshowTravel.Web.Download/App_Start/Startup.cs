@@ -32,6 +32,7 @@ namespace TradeshowTravel.Web.Download
                     {
                         ValidAudience = clientId,
                         ValidateAudience = false,
+                        ValidateTokenReplay = false,
                         ValidIssuer = openIdConnectConfig.Issuer,
                         ValidateIssuer = true,                     
                         IssuerSigningKeyResolver = (t, st, i, p) => openIdConnectConfig.SigningKeys,
