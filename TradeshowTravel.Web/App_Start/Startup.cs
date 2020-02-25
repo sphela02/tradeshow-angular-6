@@ -31,7 +31,7 @@ namespace TradeshowTravel.Web
                     TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidAudience = clientId,
-                        ValidateAudience = false,
+                        ValidateAudience = true,
                         ValidIssuer = openIdConnectConfig.Issuer,
                         ValidateIssuer = true,                     
                         IssuerSigningKeyResolver = (t, st, i, p) => openIdConnectConfig.SigningKeys,
