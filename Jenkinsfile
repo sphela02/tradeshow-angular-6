@@ -9,7 +9,7 @@ def testTool = 'mstest'
 def environment = 'Dev'
 def configuration = 'Debug'
 
-def shouldDeploy = true
+def shouldDeploy = false
 def destinationPaths = ['\\\\usmlb1web1d\\wwwroot-tradeshowtravel']
 def downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
 def scheduledTaskPath = '\\\\usmlb1web1d\\TradeshowTravelScheduledTask'
