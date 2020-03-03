@@ -93,5 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Sprint01.sql" />
+    <None Include="dbo\Scripts\UpdateSegments.sql" />
   </ItemGroup>
 </Project>
