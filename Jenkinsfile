@@ -77,7 +77,7 @@ node(agent) {
 
                             echo "Building Angular"
 							if(environment == 'Prod'){ 
-								bat "node_modules/.bin/ng.cmd build --prod"
+								bat "node_modules/.bin/ng.cmd build --prod --environment=prod"
 							}else{
 								bat "node_modules/.bin/ng.cmd build --prod --environment=devServer"
 							}
