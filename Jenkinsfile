@@ -77,9 +77,9 @@ node(agent) {
 
                             echo "Building Angular"
 							if(environment == 'Prod'){ 
-								bat "node_modules/.bin/ng.cmd build"
+								bat "node_modules/.bin/ng.cmd build --prod"
 							}else{
-								bat "node_modules/.bin/ng.cmd build --environment=devServer"
+								bat "node_modules/.bin/ng.cmd build --prod --environment=devServer"
 							}
 
                             echo "Copying Angular files to project publish folder"
