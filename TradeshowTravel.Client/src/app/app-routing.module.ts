@@ -10,6 +10,7 @@ import { AuthGuardService } from './services/auth-guard.service';
 import { AuthService } from './services/auth.service';
 import { AuthCallbackComponent } from './auth-callback/auth-callback.component';
 import { AppShellComponent } from './shared/app-shell/app-shell.component';
+import { environment } from '../environments/environment';
 
 const routes: Routes = [
     {
@@ -19,11 +20,11 @@ const routes: Routes = [
     {
         path: 'auth-callback',
         component: AuthCallbackComponent
-    },
+    }, 
     {
         path: '',
         component: AppShellComponent,
-        canActivate: [AuthGuardService],
+        canActivate:environment.useSingleSignOn? [AuthGuardService] : [],
         children: [{
             path: 'events',
             component: EventMainComponent,

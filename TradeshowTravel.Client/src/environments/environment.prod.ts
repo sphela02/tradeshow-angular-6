@@ -9,5 +9,6 @@ export const environment = {
   redirectUri: 'https://tradeshowtravel.l3harris.com/auth-callback/',
   postLogoutRedirectUri: 'https://tradeshowtravel.l3harris.com/',
   silentRedirectUri: 'https://tradeshowtravel.l3harris.com/auth-callback?silent=true',
-  refererUrlKey: 'referer_url'
+  refererUrlKey: 'referer_url',
+  useSingleSignOn:false
 };

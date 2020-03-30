@@ -10,16 +10,19 @@ import {
 
 import { Observable } from 'rxjs/Observable';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(public auth: AuthService) {}
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {   
-    request = request.clone({
-      setHeaders: {
-        Authorization: this.auth.getAuthorizationHeaderValue()
-      }
-    });
+  constructor(public auth: AuthService) { }
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (environment.useSingleSignOn) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: this.auth.getAuthorizationHeaderValue()
+        }
+      });
+    }
     return next.handle(request);
   }
 }
