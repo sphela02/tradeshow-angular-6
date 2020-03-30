@@ -10,12 +10,12 @@ def environment = 'Dev'
 def configuration = 'Debug'
 
 def shouldDeploy = false
-def useNewServers = false
+def useNewServers = true
 def destinationPaths = ['\\\\usmlb1web1d\\wwwroot-tradeshowtravel']
 def downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
 def scheduledTaskPath = '\\\\usmlb1web1d\\TradeshowTravelScheduledTask'
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('sso-dev')) {
 	if(useNewServers){	
 		destinationPaths = ['\\\\usmlb1web1d\\wwwroot-tradeshowtravel']
 		downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
@@ -30,7 +30,7 @@ if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
 }
 
 //Production uses two servers for load balancing.
-if (env.BRANCH_NAME.equalsIgnoreCase('master')) {
+if (env.BRANCH_NAME.equalsIgnoreCase('sso-master')) {
 	if(useNewServers){	
 		destinationPaths =  ['\\\\usmlb1web1p\\wwwroot-tradeshowtravel', '\\\\usmlb1web2p\\wwwroot-tradeshowtravel']
 		downloadPaths = ['\\\\usmlb1web1p\\wwwroot-TradeshowTravelDownloads', '\\\\usmlb1web2p\\wwwroot-TradeshowTravelDownloads' ]
