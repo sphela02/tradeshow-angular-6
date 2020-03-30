@@ -8,6 +8,7 @@ using Microsoft.Owin.Security.Jwt;
 using Owin;
 using System.Threading.Tasks;
 using System.Configuration;
+using System.Web.Configuration;
 
 namespace TradeshowTravel.Web.Download
 {
@@ -15,6 +16,12 @@ namespace TradeshowTravel.Web.Download
     {
         public void Configuration(IAppBuilder app)
         {
+            AuthenticationSection authSection = (AuthenticationSection)ConfigurationManager.GetSection("system.web/authentication");
+            if (authSection.Mode.ToString() == "Windows")
+            {
+                return;
+            }
+
             string clientId = ConfigurationManager.AppSettings["TokenValidation_ClientId"];
             string discoveryUrl = ConfigurationManager.AppSettings["TokenValidation_DiscoveryUrl"];
 
@@ -26,14 +33,14 @@ namespace TradeshowTravel.Web.Download
             app.UseJwtBearerAuthentication(
                 new JwtBearerAuthenticationOptions()
                 {
-                    AuthenticationMode = AuthenticationMode.Active,
+                    AuthenticationMode = Microsoft.Owin.Security.AuthenticationMode.Active,
                     AuthenticationType = DefaultAuthenticationTypes.ExternalBearer,
                     TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidAudience = clientId,
                         ValidateAudience = false,
                         ValidIssuer = openIdConnectConfig.Issuer,
-                        ValidateIssuer = true,                     
+                        ValidateIssuer = true,
                         IssuerSigningKeyResolver = (t, st, i, p) => openIdConnectConfig.SigningKeys,
                         NameClaimType = "eca"
                     }
