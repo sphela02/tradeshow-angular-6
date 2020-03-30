@@ -15,7 +15,7 @@ def destinationPaths = ['\\\\usmlb1web1d\\wwwroot-tradeshowtravel']
 def downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
 def scheduledTaskPath = '\\\\usmlb1web1d\\TradeshowTravelScheduledTask'
 
-if(env.BRANCH_NAME.equalsIgnoreCase('dev') || env.BRANCH_NAME.equalsIgnoreCase('feature/turn-authentication-off')) {
+if(env.BRANCH_NAME.equalsIgnoreCase('dev')) {
 	if(useNewServers){	
 		destinationPaths = ['\\\\usmlb1web1d\\wwwroot-tradeshowtravel']
 		downloadPaths = ['\\\\usmlb1web1d\\wwwroot-TradeshowTravelDownloads']
