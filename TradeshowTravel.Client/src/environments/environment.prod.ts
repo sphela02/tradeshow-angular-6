@@ -6,9 +6,9 @@ export const environment = {
   authority: 'https://sso.l3harris.com/ofisid/api/discovery',
   clientId: 'https://tradeshowtravel.l3harris.com/',
   clientSecret:"r66T266jpKjkAXR",
-  redirectUri: 'https://tradeshowtravel.l3harris.com/auth-callback/',
-  postLogoutRedirectUri: 'https://tradeshowtravel.l3harris.com/',
-  silentRedirectUri: 'https://tradeshowtravel.l3harris.com/auth-callback?silent=true',
+  redirectUri: 'https://tradeshowtravel.harris.com/auth-callback/',
+  postLogoutRedirectUri: 'https://tradeshowtravel.harris.com/',
+  silentRedirectUri: 'https://tradeshowtravel.harris.com/auth-callback?silent=true',
   refererUrlKey: 'referer_url',
   useSingleSignOn:false
 };
