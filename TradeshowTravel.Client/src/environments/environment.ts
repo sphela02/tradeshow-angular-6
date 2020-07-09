@@ -15,5 +15,5 @@ export const environment = {
   postLogoutRedirectUri: 'http://localhost:4200/',
   silentRedirectUri: 'http://localhost:4200/auth-callback?silent=true',
   refererUrlKey: 'referer_url',
-  useSingleSignOn:false
+  useSingleSignOn:true
 };
