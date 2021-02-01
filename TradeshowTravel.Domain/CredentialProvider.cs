@@ -66,7 +66,7 @@ namespace TradeshowTravel.Domain
                     {
                         Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk AppID '{CyberArkAppID}'.");
                     }
-                    else if (string.IsNullOrWhiteSpace(CyberArkTradeshowObjectQuery))
+                    else if (string.IsNullOrWhiteSpace(CyberArkECAObjectQuery))
                     {
                         Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk ECA Query '{CyberArkECAObjectQuery}'.");
                     }
