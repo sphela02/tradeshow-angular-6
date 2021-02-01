@@ -14,14 +14,14 @@ namespace TradeshowTravel.Domain
             get { return ConfigurationManager.AppSettings["CyberArkAppID"]; }
         }
 
-        public static string CyberArkECAObjectName
+        public static string CyberArkECAObjectQuery
         {
-            get { return ConfigurationManager.AppSettings["CyberArkECAObjectName"]; }
+            get { return ConfigurationManager.AppSettings["CyberArkECAObjectQuery"]; }
         }
 
-        public static string CyberArkTradeshowObjectName
+        public static string CyberArkTradeshowObjectQuery
         {
-            get { return ConfigurationManager.AppSettings["CyberArkTradeshowObjectName"]; }
+            get { return ConfigurationManager.AppSettings["CyberArkTradeshowObjectQuery"]; }
         }
 
         public static string DBEncryptionPassword
@@ -56,14 +56,49 @@ namespace TradeshowTravel.Domain
                     return connectionString;
                 }
 
-                var connStrBuilder = new SqlConnectionStringBuilder(connectionString);
+                var scsb = new SqlConnectionStringBuilder(connectionString);
 
-                if (string.IsNullOrWhiteSpace(connStrBuilder.Password))
+                if (string.IsNullOrWhiteSpace(scsb.Password) ||
+                    string.IsNullOrWhiteSpace(scsb.UserID) ||
+                    string.IsNullOrWhiteSpace(scsb.DataSource))
                 {
-                    connStrBuilder.Password = GetPassword(CyberArkECAObjectName);
+                    if (string.IsNullOrWhiteSpace(CyberArkAppID))
+                    {
+                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk AppID '{CyberArkAppID}'.");
+                    }
+                    else if (string.IsNullOrWhiteSpace(CyberArkECAObjectQuery))
+                    {
+                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk ECA Query '{CyberArkECAObjectQuery}'.");
+                    }
+                    else
+                    {
+                        var request = new PSDKPasswordRequest();
+                        request.AppID = CyberArkAppID;
+                        request.Query = CyberArkECAObjectQuery;
+
+                        var response = PasswordSDK.GetPassword(request);
+
+                        if (response != null)
+                        {
+                            if (string.IsNullOrWhiteSpace(scsb.Password))
+                            {
+                                scsb.Password = response.Content;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(scsb.UserID))
+                            {
+                                scsb.UserID = response.UserName;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(scsb.DataSource))
+                            {
+                                scsb.DataSource = $"{response.Address}:{response.GetAttribute("PassProps.Port")}/{response.Database}";
+                            }
+                        }
+                    }
                 }
 
-                return connStrBuilder.ToString();
+                return scsb.ToString();
             }
         }
 
@@ -83,14 +118,61 @@ namespace TradeshowTravel.Domain
                     return connectionString;
                 }
 
-                var connStrBuilder = new SqlConnectionStringBuilder(connectionString);
+                var scsb = new SqlConnectionStringBuilder(connectionString);
 
-                if (string.IsNullOrWhiteSpace(connStrBuilder.Password))
+                if (string.IsNullOrWhiteSpace(scsb.Password) ||
+                    string.IsNullOrWhiteSpace(scsb.UserID) ||
+                    string.IsNullOrWhiteSpace(scsb.DataSource))
                 {
-                    connStrBuilder.Password = GetPassword(CyberArkTradeshowObjectName);
+                    if (string.IsNullOrWhiteSpace(CyberArkAppID))
+                    {
+                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk AppID '{CyberArkAppID}'.");
+                    }
+                    else if (string.IsNullOrWhiteSpace(CyberArkTradeshowObjectQuery))
+                    {
+                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk Tradeshow Query '{CyberArkTradeshowObjectQuery}'.");
+                    }
+                    else
+                    {
+                        var request = new PSDKPasswordRequest();
+                        request.AppID = CyberArkAppID;
+                        request.Query = CyberArkTradeshowObjectQuery;
+
+                        var response = PasswordSDK.GetPassword(request);
+
+                        if (response != null)
+                        {
+                            if (string.IsNullOrWhiteSpace(scsb.Password))
+                            {
+                                scsb.Password = response.Content;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(scsb.UserID))
+                            {
+                                scsb.UserID = response.UserName;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(scsb.InitialCatalog))
+                            {
+                                scsb.InitialCatalog = response.Database;
+                            }
+
+                            if (string.IsNullOrWhiteSpace(scsb.DataSource))
+                            {
+                                if (string.IsNullOrWhiteSpace(response.GetAttribute("PassProps.Port")))
+                                {
+                                    scsb.DataSource = response.Address;
+                                }
+                                else
+                                {
+                                    scsb.DataSource = $"{response.Address},{response.GetAttribute("PassProps.Port")}";
+                                }
+                            }
+                        }
+                    }
                 }
 
-                return connStrBuilder.ToString();
+                return scsb.ToString();
             }
         }
 
