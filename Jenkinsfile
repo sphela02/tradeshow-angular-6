@@ -75,11 +75,14 @@ node(agent) {
                             echo "Running npm install"
                             bat "npm install"
 
+                            echo "Rebuild sass"
+                            bat "npm rebuild node-sass"
+
                             echo "Building Angular"
 							if(environment == 'Prod'){ 
 								bat "node_modules/.bin/ng.cmd build --prod --environment=prod"
 							}else{
-								bat "node_modules/.bin/ng.cmd build --prod --environment=devServer"
+								bat "node_modules/.bin/ng.cmd build --prod --environment=dev"
 							}
 
                             echo "Copying Angular files to project publish folder"
