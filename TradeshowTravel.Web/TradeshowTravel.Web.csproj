@@ -17,7 +17,7 @@
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
-    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
@@ -197,15 +197,6 @@
     <None Include="Properties\PublishProfiles\MLBIISDEVL1R2.pubxml" />
     <None Include="Properties\PublishProfiles\Prod.pubxml" />
     <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.MLBIIS1R2.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.MLBIIS2R2.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.MLBIISDEVL1R2.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
