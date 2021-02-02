@@ -199,15 +199,6 @@
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web.MLBIIS1R2.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.MLBIIS2R2.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
-    <None Include="Web.MLBIISDEVL1R2.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
