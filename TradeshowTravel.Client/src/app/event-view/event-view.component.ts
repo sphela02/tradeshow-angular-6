@@ -83,7 +83,7 @@ export class EventViewComponent implements OnInit {
   eventViewBcdUpdateEmail: string;
   eventViewBcdUpdateDate: string;
   showPi: boolean = false;
-  
+
 
   private _event: EventInfo;
   private _attendee: EventAttendee;
@@ -155,7 +155,7 @@ export class EventViewComponent implements OnInit {
 
     this.rebindFieldTables(null);
 
-    this.service.showPi()
+    this.service.showPi(this.event.ID)
       .subscribe(data => {
         this.showPi = data;
       }, error => {
@@ -189,7 +189,7 @@ export class EventViewComponent implements OnInit {
     );
     this.canEditOrganizerFields = CommonService.canEditOrganizerFields(
       this.currentUser, this.event, Role.Support | Role.Lead
-    ); 
+    );
   }
 
   @Input()
@@ -429,7 +429,7 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.title = "Change Organizer Fields";
     popupModalRef.componentInstance.filter = 30;
     popupModalRef.componentInstance.attendees = this.attendeeSelectComponent.checkedAttendeeFields;
-    this.setPopupComponentInstanceOrganizerFields(popupModalRef);   
+    this.setPopupComponentInstanceOrganizerFields(popupModalRef);
 
     this.subscribeToPopupComponentInstanceSave(popupModalRef);
   }
@@ -485,7 +485,7 @@ export class EventViewComponent implements OnInit {
     });
     this.pagetitle.setLoading(true);
     this.service.getAllTravelDocs(
-      ids
+      this.event.ID, ids
     ).subscribe(data => {
       let filename: string = this.event.Name.replace(/[^a-z0-9]/gi, '') + ".zip";
       if (window.navigator && window.navigator.msSaveOrOpenBlob) {
@@ -563,7 +563,7 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.bcdPopupTitle = this.event.Name;
     this.bcdPopupTitle = this.event.Name;
   }
-    
+
   acknowledgeBcdUpdates() {
     this.event.LastBcdUpdatedUsername = this.currentUser.Username;
     this.event.LastBcdUpdatedEmail = this.currentUser.Email;
@@ -586,10 +586,10 @@ export class EventViewComponent implements OnInit {
       }, error => {
         console.log("Error: " + error);
       });
-   
+
     // display section only to organizer and admin roles
     var profile = this.currentUser;
-    
+
     if (profile.Privileges == Permissions.CreateShows  ||
         profile.Privileges == Permissions.Admin  ||
         this._event.Users.some(u => 
@@ -604,7 +604,7 @@ export class EventViewComponent implements OnInit {
             this.event.showBcdUpdatesSection = true;
           }
     }
-    
+
   getBcdUpdateInfo(bcdUpdateData) {
     if (this.currentUserIsBcd) {
       this.service.getUsersByUsername(bcdUpdateData.LastBcdUpdatedUsername)
@@ -667,7 +667,7 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.title = "Edit Other Attendee Details for " + attendee.Profile.FirstName + " " + attendee.Profile.LastName;
     popupModalRef.componentInstance.filter = Role.All;
     popupModalRef.componentInstance.event = this.event;
-    
+
     var attendeeFields: { [key: number]: EventAttendee; } = {}
     attendeeFields[attendee.ID] = attendee;
     popupModalRef.componentInstance.attendees = attendeeFields;
@@ -692,7 +692,7 @@ export class EventViewComponent implements OnInit {
     popupModalRef.componentInstance.title = "Edit Organizer Only for " + attendee.Profile.FirstName + " " + attendee.Profile.LastName;
     popupModalRef.componentInstance.filter = Role.BackOffice;
     popupModalRef.componentInstance.event = this.event;
-       
+
     var attendeeFields: { [key: number]: EventAttendee; } = {}
     attendeeFields[attendee.ID] = attendee;
     popupModalRef.componentInstance.attendees = attendeeFields;

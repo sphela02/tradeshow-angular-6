@@ -124,7 +124,7 @@ export class TradeshowService {
     this._attendeeListState = state;
   }
 
-  getPhoto(url: string) : Observable<Blob> {  
+  getPhoto(url: string) : Observable<Blob> {
     return new Observable(observer => {
       this.http.get(url, { responseType: 'blob', withCredentials: true })
       .pipe(catchError(this.handleError))
@@ -642,10 +642,10 @@ export class TradeshowService {
     return new ErrorObservable(msg);
   }
 
-  getAvatar(username: string) : Observable<Blob> {  
+  getAvatar(username: string) : Observable<Blob> {
       let url: string = this._serviceUrl + "/getavatar/" + username;
       return new Observable(observer => {
-        this.http.get(url, 
+        this.http.get(url,
         { responseType: 'blob', withCredentials: true})
         .pipe(catchError(this.handleError))
         .subscribe( result => {
@@ -671,11 +671,11 @@ export class TradeshowService {
       })
     });
   }
-   
+
   getTravelDocs(username: string): Observable<Array<TravelDoc>> {
     let url: string = this._piServiceUrl + "/TravelDocs/" + username;
     return new Observable(observer => {
-      this.http.get<Array<TravelDoc>>(url, 
+      this.http.get<Array<TravelDoc>>(url,
         { withCredentials: true })
         .pipe(catchError(this.handleError))
         .subscribe(results => {
@@ -687,8 +687,8 @@ export class TradeshowService {
     });
   }
 
-  getAllTravelDocs(ids: Array<number>): Observable<Blob> {
-    let url: string = this._piServiceUrl + "/TravelDocs?ids=" + ids.join("&ids=");
+  getAllTravelDocs(eventID: number, ids: Array<number>): Observable<Blob> {
+    let url: string = this._piServiceUrl + `/TravelDocs/download/${eventID}`;
     return new Observable(observer => {
       this.http.post(url, ids, {
         responseType: 'blob',
@@ -748,8 +748,8 @@ export class TradeshowService {
     });
   }
 
-  showPi(): Observable<boolean> {
-    let url: string = this._piServiceUrl + "/showPi";
+  showPi(eventID: number): Observable<boolean> {
+    let url: string = this._piServiceUrl + "/showPi/" + eventID;
     return new Observable(observer => {
       this.http.get(url, { withCredentials: true })
         .pipe(catchError(this.handleError))

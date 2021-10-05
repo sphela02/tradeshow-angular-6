@@ -126,6 +126,18 @@ namespace TradeshowTravel.Domain
             return false;
         }
 
+        public bool CurrentUserHasRoleForAttendee(string attendeeUsername, Role role)
+        {
+            if (string.IsNullOrWhiteSpace(attendeeUsername))
+            {
+                return false;
+            }
+
+            attendeeUsername = attendeeUsername.Trim().ToUpper();
+
+            return DataRepo.UserHasRoleForAttendee(CurrentUsername, attendeeUsername, role);
+        }
+
         #endregion
 
         #region User Images

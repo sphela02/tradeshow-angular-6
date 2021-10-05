@@ -182,6 +182,13 @@ namespace TradeshowTravel.Data
                 .Any();
         }
 
+        public bool UserHasRoleForAttendee(string username, string attendeeUsername, Role role)
+        {
+            return DB.Attendees.Any(a => a.Username == attendeeUsername &&
+                DB.TradeshowUsers.Any(u => u.TradeshowID == a.TradeshowID &&
+                    u.Username == username && u.Role >= role));
+        }
+
         #endregion
 
         #region User Profiles

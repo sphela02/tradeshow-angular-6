@@ -30,6 +30,8 @@ namespace TradeshowTravel.Domain
 
         bool HasUserRole(int eventID, string username, Role role);
 
+        bool UserHasRoleForAttendee(string username, string attendeeUsername, Role role);
+
         EventInfo GetEvent(int eventID);
 
         EventQueryResult GetEvents(QueryParams parameters, string identityUser = null);
