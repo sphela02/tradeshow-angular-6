@@ -26,7 +26,8 @@ namespace TradeshowTravel.Web.Download.Controllers
         }
 
         [HttpGet]
-        [Route("~/api/showPi")]
+        [HideFromBlackList]
+        [Route("~/api/showPi/{eventId}")]
         public IHttpActionResult Index()
         {
             return Ok(true);
@@ -44,10 +45,9 @@ namespace TradeshowTravel.Web.Download.Controllers
                 : HttpResult.Create(Request, HttpStatusCode.InternalServerError, response.Message);
         }
 
-        [HttpGet]
         [HttpPost]
-        [Route("~/api/TravelDocs")]
-        public IHttpActionResult DownloadAttendeeDocuments([FromUri] int[] ids)
+        [Route("~/api/TravelDocs/download/{eventId}")]
+        public IHttpActionResult DownloadAttendeeDocuments([FromBody] int[] ids)
         {
             ValidationResponse<byte[]> response = Service.GetAttendeeDocuments(ids);
 
