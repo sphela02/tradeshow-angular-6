@@ -236,7 +236,7 @@ namespace TradeshowTravel.Web.Controllers
             parameters = parameters ?? new QueryParams();
             parameters.Sort = parameters.Sort ?? new List<SortParams>();
 
-            var sortByName = parameters.Sort.Where(s => s.Field == "Name").FirstOrDefault();
+            var sortByName = parameters.Sort.Where(s => s.Field == "User.BadgeName").FirstOrDefault();
             parameters.Sort.Add(new SortParams { 
                 Field = "User.LastName",
                 Desc = (sortByName != null) ? sortByName.Desc : false
