@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
 
@@ -232,6 +233,25 @@ namespace TradeshowTravel.Web.Controllers
         [Route("~/api/events/attendees/export/{eventID}")]
         public IHttpActionResult ExportAttendees(int eventID, QueryParams parameters)
         {
+            parameters = parameters ?? new QueryParams();
+            parameters.Sort = parameters.Sort ?? new List<SortParams>();
+
+            var sortByName = parameters.Sort.Where(s => s.Field == "Name").FirstOrDefault();
+            parameters.Sort.Add(new SortParams { 
+                Field = "User.LastName",
+                Desc = (sortByName != null) ? sortByName.Desc : false
+            });
+            parameters.Sort.Add(new SortParams
+            {
+                Field = "User.FirstName",
+                Desc = (sortByName != null) ? sortByName.Desc : false
+            });
+            
+            if (sortByName != null)
+            {
+                parameters.Sort.Remove(sortByName);
+            }
+
             ValidationResponse<Workbook> response = Service.ExportEventAttendees(eventID, parameters);
 
             if (response.Success == false)
