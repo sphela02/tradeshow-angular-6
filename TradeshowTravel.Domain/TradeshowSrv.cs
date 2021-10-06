@@ -1823,8 +1823,8 @@ namespace TradeshowTravel.Domain
                 int rowIndex = 0, colIndex = 0;
 
                 ws.Cells[rowIndex, colIndex].SetValue("Picture");
-                ws.Cells[rowIndex, ++colIndex].SetValue("First Name");
                 ws.Cells[rowIndex, ++colIndex].SetValue("Last Name");
+                ws.Cells[rowIndex, ++colIndex].SetValue("First Name");
                 ws.Cells[rowIndex, ++colIndex].SetValue("RSVP Request Sent");
                 ws.Cells[rowIndex, ++colIndex].SetValue("RSVP Response (Y/N)");
                 ws.Cells[rowIndex, ++colIndex].SetValue("Job Title");
@@ -1911,8 +1911,8 @@ namespace TradeshowTravel.Domain
                     }
 
 
-                    ws.Cells[rowIndex, colIndex].SetValue(attendee.Profile.FirstName);
-                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.LastName);
+                    ws.Cells[rowIndex, colIndex].SetValue(attendee.Profile.LastName);
+                    ws.Cells[rowIndex, ++colIndex].SetValue(attendee.Profile.FirstName);
 
                     if (attendee.DateRSVP.HasValue)
                     {

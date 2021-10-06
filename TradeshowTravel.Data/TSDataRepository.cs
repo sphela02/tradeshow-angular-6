@@ -184,9 +184,10 @@ namespace TradeshowTravel.Data
 
         public bool UserHasRoleForAttendee(string username, string attendeeUsername, Role role)
         {
-            return DB.Attendees.Any(a => a.Username == attendeeUsername &&
+            return DB.Attendees.Any(a => a.Username == attendeeUsername && (
+                a.Tradeshow.OwnerUsername == username ||
                 DB.TradeshowUsers.Any(u => u.TradeshowID == a.TradeshowID &&
-                    u.Username == username && u.Role >= role));
+                    u.Username == username && u.Role >= role)));
         }
 
         #endregion
