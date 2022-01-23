@@ -5,6 +5,7 @@ import { Role, InputType } from '../shared/Enums';
 import { TradeshowService } from '../tradeshow.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonService } from '../common.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-attendee-fields-popup',
@@ -21,7 +22,7 @@ export class AttendeeFieldsPopupComponent implements OnInit {
   private _event: EventInfo;
   private _attendees: { [key: number]: EventAttendee; };
   private _fields: Array<EventField>;
-  
+
   maxvalues: { [key: number]: any } = {};
   minvalues: { [key: number]: any } = {};
   values: { [key: number]: any } = {};
@@ -47,7 +48,7 @@ export class AttendeeFieldsPopupComponent implements OnInit {
         f => f.Included
       ) : null;
     }
-   
+
     // Load initial values when editing 1 attendee
     if (this.fields && this.attendees && Object.keys(this.attendees).length === 1) {
       for (var firstKey in this.attendees) break;
@@ -138,7 +139,7 @@ export class AttendeeFieldsPopupComponent implements OnInit {
     this.activeModal.close();
   }
 
-  onSubmit() {   
+  onSubmit() {
     if (!this.attendees || !this.fields) {
       return;
     }
@@ -153,6 +154,13 @@ export class AttendeeFieldsPopupComponent implements OnInit {
           }
         } else {
           value = this.values[f.ID];
+        }
+
+        if (f.Input == InputType.Date) {
+          var dt: Date = value as Date;
+          if (dt) {
+            value = moment(dt).format('YYYY-MM-DDT00:00:00.000') + "Z";
+          }
         }
 
         if (f.Source) {
