@@ -11,6 +11,8 @@ const REMINDER_TEMPLATE = `Hello <EventAttendee.Name>,
 
 We would like to inform you about <EventInfo.Name>!
 
+Please visit <Page: EventInfo.Name> for more information.
+
 Thank you,`;
 
 @Component({
