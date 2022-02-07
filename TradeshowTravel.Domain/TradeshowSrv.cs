@@ -1844,7 +1844,7 @@ namespace TradeshowTravel.Domain
                     foreach (var field in evt.Fields)
                     {
                         // skip these fields on the export
-                        if (field.Label == "Harris Credit Card Number" || field.Label == "Expiration Date" || field.Label == "CVV Number")
+                        if (field.Label.Contains("Credit Card") || field.Label == "Expiration Date" || field.Label == "CVV Number")
                         {
                             continue;
                         }
@@ -1953,7 +1953,7 @@ namespace TradeshowTravel.Domain
                         foreach (var field in evt.Fields)
                         {
                             // skip these fields on the export
-                            if (field.Label == "Harris Credit Card Number" || field.Label == "Expiration Date" || field.Label == "CVV Number")
+                            if (field.Label.Contains("Credit Card") || field.Label == "Expiration Date" || field.Label == "CVV Number")
                             {
                                 continue;
                             }

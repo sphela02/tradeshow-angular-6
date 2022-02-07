@@ -40,7 +40,7 @@
       <div class="col-2"><button [disabled]="!isDisabled" (click)="acknowledgeBcdUpdates()" class="btn btn-info btn-sm waves-effect waves-light px-5 float-right m-3" type="button">Save</button></div>
     </div>
   </div>
-  
+
 
   <div class="card mb-3">
     <app-event-info [(event)]="event">
@@ -279,7 +279,7 @@
                             [filterService]="filterService"
                             [currentFilter]="filter">
           </grid-rsvp-filter>
-        </ng-template> 
+        </ng-template>
       </kendo-grid-column>
 
       <kendo-grid-column field="User.Title" title="Job Title" width="200">
@@ -398,7 +398,7 @@
         </ng-template>
       </kendo-grid-column>
 
-      <kendo-grid-column field="User.DOB" title="Date of Birth" [filterable]="false" width="200" 
+      <kendo-grid-column field="User.DOB" title="Date of Birth" [filterable]="false" width="200"
         *ngIf="canViewPassportInfo">
         <ng-template kendoGridCellTemplate let-dataItem>
           {{dataItem.Profile.DOB | date:'MM/dd/yyyy'}}
@@ -445,7 +445,7 @@
           </ng-template>
           <ng-template *ngIf="field.Input == InputType.Date"
                        kendoGridCellTemplate let-dataItem>
-            {{ dataItem[field.Source] | date: 'MM/dd/yyyy' }}
+            {{ dataItem[field.Source] | date: field.Format }}
           </ng-template>
           <ng-template *ngIf="field.Input == InputType.MultiSelect"
                        kendoGridCellTemplate let-dataItem>
@@ -460,7 +460,7 @@
                            width="200">
           <ng-template kendoGridFilterMenuTemplate *ngIf="field.Input != InputType.YesOrNo"
                        let-filter let-column="column">
-            <kendo-grid-string-filter-cell 
+            <kendo-grid-string-filter-cell
                                            [showOperators]="false"
                                            [column]="column">
             </kendo-grid-string-filter-cell>

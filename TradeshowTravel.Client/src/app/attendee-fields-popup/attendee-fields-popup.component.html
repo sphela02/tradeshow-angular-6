@@ -29,7 +29,7 @@
               [activeView]="'month'"
               [max]="maxvalues[field.ID]"
               [min]="minvalues[field.ID]"
-              format="MM/dd/yyyy"
+              format="{{field.Format}}"
               formatPlaceholder="formatPattern"
               placeholder=" "
               style="width: 100%;">
@@ -76,7 +76,7 @@
               [activeView]="'month'"
               [max]="maxvalues[field.ID]"
               [min]="minvalues[field.ID]"
-              format="MM/dd/yyyy"
+              format="{{field.Format}}"
               formatPlaceholder="formatPattern"
               placeholder=" "
               style="width: 100%;">
