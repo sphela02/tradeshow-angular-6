@@ -474,6 +474,7 @@ namespace TradeshowTravel.Data
                         Tooltip = f.Tooltip,
                         Order = f.Order,
                         Options = f.Options,
+                        Format = f.Format,
                         Required = f.Required,
                         Included = f.Included,
                         Access = f.Access
@@ -1145,6 +1146,7 @@ namespace TradeshowTravel.Data
             field.Tooltip = eventField.Tooltip;
             field.Order = eventField.Order;
             field.Options = eventField.Options;
+            field.Format = eventField.Format;
             field.Required = eventField.Required;
             field.Included = eventField.Included;
 

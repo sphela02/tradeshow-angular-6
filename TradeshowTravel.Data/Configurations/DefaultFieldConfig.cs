@@ -45,20 +45,26 @@
                 .IsUnicode(false)
                 .IsOptional();
 
-            Property(p => p.Order)
+            Property(p => p.Format)
                 .HasColumnOrder(6)
-                .IsRequired();
+                .HasMaxLength(25)
+                .IsUnicode(false)
+                .IsOptional();
 
-            Property(p => p.Required)
+            Property(p => p.Order)
                 .HasColumnOrder(7)
                 .IsRequired();
 
-            Property(p => p.Included)
+            Property(p => p.Required)
                 .HasColumnOrder(8)
                 .IsRequired();
 
-            Property(p => p.Access)
+            Property(p => p.Included)
                 .HasColumnOrder(9)
+                .IsRequired();
+
+            Property(p => p.Access)
+                .HasColumnOrder(10)
                 .IsRequired();
 
             HasKey(k => k.ID);

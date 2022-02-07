@@ -12,6 +12,7 @@ namespace TradeshowTravel.Data.Models
         public string Source { get; set; }
         public string Tooltip { get; set; }
         public string Options { get; set; }
+        public string Format { get; set; }
         public int Order { get; set; }
         public bool Required { get; set; }
         public bool Included { get; set; }
