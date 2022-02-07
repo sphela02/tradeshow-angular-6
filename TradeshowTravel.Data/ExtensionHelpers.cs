@@ -167,6 +167,7 @@ namespace TradeshowTravel.Data
                 Source = field.Source,
                 Tooltip = field.Tooltip,
                 Options = field.Options,
+                Format = field.Format,
                 Order = field.Order,
                 Required = field.Required,
                 Included = field.Included,

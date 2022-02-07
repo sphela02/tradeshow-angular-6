@@ -1,7 +1,7 @@
 import { Role, ShowType, InputType } from './Enums';
 import { UserInfo } from './UserInfo';
 
-export interface EventInfo { 
+export interface EventInfo {
     ID: number;
     Name: string;
     Description: string;
@@ -34,25 +34,26 @@ export interface EventInfo {
     eventViewBcdUpdateDate: string;
 }
 
-export interface EventUser { 
+export interface EventUser {
     User: UserInfo;
     Role: Role;
 }
 
-export interface EventField { 
+export interface EventField {
     ID: number;
     Label: string;
     Input: InputType;
     Source: string;
     Tooltip: string;
     Options: string;
+    Format: string;
     Order: number;
     Required: boolean;
     Included: boolean;
     Access: Role;
 }
 
-export interface EventRoomBlock { 
+export interface EventRoomBlock {
     Date: Date;
     EstRoomCount: number;
 }
