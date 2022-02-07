@@ -8,7 +8,7 @@
   <div class="bg-secondary px-3 py-2 text-dark" *ngIf="event">
       The fields with a (<span class="text-danger">*</span>) are required by <span class="font-weight-bold">{{event.RsvpDueDate | date: 'MMM d, yyyy'}}</span>.
       <br><br>
-      Your personal information is only viewable by the show organizer and is securely stored in accordance with Harris policy.
+      Your personal information is only viewable by the show organizer and is securely stored in accordance with L3Harris policy.
   </div>
   <div class="modal-body">
     <form #profileForm="ngForm" class="row">
@@ -157,11 +157,11 @@
           <input type="text" id="coi" name="coi" class="form-control" maxlength="50"
                 [(ngModel)]="profile.COI">
         </div>
-  
+
         <br />
         <h6 class="pb-2" *ngIf="showPassportInfo">Scanned Travel Documents</h6>
         <small>
-        <div class="row" *ngFor="let tdoc of TravelDocList; let i = index"> 
+        <div class="row" *ngFor="let tdoc of TravelDocList; let i = index">
           <div class="col-md-1">
             <a class="valign-middle" (click)="removeTravelDoc($event)" [attr.data-index]="i">
               <i class="text-warning fa fa-minus-circle fa-lg mr-1" aria-hidden="true"></i>
@@ -173,7 +173,7 @@
           </div>
           <div class="col-md-9">
             {{tdoc.Description}}
-          </div> 
+          </div>
         </div>
         <br/>
         <div class="row">
@@ -183,10 +183,10 @@
             </a>
           </div>
         </div>
-        </small>  
+        </small>
       </div>
-        
-      
+
+
     </form>
   </div>
   <div class="modal-footer">
