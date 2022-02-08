@@ -205,14 +205,7 @@ namespace TradeshowTravel.Data
                 IsHotelNeeded = attendee.IsHotelNeeded.ToYesNoString(),
                 Properties = attendee.FieldValues
                     .Where(v => v.TradeshowField.Included)
-                    .ToDictionary(k => k.TradeshowFieldID, v => { 
-                        if (v.TradeshowField.Input == InputType.Date.ToString())
-                        {
-                            return v.Value.ToDateTime().ToString();
-                        }
-
-                        return v.Value; 
-                    })
+                    .ToDictionary(k => k.TradeshowFieldID, v => v.Value)
             };
             
             return ea;

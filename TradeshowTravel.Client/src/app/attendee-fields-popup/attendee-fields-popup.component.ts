@@ -159,11 +159,7 @@ export class AttendeeFieldsPopupComponent implements OnInit {
         if (f.Input == InputType.Date) {
           var dt: Date = value as Date;
           if (dt) {
-            if (f.Format === 'MM/yyyy') {
-              value = moment(dt).endOf('month').format('YYYY-MM-DDT00:00:00.000') + "Z";
-            } else {
-              value = moment(dt).format('YYYY-MM-DDT00:00:00.000') + "Z";
-            }
+            value = moment(dt).format('YYYY-MM-DDT00:00:00');
           }
         }
 
