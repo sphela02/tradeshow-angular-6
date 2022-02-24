@@ -134,7 +134,7 @@ namespace TradeshowTravel.ECA
             {
                 if (str.Length > 1)
                 {
-                   return char.ToUpperInvariant(str[0]).ToString() + str.Substring(1).ToLower();
+                   return char.ToUpperInvariant(str[0]).ToString() + str.Substring(1);
                 }
                 else
                 {
