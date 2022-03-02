@@ -328,7 +328,7 @@ namespace TradeshowTravel.Domain
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                name = name.Trim().ToLower();
+                name = name.Trim();
 
                 string[] names = name.Split(new char[] { ',' }, 2);
 
