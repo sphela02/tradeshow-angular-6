@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 $primary: #0073c6;
 @import "~@progress/kendo-theme-material/scss/all";
-@import url('https://design.harris.com/dist/v1.0/css/default/default.min.css');
+@import url('https://design.l3harris.com/dist/v1.0/css/default/default.min.css');
 
 
 // Colors
@@ -19,7 +19,7 @@ $breakpoint-xl: '1140px';
 /* Absolute Center Spinner */
 .loading {
     position: relative;
-    
+
     &:before {
         background-color: rgba(0,0,0,0.3);
         bottom: 0;
@@ -69,11 +69,11 @@ body.loading {
     #app-alerts {
         color: var(--harris-grey);
         position: relative;
-    
+
         i {
             font-size: 1.9rem;
         }
-    
+
         .badge {
             font-size: .6em;
             line-height: 1.3;
@@ -95,13 +95,13 @@ body.loading {
             height: auto;
             line-height: inherit;
         }
-    
+
         .app-name {
             background-color: $harris-red;
             padding-top: 1.35rem;
             padding-bottom: 1.35rem;
         }
-        
+
         .user-menu {
             background-color: whitesmoke;
             padding-top: 2rem;
@@ -126,7 +126,7 @@ body.loading {
                        margin-right: 0.6rem;
                    }
                 }
-    
+
                 &.active {
                     border-left-color: $harris-red!important;
 
@@ -139,7 +139,7 @@ body.loading {
                         }
                     }
                 }
-    
+
                 .nav .nav-item .nav-link {
                     color: $harris-grey;
                     font-weight: 400;
@@ -276,9 +276,9 @@ ul.list-tabs {
     padding: 8px 16px;
 }
 
-.k-grid .k-grid-filter { 
+.k-grid .k-grid-filter {
     margin-top: 0;
-    position: absolute; top: 50%; 
+    position: absolute; top: 50%;
     transform: translate(0, -50%);
     right: 0px;
 }
@@ -287,7 +287,7 @@ ul.list-tabs {
 .k-grid-content-locked {
     border-right-width: 0px!important;
 }
-.k-grid-lockedcolumns .k-grid-content, 
+.k-grid-lockedcolumns .k-grid-content,
 .k-grid-lockedcolumns .k-grid-header-wrap {
     -webkit-box-shadow: inherit;
     box-shadow: inherit;
@@ -307,8 +307,8 @@ ul.list-tabs {
 }
 .valign-middle {
     margin-top: 0;
-    position: absolute; 
-    top: 50%; 
+    position: absolute;
+    top: 50%;
     transform: translate(0, -50%)
 }
 
@@ -344,8 +344,8 @@ ul.list-tabs {
 .hide-for-mobile {
     @media screen and (max-width: $breakpoint-md) {
         display: none !important;
-        visibility: hidden !important; 
-        
+        visibility: hidden !important;
+
         .ignore-mobile-hide & {
             display: initial !important;
             visibility: visible !important;
@@ -356,6 +356,6 @@ ul.list-tabs {
 .mobile-only {
     @media screen and (min-width: $breakpoint-md) {
         display: none !important;
-        visibility: hidden !important;       
+        visibility: hidden !important;
     }
 }
