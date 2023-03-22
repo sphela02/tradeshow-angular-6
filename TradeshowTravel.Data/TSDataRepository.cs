@@ -236,23 +236,24 @@ namespace TradeshowTravel.Data
                 return null;
             }
 
-            var query = this.DB.Users
-                .Include("Delegate")
-                .Where(u => u.Username == username);
-
             if (!string.IsNullOrWhiteSpace(identityUser))
             {
-                query = query.Where(
-                    u => u.Username == identityUser ||
-                         u.DelegateUsername == identityUser ||
-                         u.Attendees.Any(
-                             a => a.Tradeshow.OwnerUsername == identityUser ||
-                                  a.Tradeshow.Users.Any(
-                                      x => x.Username == identityUser
-                                      )));
+                if (!username.Equals(identityUser, StringComparison.OrdinalIgnoreCase) &&
+                    !DB.Users.Any(u => u.Username == username && u.DelegateUsername == identityUser) &&
+                    !DB.Tradeshows.Any(t => t.Users.Any(u => u.Username == username) && 
+                        t.Users.Any(u => u.Username == identityUser)) &&
+                    !DB.Attendees.Any(a => a.Username == username && (
+                        a.Tradeshow.OwnerUsername == identityUser || 
+                        a.Tradeshow.Users.Any(u => u.Username == identityUser))))
+                {
+                    return null;
+                }
             }
 
-            var user = query.FirstOrDefault();
+            var user = DB.Users
+                .Include("Delegate")
+                .Where(u => u.Username == username)
+                .FirstOrDefault();
 
             if (user == null)
             {
