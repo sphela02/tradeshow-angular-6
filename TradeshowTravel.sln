@@ -31,11 +31,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Telerik", "Telerik", "{9CA5
 		Telerik\Telerik.Windows.Zip.xml = Telerik\Telerik.Windows.Zip.xml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AngularClient", "AngularClient", "{58D220D4-D268-41D5-968C-0BA61D699147}"
-	ProjectSection(SolutionItems) = preProject
-		TradeshowTravel.Client.zip = TradeshowTravel.Client.zip
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradeshowTravel.ScheduledTask", "TradeshowTravel.ScheduledTask\TradeshowTravel.ScheduledTask.csproj", "{A15AFDFC-1AD9-4C53-831F-1EB6FD00E053}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BB960487-ECBC-4089-8FC7-AA46EC994BBE}"
