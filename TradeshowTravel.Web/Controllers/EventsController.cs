@@ -13,8 +13,7 @@ namespace TradeshowTravel.Web.Controllers
     using System.Net.Http.Headers;
     using System.Web;
     using System;
-    using Common.Logging;
-
+    
     [Authorize]
     [EnableCors]
     public class EventsController : BaseController
@@ -305,7 +304,7 @@ namespace TradeshowTravel.Web.Controllers
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Warning, $"Unable to upload file for event {eventID}. Exception: {ex} Message {ex.Message}");
+                theLogger.Warn(ex, $"Unable to upload file for event {eventID}.");
 
                 string message = "Unable to upload file.";
 

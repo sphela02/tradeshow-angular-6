@@ -5,7 +5,6 @@ using System.Net.Mail;
 
 namespace TradeshowTravel.Domain
 {
-    using Common.Logging;
     using DTOs;
     using System;
     using System.Configuration;
@@ -20,6 +19,8 @@ namespace TradeshowTravel.Domain
         private readonly string baseUrl;
 
         private readonly string EMAIL_TEMPLATE_PATH = ConfigurationManager.AppSettings["EmailTemplatesPath"];
+
+        private static NLog.ILogger theLogger { get; } = NLog.LogManager.GetCurrentClassLogger();
 
         private IDataRepository repo = null;
 
@@ -116,7 +117,7 @@ namespace TradeshowTravel.Domain
                 }
                 catch (Exception ex)
                 {
-                    Logging.LogMessage(LogLevel.DebugDetailed, $"Unable to delete file {item}. Exception: {ex} Message {ex.Message}");
+                    theLogger.Debug(ex, $"Unable to delete file {item}.");
                 }
             }
 
@@ -126,8 +127,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.DebugDetailed, $"Unable to delete folder {folder}. Exception: {ex} Message {ex.Message}");
-
+                theLogger.Debug(ex, $"Unable to delete folder {folder}.");
             }
         }
 

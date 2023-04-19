@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace TradeshowTravel.Data
 {
-    using Common.Logging;
     using Configurations;
     using Models;
     using Domain;
@@ -16,6 +15,7 @@ namespace TradeshowTravel.Data
     public class TSTDB: DbContext
     {
         private string EncryptionPwdHash { get; set; }
+        private NLog.ILogger theLogger { get; }
 
         public TSTDB() : base(CredentialProvider.TSTConnectionString)
         {
@@ -23,7 +23,9 @@ namespace TradeshowTravel.Data
 
             this.EncryptionPwdHash = CredentialProvider.DBEncryptionPassword;
 
-            this.Database.Log = sql => Logging.LogMessage(LogLevel.DebugDetailed, sql);
+            theLogger = NLog.LogManager.GetCurrentClassLogger();
+
+            this.Database.Log = sql => theLogger.Trace(sql);
         }
                 
         public virtual DbSet<Attendee> Attendees { get; set; }

@@ -5,7 +5,6 @@ using System.Linq;
 namespace TradeshowTravel.Domain
 {
     using DTOs;
-    using Common.Logging;
     using System.Text.RegularExpressions;
 
     public class Encrypted : Attribute

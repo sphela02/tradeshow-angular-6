@@ -12,7 +12,6 @@ using System.Net.Mime;
 
 namespace TradeshowTravel.Domain
 {
-    using Common.Logging;
     using DTOs;
     using Telerik.Windows.Documents.Spreadsheet.Model;
     using Telerik.Windows.Documents.Spreadsheet.Model.Shapes;
@@ -20,6 +19,7 @@ namespace TradeshowTravel.Domain
 
     public class TradeshowSrv
     {
+        private NLog.ILogger theLogger { get; }
         private IDataRepository DataRepo { get; set; }
         private IUserProfileQuery UserSrv { get; set; }
         private EmailSrv EmailSrv { get; set; }
@@ -31,6 +31,8 @@ namespace TradeshowTravel.Domain
 
         public TradeshowSrv(IDataRepository dataRepository, IUserProfileQuery userService)
         {
+            theLogger = NLog.LogManager.GetCurrentClassLogger();
+
             DataRepo = dataRepository;
             UserSrv = userService;
 
@@ -180,7 +182,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error removing images '{username}'.  Ex: {ex}");
+                theLogger.Error(ex, $"Error removing images '{username}'.");
                 return ValidationResponse<bool>.CreateFailure($"Error removing images for (username={username})");
             }
         }
@@ -231,7 +233,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving the image '{category}' for '{username}'.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving the image '{category}' for '{username}'.");
                 return ValidationResponse<bool>.CreateFailure($"Error saving the image '{category}' for (username={username})");
             }
         }
@@ -246,7 +248,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error querying user images. Ex: {ex}");
+                theLogger.Error(ex, $"Error querying user images.");
                 return ValidationResponse<List<UserImages>>.CreateFailure("Error querying user images.");
             }
 
@@ -265,7 +267,7 @@ namespace TradeshowTravel.Domain
             {
                 string message = "Error zipping travel documents.";
 
-                Logging.LogMessage(LogLevel.Error, $"{message} Ex: {ex}");
+                theLogger.Error(ex, $"{message}");
                 return ValidationResponse<byte[]>.CreateFailure(message);
             }
         }
@@ -409,7 +411,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving the profile for {username}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving the profile for {username}.");
                 return null;
             }
 
@@ -444,7 +446,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error getting profile for {username}. Ex: {ex}");
+                theLogger.Error(ex, $"Error getting profile for {username}.");
                 return ValidationResponse<UserProfile>.CreateFailure($"Error getting profile for {username}.");
             }
 
@@ -560,7 +562,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving the profile for {profile.Username}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving the profile for {profile.Username}.");
                 return ValidationResponse<UserProfile>.CreateFailure(
                     $"Error saving the profile for {profile.Username}"
                     );
@@ -575,7 +577,7 @@ namespace TradeshowTravel.Domain
             {
                 // TODO: Send delegate notification
                 EmailSrv.SendDelegateNotification(profile);
-                Logging.LogMessage(LogLevel.DebugBasic, $"Send delegate email to '{profile.DelegateUsername}'.");
+                theLogger.Debug($"Send delegate email to '{profile.DelegateUsername}'.");
             }
 
             return ValidationResponse<UserProfile>.CreateSuccess(profile);
@@ -591,7 +593,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error getting user profiles.  Ex: {ex}");
+                theLogger.Error(ex, $"Error getting user profiles.");
                 return ValidationResponse<List<UserProfile>>.CreateFailure("Error getting user profiles.");
             }
         }
@@ -630,7 +632,7 @@ namespace TradeshowTravel.Domain
                 }
                 catch (Exception ex)
                 {
-                    Logging.LogMessage(LogLevel.Error, $"Error saving privileged user '{username}'.  Ex: {ex}");
+                    theLogger.Error(ex, $"Error saving privileged user '{username}'.");
                     return ValidationResponse<bool>.CreateFailure($"Error saving privileged user '{username}'.");
                 }
             }
@@ -670,7 +672,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error removing {privilege} from user '{username}'.  Ex: {ex}");
+                theLogger.Error(ex, $"Error removing {privilege} from user '{username}'.");
                 return ValidationResponse<bool>.CreateFailure($"Error removing {privilege} from user '{username}'.");
             }
 
@@ -730,7 +732,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error querying events. Ex: {ex}");
+                theLogger.Error(ex, $"Error querying events.");
                 return ValidationResponse<EventQueryResult>.CreateFailure("Error querying events.");
             }
 
@@ -876,7 +878,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving the event '{eventInfo.Name}' ({eventInfo.ID}).  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving the event '{eventInfo.Name}' ({eventInfo.ID}).");
                 return ValidationResponse<EventInfo>.CreateFailure($"Error saving the event (ID={eventInfo.ID})");
             }
 
@@ -884,7 +886,7 @@ namespace TradeshowTravel.Domain
             {
                 // TODO: Send new event email.
                 EmailSrv.SendNewEventNotifications(eventInfo);
-                Logging.LogMessage(LogLevel.DebugBasic, $"Send new event email to team.");
+                theLogger.Debug($"Send new event email to team.");
             }
 
             return ValidationResponse<EventInfo>.CreateSuccess(eventInfo);
@@ -906,7 +908,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error deleting event {eventID}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error deleting event {eventID}.");
                 return ValidationResponse<bool>.CreateFailure($"Error deleting event {eventID}.");
             }
 
@@ -954,7 +956,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving event users for event ID: {eventID}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving event users for event ID: {eventID}.");
                 return ValidationResponse<bool>.CreateFailure($"Error saving event users for event ID: {eventID}");
             }
 
@@ -971,7 +973,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error getting fields for event ID: {eventID}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error getting fields for event ID: {eventID}.");
 
                 return ValidationResponse<List<EventField>>.CreateFailure(
                     $"Error getting fields for event ID: {eventID}"
@@ -1044,7 +1046,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving fields for event ID: {eventID}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving fields for event ID: {eventID}.");
                 return ValidationResponse<bool>.CreateFailure($"Error saving fields for event ID: {eventID}");
             }
 
@@ -1120,7 +1122,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving fields for event ID: {eventID}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving fields for event ID: {eventID}.");
                 return ValidationResponse<EventField>.CreateFailure($"Error saving fields for event ID: {eventID}");
             }
 
@@ -1160,7 +1162,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error deleting field for event ID: {eventID}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error deleting field for event ID: {eventID}.");
                 return ValidationResponse<bool>.CreateFailure($"Error deleting field for event ID: {eventID}");
             }
 
@@ -1201,7 +1203,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving the attacment '{attachment.FileName}' for event: {eventID}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving the attacment '{attachment.FileName}' for event: {eventID}.");
                 success = false;
             }
 
@@ -1258,7 +1260,7 @@ namespace TradeshowTravel.Domain
                 }
                 catch (Exception ex)
                 {
-                    Logging.LogMessage(LogLevel.Error, $"Error saving the RSVP due date for event: {eventID}.  Ex: {ex}");
+                    theLogger.Error(ex, $"Error saving the RSVP due date for event: {eventID}.");
                     return ValidationResponse<bool>.CreateFailure($"Error saving the RSVP due date for event: {eventID}");
                 }
             }
@@ -1313,13 +1315,13 @@ namespace TradeshowTravel.Domain
                 if(DataRepo.IsUserNew(attendee.Username))
                 {
                     EmailSrv.SendNewUser(evt, attendee);
-                    Logging.LogMessage(LogLevel.DebugBasic, $"Send Welcome notification to {attendee.Username}.");
+                    theLogger.Debug($"Send Welcome notification to {attendee.Username}.");
                 }
 
                 // TODO: Replace email text placeholders with object property values
                 // TODO: Send email to attendee and update RSVP date
                 EmailSrv.SendRSVP(evt, attendee, req);
-                Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP notification to {attendee.Username} for event {eventID}.");
+                theLogger.Debug($"Send RSVP notification to {attendee.Username} for event {eventID}.");
                 attendee.SendRSVP = true;
                 attendee.DateRSVP = timestamp;
             }
@@ -1330,7 +1332,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error saving RSVP due date for attendees: {String.Join(", ", req.AttendeeIDs)}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error saving RSVP due date for attendees: {String.Join(", ", req.AttendeeIDs)}.");
                 return ValidationResponse<bool>.CreateSuccess(false);
             }
 
@@ -1398,7 +1400,7 @@ namespace TradeshowTravel.Domain
             // TODO: Replace email text placeholders with object property values
             // TODO: Add everyone to one email? doesn't seem to be attendee specific.
             EmailSrv.SendReminderNotifications(evt, attendees, req);
-            Logging.LogMessage(LogLevel.DebugBasic, $"Send reminder notification to {String.Join(", ", req.AttendeeIDs)} for event {eventID}.");
+            theLogger.Debug($"Send reminder notification to {String.Join(", ", req.AttendeeIDs)} for event {eventID}.");
 
             return ValidationResponse<bool>.CreateSuccess(true);
         }
@@ -1441,7 +1443,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error querying event attendees. Ex: {ex}");
+                theLogger.Error(ex, $"Error querying event attendees.");
                 return ValidationResponse<EventAttendeeQueryResult>.CreateFailure("Error querying event attendees.");
             }
 
@@ -1566,7 +1568,7 @@ namespace TradeshowTravel.Domain
                     // Skip if new but has already been added
                     if (DataRepo.GetAttendee(eventID, attendee.Username) != null)
                     {
-                        Logging.LogMessage(LogLevel.DebugDetailed, $"{attendee.Username} is already a part of event {eventID}, skipping.");
+                        theLogger.Trace($"{attendee.Username} is already a part of event {eventID}, skipping.");
                         continue;
                     }
 
@@ -1674,7 +1676,7 @@ namespace TradeshowTravel.Domain
                 }
                 catch (Exception ex)
                 {
-                    Logging.LogMessage(LogLevel.Error, $"Error saving attendee '{attendee.Username}' for event ID: {eventID}.  Ex: {ex}");
+                    theLogger.Error(ex, $"Error saving attendee '{attendee.Username}' for event ID: {eventID}.");
                     return ValidationResponse<List<EventAttendee>>.CreateFailure($"Error saving attendee '{attendee.Username}' for event ID: {eventID}");
                 }
 
@@ -1682,7 +1684,7 @@ namespace TradeshowTravel.Domain
                 {
                     // TODO: Send delegate notification
                     EmailSrv.SendDelegateNotification(attendee.Profile); // maybe make this of type EventAttendee?
-                    Logging.LogMessage(LogLevel.DebugBasic, $"Send delegate email to '{attendee.Profile.DelegateUsername}'.");
+                    theLogger.Debug($"Send delegate email to '{attendee.Profile.DelegateUsername}'.");
                 }
 
                 // Don't bother sending notifications for past events
@@ -1705,24 +1707,24 @@ namespace TradeshowTravel.Domain
                                         if(isNewUser)
                                         {
                                             EmailSrv.SendNewUser(evt, attendee);
-                                            Logging.LogMessage(LogLevel.DebugBasic, $"Send Welcome notification to {attendee.Username}.");
+                                            theLogger.Debug($"Send Welcome notification to {attendee.Username}.");
                                         }
 
-                                        Logging.LogMessage(LogLevel.DebugBasic, $"Send RSVP to {attendee.Username} for event {eventID}.");
+                                        theLogger.Debug($"Send RSVP to {attendee.Username} for event {eventID}.");
                                     }
                                     break;
                                 }
                             case AttendeeStatus.Accepted:
                                 // TODO: Send attending notifcation
                                 EmailSrv.SendAttendingConfirmationNotification(evt, attendee);
-                                Logging.LogMessage(LogLevel.DebugBasic, $"Send attending confirmation for {attendee.Username} and event {eventID}.");
+                                theLogger.Debug($"Send attending confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                             case AttendeeStatus.Declined:
                                 // TODO: Send declined notifcation to the attendee who declined it and his/her delegate
                                 EmailSrv.SendDeclinedConfirmationNotification(evt, attendee);
                                 // Send user cancelled reservation email to Lead / Support / BCD
                                 EmailSrv.SendUserCancelledReservationNotification(evt, attendee);
-                                Logging.LogMessage(LogLevel.DebugBasic, $"Send declined confirmation for {attendee.Username} and event {eventID}.");
+                                theLogger.Debug($"Send declined confirmation for {attendee.Username} and event {eventID}.");
                                 break;
                         }
                     }
@@ -1737,7 +1739,7 @@ namespace TradeshowTravel.Domain
                             EmailSrv.SendUserDetailsUpdatedNotification(evt, attendee, fieldComparisonResponse);
                         }
 
-                        Logging.LogMessage(LogLevel.DebugBasic, $"Send notification to event team that '{attendee.Username}' has updated their info.");
+                        theLogger.Debug($"Send notification to event team that '{attendee.Username}' has updated their info.");
                     }
                 }
             }
@@ -1746,7 +1748,7 @@ namespace TradeshowTravel.Domain
             {
                 // TODO: Send email notification to event Lead that new attendees have been added.
                 EmailSrv.SendAttendeeAddedNotifications(evt, CurrentUsername, newAttendeeList);
-                Logging.LogMessage(LogLevel.DebugBasic, $"Send new attendee added email to event Lead ({evt.OwnerUsername})");
+                theLogger.Debug($"Send new attendee added email to event Lead ({evt.OwnerUsername})");
             }
 
             return ValidationResponse<List<EventAttendee>>.CreateSuccess(eventAttendees);
@@ -1809,7 +1811,7 @@ namespace TradeshowTravel.Domain
                 }
                 catch (Exception ex)
                 {
-                    Logging.LogMessage(LogLevel.Error, $"Error querying event attendees. Ex: {ex}");
+                    theLogger.Error(ex, $"Error querying event attendees.");
                     return ValidationResponse<Workbook>.CreateFailure("Error querying event attendees.");
                 }
 
@@ -1879,13 +1881,13 @@ namespace TradeshowTravel.Domain
                         }
                         catch (Exception e)
                         {
-                            Logging.LogMessage(LogLevel.DebugBasic, e.Message);
+                            theLogger.Debug(e.Message);
                         }
                     }
                     else
                     {
                         string url = string.Format(ConfigurationManager.AppSettings["EmployeePicsUrl"], attendee.Profile.EmplID);
-                        Logging.LogMessage(LogLevel.DebugBasic, $"Fetching picture for {attendee.Username}. ({url})");
+                        theLogger.Debug($"Fetching picture for {attendee.Username}. ({url})");
 
                         using (var client = new WebClient())
                         {
@@ -1905,7 +1907,7 @@ namespace TradeshowTravel.Domain
                             }
                             catch (Exception e)
                             {
-                                Logging.LogMessage(LogLevel.DebugBasic, e.Message);
+                                theLogger.Debug(e.Message);
                             }
                         }
                     }
@@ -2038,7 +2040,7 @@ namespace TradeshowTravel.Domain
                 return ValidationResponse<Workbook>.CreateSuccess(wb);
 
             }
-            catch (Exception e) { Logging.LogMessage(LogLevel.DebugBasic, e.Message); }
+            catch (Exception e) { theLogger.Debug(e.Message); }
 
             return null;
         }
@@ -2089,7 +2091,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error deleting attendees: {String.Join(", ", attendeeIDs)}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error deleting attendees: {String.Join(", ", attendeeIDs)}.");
                 return ValidationResponse<bool>.CreateFailure($"Error deleting attendees: {String.Join(", ", attendeeIDs)}.");
             }
 
@@ -2099,7 +2101,7 @@ namespace TradeshowTravel.Domain
                 {
                     // TODO: Send notification that their attendance has been cancelled.
                     EmailSrv.SendAttendeeRemovalNotification(evt, attendee);
-                    Logging.LogMessage(LogLevel.DebugBasic, $"Send cancellation email to {attendee.Username}.");
+                    theLogger.Debug($"Send cancellation email to {attendee.Username}.");
                 }
             }
 
@@ -2131,7 +2133,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error querying attendees. Ex: {ex}");
+                theLogger.Error(ex, $"Error querying attendees.");
                 return ValidationResponse<AttendeeQueryResult>.CreateFailure("Error querying attendees.");
             }
 
@@ -2162,7 +2164,7 @@ namespace TradeshowTravel.Domain
             }
             catch (Exception ex)
             {
-                Logging.LogMessage(LogLevel.Error, $"Error getting attendee events for {username}.  Ex: {ex}");
+                theLogger.Error(ex, $"Error getting attendee events for {username}.");
                 return ValidationResponse<List<AttendeeEvent>>.CreateFailure($"Error getting attendee events for {username}.");
             }
         }
@@ -2200,7 +2202,7 @@ namespace TradeshowTravel.Domain
                     {
                         // TODO: send notification to any accepted attendee that new field(s) are required.
                         EmailSrv.SendNewFieldsAddedNotification(attendee);
-                        Logging.LogMessage(LogLevel.DebugBasic, $"Email '{attendee.Username} that new fields are required.");
+                        theLogger.Debug($"Email '{attendee.Username}' that new fields are required.");
                     }
                 }
             }
