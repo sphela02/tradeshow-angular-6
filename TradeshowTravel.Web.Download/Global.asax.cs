@@ -3,15 +3,20 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using NLog;
 
 namespace TradeshowTravel.Web.Download
 {
     public class WebApiApplication : System.Web.HttpApplication
     {
+        public ILogger theLogger { get; } = NLog.LogManager.GetCurrentClassLogger();
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
+
+            theLogger.Info("Application Started");
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)

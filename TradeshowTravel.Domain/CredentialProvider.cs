@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 
 namespace TradeshowTravel.Domain
 {
-    using Common.Logging;
     using CyberArk.AIM.NetPasswordSDK;
 
     public class CredentialProvider
@@ -14,10 +13,7 @@ namespace TradeshowTravel.Domain
             get { return ConfigurationManager.AppSettings["CyberArkAppID"]; }
         }
 
-        public static string CyberArkECAObjectQuery
-        {
-            get { return ConfigurationManager.AppSettings["CyberArkECAObjectQuery"]; }
-        }
+        private static NLog.ILogger theLogger { get; } = NLog.LogManager.GetCurrentClassLogger();
 
         public static string CyberArkTradeshowObjectQuery
         {
@@ -37,68 +33,6 @@ namespace TradeshowTravel.Domain
                 }
 
                 return retval;
-            }
-        }
-
-        public static string ECAConnectionString
-        {
-            get
-            {
-                var setting = ConfigurationManager.ConnectionStrings["ECADB"];
-                if (setting == null)
-                {
-                    return null;
-                }
-
-                var connectionString = setting.ConnectionString;
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    return connectionString;
-                }
-
-                var scsb = new SqlConnectionStringBuilder(connectionString);
-
-                if (string.IsNullOrWhiteSpace(scsb.Password) ||
-                    string.IsNullOrWhiteSpace(scsb.UserID) ||
-                    string.IsNullOrWhiteSpace(scsb.DataSource))
-                {
-                    if (string.IsNullOrWhiteSpace(CyberArkAppID))
-                    {
-                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk AppID '{CyberArkAppID}'.");
-                    }
-                    else if (string.IsNullOrWhiteSpace(CyberArkECAObjectQuery))
-                    {
-                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk ECA Query '{CyberArkECAObjectQuery}'.");
-                    }
-                    else
-                    {
-                        var request = new PSDKPasswordRequest();
-                        request.AppID = CyberArkAppID;
-                        request.Query = CyberArkECAObjectQuery;
-
-                        var response = PasswordSDK.GetPassword(request);
-
-                        if (response != null)
-                        {
-                            if (string.IsNullOrWhiteSpace(scsb.Password))
-                            {
-                                scsb.Password = response.Content;
-                            }
-
-                            if (string.IsNullOrWhiteSpace(scsb.UserID))
-                            {
-                                scsb.UserID = response.UserName;
-                            }
-
-                            if (string.IsNullOrWhiteSpace(scsb.DataSource))
-                            {
-                                scsb.DataSource = $"{response.Address}:{response.GetAttribute("PassProps.Port")}/{response.Database}";
-                            }
-                        }
-                    }
-                }
-
-                return scsb.ToString();
             }
         }
 
@@ -126,11 +60,11 @@ namespace TradeshowTravel.Domain
                 {
                     if (string.IsNullOrWhiteSpace(CyberArkAppID))
                     {
-                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk AppID '{CyberArkAppID}'.");
+                        theLogger.Warn($"Invalid CyberArk AppID '{CyberArkAppID}'.");
                     }
                     else if (string.IsNullOrWhiteSpace(CyberArkTradeshowObjectQuery))
                     {
-                        Logging.LogMessage(LogLevel.Warning, $"Invalid CyberArk Tradeshow Query '{CyberArkTradeshowObjectQuery}'.");
+                        theLogger.Warn($"Invalid CyberArk Tradeshow Query '{CyberArkTradeshowObjectQuery}'.");
                     }
                     else
                     {
@@ -191,7 +125,7 @@ namespace TradeshowTravel.Domain
 
             if (response == null)
             {
-                Logging.LogMessage(LogLevel.Warning, $"CyberArk Object '{cyberArkObjectName}' ({CyberArkAppID}) was not found!");
+                theLogger.Warn($"CyberArk Object '{cyberArkObjectName}' ({CyberArkAppID}) was not found!");
                 return string.Empty;
             }
 
@@ -199,7 +133,7 @@ namespace TradeshowTravel.Domain
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                Logging.LogMessage(LogLevel.Warning, $"CyberArk Object '{cyberArkObjectName}' returned a null or empty string!");
+                theLogger.Warn($"CyberArk Object '{cyberArkObjectName}' returned a null or empty string!");
             }
 
             return password;

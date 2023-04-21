@@ -1,149 +1,121 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using Newtonsoft.Json;
+using NLog;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Net;
+using TradeshowTravel.Domain;
+using TradeshowTravel.Domain.DTOs;
+using TradeshowTravel.ECA.Models;
 
 namespace TradeshowTravel.ECA
 {
-    using Configurations;
-    using Domain;
-    using Domain.DTOs;
-    using Models;
-    using Oracle.ManagedDataAccess.Client;
-
-    public class ECAUserRepository : DbContext, IUserProfileQuery
+    public class ECAUserRepository : IUserProfileQuery
     {
-        public ECAUserRepository() : base(new OracleConnection(CredentialProvider.ECAConnectionString), true)
+        private ILogger theLogger { get; }
+
+        private string EcaBaseUrl
         {
-            Database.SetInitializer<ECAUserRepository>(null);
+            get { return ConfigurationManager.AppSettings["ECA_Url"]; }
         }
 
-        public virtual DbSet<Associate> Associates { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        public ECAUserRepository()
         {
-            modelBuilder.Configurations.Add(new AssociateConfig());
+            theLogger = LogManager.GetCurrentClassLogger();
         }
 
         public UserProfile GetProfile(string username)
         {
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return null;
-            }
+            var url = $"{EcaBaseUrl}{GetAssociateByEcaIdParams.METHOD_NAME}";
 
-            UserProfile profile = null;
-            
-            username = username.Trim().ToUpper();
-            foreach (var associate in Associates
-                .Where(a => a.Username == username))
+            var @params = new GetAssociateByEcaIdParams()
             {
-                if (Associate.ACTIVE_STATUSES.Contains(associate.Status) ||
-                    profile == null)
+                ecaId = username
+            };
+
+            var data = JsonConvert.SerializeObject(@params);
+
+            try
+            {
+                using (var client = new WebClient())
                 {
-                    profile = new UserProfile
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                    var response = client.UploadString(url, data);
+
+                    var associate = JsonConvert.DeserializeObject<Associate>(response);
+
+                    if (associate == null)
                     {
-                        Username = associate.Username,
-                        EmplID = associate.EmplID,
-                        FirstName = associate.FirstName,
-                        LastName = associate.LastName,
-                        Email = associate.Email,
-                        Segment = associate.Segment ?? (associate.Company != null ? associate.Company.Trim() : ""),
-                        Title = associate.Title,
-                        Mobile = associate.Mobile,
-                        Telephone = associate.Telephone,
-                        BadgeName = associate.FirstName + " " + associate.LastName,
-                        ShowPicture = string.IsNullOrWhiteSpace(associate.EmplID) ? false : associate.ShowPicture
-                    };
+                        theLogger.Error($"Error '{response}' querying '{url}' with data: {data}");
+                    }
+                    else
+                    {
+                        return new UserProfile()
+                        {
+                            Username = associate.EcaId,
+                            EmplID = associate.EmployeeId,
+                            FirstName = associate.FirstName,
+                            LastName = associate.LastName,
+                            Email = associate.Email,
+                            Title = associate.Title,
+                            Segment = associate.SegmentCode,
+                            Telephone = associate.PhoneNumbers?.Where(x => x.PhoneTypeText == "Office1").Select(x => x.Number).FirstOrDefault(),
+                            Mobile = associate.PhoneNumbers?.Where(x => x.PhoneTypeText == "Mobile").Select(x => x.Number).FirstOrDefault(),
+                            ShowPicture = associate.ShowPicture,
+                            BadgeName = $"{associate.FirstName} {associate.LastName}"
+                        };
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+                theLogger.Error(ex, $"Error querying [{url}] with data: {data}");
+            }
 
-            return profile;
+            return null;
         }
-        
-        List<UserInfo> IUserProfileQuery.GetUsers(string username, string last, string first, int size, int skip)
+
+        public List<UserInfo> GetUsers(string username, string last, string first, int size = 0, int skip = 0)
         {
-            var query = this.Associates.Where(a => Associate.ACTIVE_STATUSES.Contains(a.Status));
+            var users = new List<UserInfo>();
 
-            if (!string.IsNullOrWhiteSpace(username))
-            {
-                username = username.Trim().ToUpper();
-                query = query.Where(a => a.Username.StartsWith(username));
-            }
+            var url = $"{EcaBaseUrl}{AssociateSearchParams.METHOD_NAME}";
 
-            if (!string.IsNullOrWhiteSpace(last) && !string.IsNullOrWhiteSpace(first) && first == last)
+            var @params = new AssociateSearchParams()
             {
-                first = first.Trim().MakePropperCase();
-                last = last.Trim().MakePropperCase();
+                searchTerm = string.IsNullOrWhiteSpace(username) ? $"{first} {last}".Trim() : username.Trim()
+            };
 
-                query = query.Where(a => a.Last.StartsWith(last) || a.PreferredLast.StartsWith(last) ||
-                            a.First.StartsWith(first) || a.PreferredFirst.StartsWith(first));
-            }
-            else
+            var data = JsonConvert.SerializeObject(@params);
+
+            try
             {
-                if (!string.IsNullOrWhiteSpace(last))
+                using (var client = new WebClient())
                 {
-                    last = last.Trim().MakePropperCase();
-                    query = query.Where(a => a.Last.StartsWith(last) || a.PreferredLast.StartsWith(last));
+                    client.Headers[HttpRequestHeader.ContentType] = "application/json";
+
+                    var response = client.UploadString(url, data);
+
+                    var associates = JsonConvert.DeserializeObject<List<Associate>>(response) ?? new List<Associate>();
+
+                    users.AddRange(associates.Select(a => new UserInfo()
+                    {
+                        Username = a.EcaId,
+                        FirstName = a.FirstName,
+                        LastName = a.LastName,
+                        Email = a.Email,
+                        Segment = a.SegmentCode
+                    }));
                 }
-
-                if (!string.IsNullOrWhiteSpace(first))
-                {
-                    first = first.Trim().MakePropperCase();
-                    query = query.Where(a => a.First.StartsWith(first) || a.PreferredFirst.StartsWith(first));
-                }
             }
-
-            query = query.OrderBy(a => a.PreferredLast)
-                .ThenBy(a => a.Last)
-                .ThenBy(a => a.PreferredFirst)
-                .ThenBy(a => a.First);
-
-            if (skip > 0)
+            catch (Exception ex)
             {
-                query = query.Skip(skip).Take(size);
-            }
-            else if (size > 0)
-            {
-                query = query.Take(size);
-            }
-
-            List<UserInfo> users = new List<UserInfo>();
-
-            foreach (var a in query)
-            {
-                users.Add(new UserInfo
-                {
-                    Username = a.Username,
-                    FirstName = a.FirstName,
-                    LastName = a.LastName,
-                    Segment = a.Segment ?? (a.Company != null ? a.Company.Trim() : string.Empty),
-                    Email = a.Email
-                });
+                theLogger.Error(ex, $"Error querying '{url}' with data:  {data}");
             }
 
             return users;
         }
     }
-
-    public static class Extensions
-    {
-
-        public static string MakePropperCase(this string str)
-        {
-            if (!string.IsNullOrWhiteSpace(str))
-            {
-                if (str.Length > 1)
-                {
-                   return char.ToUpperInvariant(str[0]).ToString() + str.Substring(1);
-                }
-                else
-                {
-                    return char.ToUpperInvariant(str[0]).ToString();
-                }
-            }
-
-            return str;
-        }
-    }
-    
 }

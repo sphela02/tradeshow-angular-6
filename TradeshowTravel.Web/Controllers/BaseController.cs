@@ -8,10 +8,13 @@ namespace TradeshowTravel.Web.Controllers
 
     public class BaseController : ApiController
     {
+        protected NLog.ILogger theLogger { get; }
         protected TradeshowSrv Service { get; set; }
 
         public BaseController()
         {
+            theLogger = NLog.LogManager.GetCurrentClassLogger();
+
             Service = new TradeshowSrv(new TSDataRepository(), new ECAUserRepository());
         }
     }

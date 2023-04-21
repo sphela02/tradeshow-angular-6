@@ -2,20 +2,19 @@
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using NLog;
 
 namespace TradeshowTravel.Web
 {
-    using Common.Logging;
-
     public class Global : System.Web.HttpApplication
     {
+        public ILogger theLogger { get; } = NLog.LogManager.GetCurrentClassLogger();
+
         protected void Application_Start(object sender, EventArgs e)
         {
-            Logging.Initialize();
-
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
-            Logging.LogMessage(LogLevel.Info, "Application Started");
+            theLogger.Info("Application Started");
         }
 
         protected void Session_Start(object sender, EventArgs e)
@@ -46,7 +45,7 @@ namespace TradeshowTravel.Web
             var ex = Server.GetLastError();
             if (ex != null)
             {
-                Logging.LogMessage(LogLevel.Error, $"Uncaught application error!  {ex}");
+                theLogger.Error(ex, $"Uncaught application error!");
             }
         }
 
