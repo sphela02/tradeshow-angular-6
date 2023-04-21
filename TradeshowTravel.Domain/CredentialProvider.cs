@@ -15,11 +15,6 @@ namespace TradeshowTravel.Domain
 
         private static NLog.ILogger theLogger { get; } = NLog.LogManager.GetCurrentClassLogger();
 
-        public static string CyberArkECAObjectQuery
-        {
-            get { return ConfigurationManager.AppSettings["CyberArkECAObjectQuery"]; }
-        }
-
         public static string CyberArkTradeshowObjectQuery
         {
             get { return ConfigurationManager.AppSettings["CyberArkTradeshowObjectQuery"]; }
@@ -38,68 +33,6 @@ namespace TradeshowTravel.Domain
                 }
 
                 return retval;
-            }
-        }
-
-        public static string ECAConnectionString
-        {
-            get
-            {
-                var setting = ConfigurationManager.ConnectionStrings["ECADB"];
-                if (setting == null)
-                {
-                    return null;
-                }
-
-                var connectionString = setting.ConnectionString;
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    return connectionString;
-                }
-
-                var scsb = new SqlConnectionStringBuilder(connectionString);
-
-                if (string.IsNullOrWhiteSpace(scsb.Password) ||
-                    string.IsNullOrWhiteSpace(scsb.UserID) ||
-                    string.IsNullOrWhiteSpace(scsb.DataSource))
-                {
-                    if (string.IsNullOrWhiteSpace(CyberArkAppID))
-                    {
-                        theLogger.Warn($"Invalid CyberArk AppID '{CyberArkAppID}'.");
-                    }
-                    else if (string.IsNullOrWhiteSpace(CyberArkECAObjectQuery))
-                    {
-                        theLogger.Warn($"Invalid CyberArk ECA Query '{CyberArkECAObjectQuery}'.");
-                    }
-                    else
-                    {
-                        var request = new PSDKPasswordRequest();
-                        request.AppID = CyberArkAppID;
-                        request.Query = CyberArkECAObjectQuery;
-
-                        var response = PasswordSDK.GetPassword(request);
-
-                        if (response != null)
-                        {
-                            if (string.IsNullOrWhiteSpace(scsb.Password))
-                            {
-                                scsb.Password = response.Content;
-                            }
-
-                            if (string.IsNullOrWhiteSpace(scsb.UserID))
-                            {
-                                scsb.UserID = response.UserName;
-                            }
-
-                            if (string.IsNullOrWhiteSpace(scsb.DataSource))
-                            {
-                                scsb.DataSource = $"{response.Address}:{response.GetAttribute("PassProps.Port")}/{response.Database}";
-                            }
-                        }
-                    }
-                }
-
-                return scsb.ToString();
             }
         }
 
