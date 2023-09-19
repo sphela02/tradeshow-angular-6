@@ -440,6 +440,11 @@ namespace TradeshowTravel.Domain
         // New field added for attendees (lower priority).
         public void SendNewFieldsAddedNotification(EventAttendee attendee)
         {
+            if (attendee.Event == null)
+            {
+                attendee.Event = this.repo.GetEvent(attendee.EventID);
+            }
+
             var subject = $"[Action Requested] Event Travel Portal | {attendee.Event.Name}: New Information Required";
             var body = $"Hello {attendee.Profile.FirstName},\n\nA change has been made for your required information for {attendee.Event.Name}. Please update your Attendee Details for this event by {attendee.Event.RsvpDueDate}.\n\nView Event: {getUserProfileUrl(attendee.Profile.Username)}\n\n{getSignature(attendee.Event)}";
 
