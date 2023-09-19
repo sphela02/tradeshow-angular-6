@@ -902,6 +902,7 @@ namespace TradeshowTravel.Data
                 .Include("User.Delegate")
                 .Include("FieldValues")
                 .Include("FieldValues.TradeshowField")
+                .Include("Tradeshow")
                 .AsQueryable();
 
             List<string> customFieldValues = GetCustomFieldValues(eventID);
@@ -922,7 +923,9 @@ namespace TradeshowTravel.Data
 
             foreach (var a in query)
             {
-                attendees.Add(a.ToEventAttendee());
+                var attendee = a.ToEventAttendee();
+                attendee.Event = a.Tradeshow.ToEventInfo();
+                attendees.Add(attendee);
             }
 
             return attendees;
