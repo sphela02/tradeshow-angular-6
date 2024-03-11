@@ -104,7 +104,17 @@ export class EventViewComponent implements OnInit {
       sort: [{ field: 'Name', dir: 'asc' }]
     };
     // init query results
-    this.results = <EventAttendeeQueryResult> { Total: 0, Hotel: 0, RSVPD: 0, Completed: 0, Attendees: [] };
+    this.results = <EventAttendeeQueryResult> { 
+      Total: 0, 
+      Hotel: 0, 
+      RSVPD: {
+        Yes: 0,
+        No: 0,
+        Total: 0
+      }, 
+      Completed: 0, 
+      Attendees: [] 
+    };
   }
 
   ngOnInit() {

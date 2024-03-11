@@ -66,12 +66,12 @@
     <div class="card card-inline">
       <div class="card-body text-center">
         <p class="mb-1">RSVP'd&nbsp;Attendees</p>
-        <h2>{{results?.RSVPD}}</h2>
+        <h2>{{results?.RSVPD.Total}}</h2>
         <div class="float-left mb-1" style="width: 70px">
-          <strong>Yes: {{results?.Attendees.filter(yesRSVPs).length}}</strong>
+          <strong>Yes: {{results?.RSVPD.Yes}}</strong>
         </div>
         <div class="float-right mb-1" style="width: 70px">
-          <strong>No: {{results?.Attendees.filter(noRSVPs).length}}</strong>
+          <strong>No: {{results?.RSVPD.No}}</strong>
         </div>
       </div>
     </div>

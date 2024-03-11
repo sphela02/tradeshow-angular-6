@@ -10,6 +10,7 @@ namespace TradeshowTravel.Domain.DTOs
     {
         public EventAttendeeQueryResult()
         {
+            RSVPD = new EventAttendeeRSVPD();
             Segments = new Dictionary<string, int>();
         }
 
@@ -17,9 +18,19 @@ namespace TradeshowTravel.Domain.DTOs
         public List<EventAttendee> Attendees { get; set; }
         
         public int Hotel { get; set; }
-        public int RSVPD { get; set; }
+        public EventAttendeeRSVPD RSVPD { get; set; }
         public int Completed { get; set; }
         public bool IsAttending { get; set; }
         public virtual Dictionary<string, int> Segments { get; set; }
+    }
+
+    public class EventAttendeeRSVPD
+    {
+        public int Yes { get; set; }
+        public int No { get; set; }
+        public int Total
+        {
+            get { return Yes + No; }
+        }
     }
 }
