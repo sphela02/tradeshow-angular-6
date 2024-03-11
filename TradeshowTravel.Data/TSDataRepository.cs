@@ -837,7 +837,8 @@ namespace TradeshowTravel.Data
             var stats = subquery.GroupBy(g => 1).Select(s => new
             {
                 Total = s.Count(),
-                RSVPD = s.Count(a => a.DateAccepted.HasValue || a.DateCancelled.HasValue),
+                RSVPD_Yes = s.Count(a => a.DateAccepted.HasValue),
+                RSVPD_No = s.Count(a => a.DateCancelled.HasValue),
                 Completed = s.Count(a => a.DateCompleted.HasValue),
                 Hotel = s.Count(a => a.IsHotelNeeded.Value && !a.DateCancelled.HasValue)
             }).FirstOrDefault();
@@ -845,7 +846,8 @@ namespace TradeshowTravel.Data
             if (stats != null)
             {
                 result.Total = stats.Total;
-                result.RSVPD = stats.RSVPD;
+                result.RSVPD.Yes = stats.RSVPD_Yes;
+                result.RSVPD.No = stats.RSVPD_No;
                 result.Completed = stats.Completed;
                 result.Hotel = stats.Hotel;
             }
