@@ -834,11 +834,14 @@ namespace TradeshowTravel.Data
                     Count = subquery.Count(a => a.User.Segment == s.Key && (a.DateAccepted.HasValue || a.DateCancelled.HasValue))
                 }).ToDictionary(s => s.Segment, s => s.Count);
 
+            var accepted = AttendeeStatus.Accepted.ToString();
+            var declined = AttendeeStatus.Declined.ToString();
+
             var stats = subquery.GroupBy(g => 1).Select(s => new
             {
                 Total = s.Count(),
-                RSVPD_Yes = s.Count(a => a.DateAccepted.HasValue),
-                RSVPD_No = s.Count(a => a.DateCancelled.HasValue),
+                RSVPD_Yes = s.Count(a => a.Status == accepted),
+                RSVPD_No = s.Count(a => a.Status == declined),
                 Completed = s.Count(a => a.DateCompleted.HasValue),
                 Hotel = s.Count(a => a.IsHotelNeeded.Value && !a.DateCancelled.HasValue)
             }).FirstOrDefault();
