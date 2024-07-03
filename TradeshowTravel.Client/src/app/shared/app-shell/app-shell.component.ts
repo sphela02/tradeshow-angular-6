@@ -8,9 +8,9 @@ import { PageTitleService } from '../../pagetitle.service';
 import { environment } from '../../../environments/environment';
 import { Location } from '@angular/common';
 
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
+
+
+
 
 declare var $: any;
 

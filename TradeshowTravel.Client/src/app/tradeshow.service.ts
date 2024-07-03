@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { of }         from 'rxjs/observable/of';
+import { Observable ,  of ,  ReplaySubject, Observer, BehaviorSubject } from 'rxjs';
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
-import 'rxjs/add/operator/delay';
+
 
 import { environment } from '../environments/environment';
 import { UserProfile } from './shared/UserProfile';
-import { catchError } from 'rxjs/operators';
+import { catchError ,  ObserveOnOperator } from 'rxjs/operators';
 import { Headers, ResponseContentType, RequestOptions } from '@angular/http';
-import { ReplaySubject, Observer, BehaviorSubject } from 'rxjs';
 import { ShowType, Permissions } from './shared/Enums';
 import { EventInfo, EventUser, EventField } from './shared/EventInfo';
 import { QueryParams } from './shared/QueryParams';
@@ -28,7 +26,6 @@ import { AttendeeQueryResult } from './shared/AttendeeQuery';
 import { AttendeeEvent } from './shared/AttendeeEvent';
 import { UserPic } from './shared/UserImage';
 import { ContentType } from '@angular/http/src/enums';
-import { ObserveOnOperator } from 'rxjs/operators/observeOn';
 import { TravelDoc } from './shared/UserImage';
 
 @Injectable()

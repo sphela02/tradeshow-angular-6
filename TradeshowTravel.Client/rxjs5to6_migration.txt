@@ -1,0 +1,13 @@
+npm install --save-dev rxjs-tslint@0.1.8
+
+Force rxjs-tslint package.json to use minimum typescript version (2.8 ish, just take the ">=" off the front and use exact)
+
+cd node_modules\rxjs-tslint
+npm install
+cd ..\..
+
+.\node_modules\.bin\rxjs-5-to-6-migrate -p .\tsconfig.json
+
+
+
+

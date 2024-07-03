@@ -1,7 +1,7 @@
 import { Component, Input, forwardRef, Output, EventEmitter } from '@angular/core';
 import { TradeshowService } from '../tradeshow.service';
 import { UserInfo } from '../shared/UserInfo';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { UserProfile } from '../shared/UserProfile';
 import { ComboBoxComponent } from '@progress/kendo-angular-dropdowns';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR  } from '@angular/forms';
